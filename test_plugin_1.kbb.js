@@ -17,6 +17,8 @@ if (window.location.href == "https://example.com/") {
 
 if (window.location.href == "https://www3.nhk.or.jp/news/pickup_news16/pickup_news_movie.html") {
   setTimeout(() => {
-    nPlayerContainerAltContentVideoContentPosterFrame.click();
+    const video = document.querySelector('#nPlayerContainerAltContentVideoContent > video');
+    video.setAttribute('loop', '');
+    document.getElementById("nPlayerContainerAltContentVideoContentPosterFrame").click();
   }, 1000);
 }
