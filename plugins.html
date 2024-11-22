@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Plugins</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        const urls = [
+            "https://raw.githubusercontent.com/girasolenergy/girasol-tvbro-doc/refs/heads/plugin_test/test_plugin_1.kbb.js"
+        ];
+        $(document).ready(() => {
+            urls.forEach(url => {
+                $.get(url, data => {
+                    const lines = data.split("\n");
+                    const headerLines = [];
+
+                    for (const line of lines) {
+                        const trimmedLine = line.trim();
+                        if (trimmedLine.startsWith('//')) {
+                            headerLines.push(trimmedLine.replace(/^\/\/\s*/, ""));
+                        } else {
+                            break;
+                        }
+                    }
+
+                    if (headerLines[0] !== '@KanbanBroPlugin') {
+                        throw new Error("Plugin header must start with '@KanbanBroPlugin'");
+                    }
+
+                    const jsonString = headerLines.slice(1).join("");
+                    const metadata = JSON.parse(jsonString);
+
+                    $("#plugin_container")
+                    .append(
+                        $("<div>")
+                        .append(
+                            $("<h2>", {
+                                text: metadata.title
+                            })
+                        )
+                        .append(
+                            $("<div>", {
+                                text: metadata.version
+                            })
+                        )
+                        .append(
+                            $("<div>", {
+                                html: metadata.description
+                            })
+                        )
+                        .append(
+                            $("<div>", {
+                                text: metadata.name
+                            })
+                        )
+                        .append(
+                            $("<div>", {
+                                text: url
+                            })
+                        )
+                        .append(
+                            $("<p>")
+                            .append(
+                                $("<a>", {
+                                    href: `kbb://plugin/?url=${encodeURIComponent(url)}`,
+                                    text: "Install"
+                                })
+                                .css("padding", "1em")
+                                .css("background-color", "#EEEEEE")
+                            )
+                        )
+                    );
+                }).fail((jqXHR, textStatus, errorThrown) => {
+                    console.log("Load Error", textStatus, errorThrown);
+
+                    $("#plugin_container")
+                    .append(
+                        $("<div>")
+                        .append(
+                            $("<h2>", {
+                                text: "Error"
+                            })
+                        )
+                        .append(
+                            $("<div>", {
+                                text: "" + textStatus
+                            })
+                        )
+                        .append(
+                            $("<div>", {
+                                text: "" + errorThrown
+                            })
+                        )
+                        .append(
+                            $("<p>")
+                            .append(
+                                $("<a>", {
+                                    href: `kbb://plugin/?url=${encodeURIComponent(url)}`,
+                                    text: url
+                                })
+                            )
+                        )
+                    );
+                })
+            });
+        });
+    </script>
+</head>
+<body>
+<h1>Plugins</h1>
+<div id="plugin_container"></div>
+</body>
