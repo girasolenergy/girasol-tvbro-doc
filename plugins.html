@@ -61,9 +61,20 @@
                             $("<p>")
                             .append(
                                 $("<a>", {
-                                    href: `kbb://plugin/?url=${encodeURIComponent(url)}`,
-                                    text: "Install"
+                                    href: url,
+                                    text: "Src"
                                 })
+                                .css("margin", "1em")
+                                .css("padding", "1em")
+                                .css("background-color", "#EEEEEE")
+                            )
+                            .append(
+                                $("<a>", {
+                                    href: "javascript:void(0)",
+                                    text: "Install",
+                                    click: () => KanbanBro.showPluginAdditionDialog(url, null)
+                                })
+                                .css("margin", "1em")
                                 .css("padding", "1em")
                                 .css("background-color", "#EEEEEE")
                             )
@@ -94,9 +105,22 @@
                             $("<p>")
                             .append(
                                 $("<a>", {
-                                    href: `kbb://plugin/?url=${encodeURIComponent(url)}`,
-                                    text: url
+                                    href: "javascript:void(0)",
+                                    text: "Install",
+                                    click: () => KanbanBro.showPluginAdditionDialog(url, null)
                                 })
+                                .css("margin", "1em")
+                                .css("padding", "1em")
+                                .css("background-color", "#EEEEEE")
+                            )
+                            .append(
+                                $("<a>", {
+                                    href: url,
+                                    text: "Src"
+                                })
+                                .css("margin", "1em")
+                                .css("padding", "1em")
+                                .css("background-color", "#EEEEEE")
                             )
                         )
                     );
