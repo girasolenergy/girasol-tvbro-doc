@@ -13,41 +13,44 @@
 
 <script>
     function smoothScrollWithinElement(element, targetRatio, pixelsPerSecond) {
-      return new Promise(resolve => {
-        const maxPixels = element.scrollHeight - element.clientHeight;
-        const targetPixels = maxPixels * targetRatio;
-        let lastMilliseconds = performance.now();
+        return new Promise(resolve => {
+            const maxPixels = element.scrollHeight - element.clientHeight;
+            const targetPixels = maxPixels * targetRatio;
+            let lastMilliseconds = performance.now();
+            let totalDeltaPixels = 0;
 
-        const animationStep = currentMilliseconds => {
+            const animationStep = currentMilliseconds => {
 
-          const deltaMilliseconds = currentMilliseconds - lastMilliseconds;
-          lastMilliseconds = currentMilliseconds;
+                const deltaMilliseconds = Math.max(currentMilliseconds - lastMilliseconds, 0);
+                lastMilliseconds = currentMilliseconds;
 
-          const remainingPixels = targetPixels - element.scrollTop;
-          let deltaPixels = pixelsPerSecond * (deltaMilliseconds / 1000);
-          deltaPixels = deltaPixels > 0 ? Math.ceil(deltaPixels) : Math.floor(deltaPixels);
+                const lastTotalDeltaPixels = totalDeltaPixels;
+                totalDeltaPixels += pixelsPerSecond * (deltaMilliseconds / 1000);
+                const deltaPixels = Math.round(totalDeltaPixels) - Math.round(lastTotalDeltaPixels);
 
-          if (Math.abs(remainingPixels) <= Math.abs(deltaPixels)) {
-            element.scrollTop = targetPixels;
-            resolve(null);
-          } else {
-            element.scrollTop += remainingPixels > 0 ? deltaPixels : -deltaPixels;
+                const remainingPixels = targetPixels - element.scrollTop;
+
+                if (Math.abs(remainingPixels) <= deltaPixels) {
+                    element.scrollTop = targetPixels;
+                    resolve(null);
+                } else {
+                    element.scrollTop += remainingPixels > 0 ? deltaPixels : -deltaPixels;
+                    requestAnimationFrame(animationStep);
+                }
+            };
+
             requestAnimationFrame(animationStep);
-          }
-        };
-
-        requestAnimationFrame(animationStep);
-      });
+        });
     }
 
     const container = document.getElementById("container");
 
     window.addEventListener("load", () => {
-      for (let i = 1; i <= 200; i++) {
-        const div = document.createElement("div");
-        div.textContent = i;
-        container.appendChild(div);
-      }
+        for (let i = 1; i <= 200; i++) {
+            const div = document.createElement("div");
+            div.textContent = i;
+            container.appendChild(div);
+        }
     });
 
     async function scrollToTop() {
