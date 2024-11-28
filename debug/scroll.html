@@ -24,7 +24,8 @@
           lastMilliseconds = currentMilliseconds;
 
           const remainingPixels = targetPixels - element.scrollTop;
-          const deltaPixels = Math.round(pixelsPerSecond * (deltaMilliseconds / 1000));
+          let deltaPixels = pixelsPerSecond * (deltaMilliseconds / 1000);
+          deltaPixels = deltaPixels > 0 ? Math.ceil(deltaPixels) : Math.floor(deltaPixels);
 
           if (Math.abs(remainingPixels) <= Math.abs(deltaPixels)) {
             element.scrollTop = targetPixels;
