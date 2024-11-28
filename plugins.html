@@ -18,7 +18,7 @@
 
     </script>
 
-    <!-- Kanban Bro Plugin Repository Framework v0.1.0 -->
+    <!-- Kanban Bro Plugin Repository Framework v0.1.1 -->
 
     <title>Kanban Bro Plugin Repository</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -136,9 +136,8 @@
                             $("<p>")
                             .append(
                                 $("<a>", {
-                                    href: "javascript:void(0)",
-                                    text: "Install",
-                                    click: () => KanbanBro.showPluginAdditionDialog(plugin.url, null)
+                                    href: plugin.url,
+                                    text: "Src"
                                 })
                                 .css("margin", "1em")
                                 .css("padding", "1em")
@@ -146,8 +145,11 @@
                             )
                             .append(
                                 $("<a>", {
-                                    href: plugin.url,
-                                    text: "Src"
+                                    href: "javascript:void(0)",
+                                    text: "Install",
+                                    click: () => {
+                                        KanbanBro.showPluginAdditionDialog(plugin.url, null)
+                                    }
                                 })
                                 .css("margin", "1em")
                                 .css("padding", "1em")
