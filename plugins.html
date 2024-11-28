@@ -1,15 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Plugins</title>
+
+    <script>
+
+        const title = "Sample Kanban Bro Plugin Repository";
+        const plugins = [
+            {
+                url: "https://raw.githubusercontent.com/girasolenergy/girasol-tvbro-doc/refs/heads/plugin_test/test_plugin_1.kbb.js",
+                isPrivate: false
+            },
+            {
+                url: "https://raw.githubusercontent.com/girasolenergy/girasol-tvbro-doc/refs/heads/plugin_test/test_plugin_1.kbb.js",
+                isPrivate: true
+            }
+        ];
+
+    </script>
+
+    <!-- Kanban Bro Plugin Repository Framework v0.1.0 -->
+
+    <title>Kanban Bro Plugin Repository</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        const urls = [
-            "https://raw.githubusercontent.com/girasolenergy/girasol-tvbro-doc/refs/heads/plugin_test/test_plugin_1.kbb.js"
-        ];
         $(document).ready(() => {
-            urls.forEach(url => {
-                $.get(url, data => {
+            document.title = title;
+            $("#title").text(title);
+            plugins.forEach(plugin => {
+                $.get(plugin.url, data => {
                     const lines = data.split("\n");
                     const headerLines = [];
 
@@ -33,9 +51,14 @@
                     .append(
                         $("<div>")
                         .append(
-                            $("<h2>", {
-                                text: metadata.title
-                            })
+                            $("<h2>")
+                            .append(
+                                $("<a>", {
+                                    id: metadata.name,
+                                    href: `#${metadata.name}`,
+                                    text: metadata.title
+                                })
+                            )
                         )
                         .append(
                             $("<div>", {
@@ -54,14 +77,14 @@
                         )
                         .append(
                             $("<div>", {
-                                text: url
+                                text: plugin.url
                             })
                         )
                         .append(
                             $("<p>")
                             .append(
                                 $("<a>", {
-                                    href: url,
+                                    href: plugin.url,
                                     text: "Src"
                                 })
                                 .css("margin", "1em")
@@ -72,7 +95,15 @@
                                 $("<a>", {
                                     href: "javascript:void(0)",
                                     text: "Install",
-                                    click: () => KanbanBro.showPluginAdditionDialog(url, null)
+                                    click: () => {
+                                        if (plugin.isPrivate) {
+                                            const url = new URL(document.location.href);
+                                            url.hash = metadata.name;
+                                            KanbanBro.showPluginAdditionDialog(url.toString(), data)
+                                        } else {
+                                            KanbanBro.showPluginAdditionDialog(plugin.url, null)
+                                        }
+                                    }
                                 })
                                 .css("margin", "1em")
                                 .css("padding", "1em")
@@ -107,7 +138,7 @@
                                 $("<a>", {
                                     href: "javascript:void(0)",
                                     text: "Install",
-                                    click: () => KanbanBro.showPluginAdditionDialog(url, null)
+                                    click: () => KanbanBro.showPluginAdditionDialog(plugin.url, null)
                                 })
                                 .css("margin", "1em")
                                 .css("padding", "1em")
@@ -115,7 +146,7 @@
                             )
                             .append(
                                 $("<a>", {
-                                    href: url,
+                                    href: plugin.url,
                                     text: "Src"
                                 })
                                 .css("margin", "1em")
@@ -130,6 +161,6 @@
     </script>
 </head>
 <body>
-<h1>Plugins</h1>
+<h1 id="title"></h1>
 <div id="plugin_container"></div>
 </body>
