@@ -111,7 +111,7 @@ if (location.href === 'https://example.com/') {
 
 説明は、以下のコードによってAndroidのGUI上で解釈可能な簡易的なHTMLをサポートします。
 
-`[android.widget.TextView.setText](https://developer.android.com/reference/android/widget/TextView#setText(int))([Html.fromHtml](https://developer.android.com/reference/android/text/Html#fromHtml(java.lang.String,%20int))(description, Html.FROM_HTML_MODE_COMPACT))`
+<code><a href="https://developer.android.com/reference/android/widget/TextView#setText(int)">android.widget.TextView.setText</a>(<a href="https://developer.android.com/reference/android/text/Html#fromHtml(java.lang.String,%20int)">Html.fromHtml</a>(description, Html.FROM_HTML_MODE_COMPACT))</code>
 
 例: `This is <b>an example</b> plugin.`
 
