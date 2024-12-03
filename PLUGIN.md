@@ -51,7 +51,7 @@ Kanban Broのプラグインは、Kanban Broで表示しているページの動
 
 ```javascript
 if (location.href === 'https://example.com/') {
-  console.log('This is example.com');
+    console.log('This is example.com');
 }
 ```
 
@@ -69,7 +69,7 @@ if (location.href === 'https://example.com/') {
 // }
 
 if (location.href === 'https://example.com/') {
-  console.log('This is example.com');
+    console.log('This is example.com');
 }
 ```
 
