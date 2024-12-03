@@ -45,7 +45,7 @@ Kanban Broのプラグインは、Kanban Broで表示しているページの動
 
 メタデータ部との競合を回避するために、本文の先頭は行コメントであってはなりません。
 
-本文の内容は概ね自由ですが、多くの場合、特定のページ上でのみ動作するための判定が行われます。
+本文の内容は概ね自由ですが、多くの場合、特定のページ上でのみ動作するための判定が含まれます。
 
 ---
 
@@ -81,7 +81,9 @@ if (location.href === 'https://example.com/') {
 
 プラグインを一意に識別するための名前です。
 
-プラグインの名前は、多くの場合Javaのパッケージ名のようにドット区切りで表現された識別子のような形式を取ります。
+プラグインの名前は、Javaのパッケージ名のようにドット区切りで表現された識別子のような形式を取ることが想定されています。
+
+識別子は、1文字以上の半角英小文字・半角数字・アンダースコア（ `/[a-z0-9_]+/` ）で構成されることが想定されます。
 
 例: `com.example.example_plugin`
 
@@ -89,7 +91,7 @@ if (location.href === 'https://example.com/') {
 
 人間にとって読みやすいプラグインのタイトルです。
 
-プラグインのタイトルは英語でなくてもかまいません。
+タイトルは英語でなくてもかまいません。
 
 例: `Example Plugin`
 
@@ -97,7 +99,7 @@ if (location.href === 'https://example.com/') {
 
 プラグインのバージョンです。
 
-バージョンは[セマンティックバージョニング](https://semver.org/)に従うことが推奨されます。
+バージョンは[セマンティックバージョニング](https://semver.org/)の `<version core>` である（ `/([1-9][0-9]*)\.([1-9][0-9]*)\.([1-9][0-9]*)/` ）ことが想定されます。
 
 例: `1.0.0`
 
@@ -105,10 +107,16 @@ if (location.href === 'https://example.com/') {
 
 プラグインの説明です。
 
+説明は英語でなくてもかまいません。
+
 説明は、以下のコードによってAndroidのGUI上で解釈可能な簡易的なHTMLをサポートします。
 
-```
-[android.widget.TextView.setText](https://developer.android.com/reference/android/widget/TextView#setText(int))([Html.fromHtml](https://developer.android.com/reference/android/text/Html#fromHtml(java.lang.String,%20int))(description))
-```
+`[android.widget.TextView.setText](https://developer.android.com/reference/android/widget/TextView#setText(int))([Html.fromHtml](https://developer.android.com/reference/android/text/Html#fromHtml(java.lang.String,%20int))(description, Html.FROM_HTML_MODE_COMPACT))`
 
 例: `This is <b>an example</b> plugin.`
+
+## ファイル名
+
+プラグインのファイル名は `.kbb.js` という拡張子である必要があります。
+
+より正確にいうと、プラグインがダウンロードできるURLは `.kbb.js` で終わることが想定されます。 
