@@ -30,10 +30,10 @@ Kanban Broのプラグインは、Kanban Broで表示しているページの動
 
 ```javascript
 // {
-//   "name": "com.example.example_plugin",
-//   "title": "Example Plugin",
-//   "version": "1.0.0",
-//   "description": "This is <b>an example</b> plugin."
+//     "name": "com.example.example_plugin",
+//     "title": "Example Plugin",
+//     "version": "1.0.0",
+//     "description": "This is <b>an example</b> plugin."
 // }
 ```
 
@@ -62,10 +62,10 @@ if (location.href === 'https://example.com/') {
 ```javascript
 // @KanbanBroPlugin
 // {
-//   "name": "com.example.example_plugin",
-//   "title": "Example Plugin",
-//   "version": "1.0.0",
-//   "description": "This is <b>an example</b> plugin."
+//     "name": "com.example.example_plugin",
+//     "title": "Example Plugin",
+//     "version": "1.0.0",
+//     "description": "This is <b>an example</b> plugin."
 // }
 
 if (location.href === 'https://example.com/') {
