@@ -133,7 +133,7 @@ if (location.href === 'https://example.com/') {
 
 awaitを使う場合は、以下のようにPromiseで囲う必要があります。
 
-```
+```javascript
 new Promise(async () => {
     // awaitを使う処理
 });
