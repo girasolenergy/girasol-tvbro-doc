@@ -97,6 +97,8 @@ if (location.href === 'https://example.com/') {
 
 タイトルは英語でなくてもかまいません。
 
+タイトルは、全角10文字、半角20文字以内が推奨されます。
+
 例: `Example Plugin`
 
 ### `version` : required string
