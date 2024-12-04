@@ -2,14 +2,11 @@
 // {
 //     "name": "co.pplc.kanbanbro.plugins.slack_fullscreen_message",
 //     "title": "Slack全画面メッセージ",
-//     "version": "1.3.1",
+//     "version": "1.4.0",
 //     "description": "Slackのメッセージ領域を全画面に表示します。"
 // }
 
 if (location.href.startsWith('https://app.slack.com/')) {
-    async function delay(wait) {
-        return new Promise(callback => setTimeout(() => callback(), wait));
-    }
     function error(message) {
         const warningBanner = document.createElement('div');
         warningBanner.style.position = 'fixed';
@@ -30,39 +27,18 @@ if (location.href.startsWith('https://app.slack.com/')) {
 
         throw new Error(message);
     }
-    async function retry(wait, limit, getter) {
-        return new Promise(async callback => {
-            for (let t = 0; t < limit; t++) {
-                if (t > 0) await delay(wait);
-                const result = getter();
-                if (result !== undefined) {
-                    callback(result);
-                    return;
-                }
-            }
-            callback(undefined);
-        });
-    }
-    //new Promise(async () => {
 
-        // メッセージ領域を取得
-        const messagePane = (() => {//await retry(100, 100, () => {
-            const messagePanes = Array.from(document.querySelectorAll('.p-message_pane'));
-            if (messagePanes.length == 1) {
-                return messagePanes[0];
-            }
-        })();//});
-        if (messagePane === undefined) error('[SFM]メッセージ領域を取得できませんでした。');
+    // メッセージ領域を取得
+    const messagePanes = Array.from(document.querySelectorAll('.p-message_pane'));
+    if (messagePanes.length != 1) error('[SFM]メッセージ領域を取得できませんでした。');
+    const messagePane = messagePanes[0];
 
-        //await delay(10000);
+    // 一旦body配下の全要素を非表示
+    document.querySelectorAll('body > *').forEach(element => {
+        element.style.display = 'none';
+    });
 
-        // 一旦body配下の全要素を非表示
-        document.querySelectorAll('body > *').forEach(element => {
-            element.style.display = 'none';
-        });
+    // メッセージ領域をbody直下に移動
+    document.body.appendChild(messagePane);
 
-        // メッセージ領域をbody直下に移動
-        document.body.appendChild(messagePane);
-
-    //});
 }
