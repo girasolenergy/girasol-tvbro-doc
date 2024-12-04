@@ -2,7 +2,7 @@
 // {
 //     "name": "co.pplc.kanbanbro.plugins.slack_fullscreen_message",
 //     "title": "Slack全画面メッセージ",
-//     "version": "1.2.0",
+//     "version": "1.3.0",
 //     "description": "Slackのメッセージ領域を全画面に表示します。"
 // }
 
