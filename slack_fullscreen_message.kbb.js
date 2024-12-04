@@ -30,22 +30,29 @@ if (location.href.startsWith('https://app.slack.com/')) {
 
         throw new Error(message);
     }
+    async function retry(wait, limit, getter) {
+        return new Promise(async callback => {
+            for (let t = 0; t < limit; t++) {
+                if (t > 0) await delay(wait);
+                const result = getter();
+                if (result !== undefined) {
+                    callback(result);
+                    return;
+                }
+            }
+            callback(undefined);
+        });
+    }
     new Promise(async () => {
 
         // メッセージ領域を取得
-        const messagePane = await new Promise(async callback => {
-            for (let t = 0; t < 100; t++) {
-                if (t > 0) await delay(100);
-
-                const messagePanes = Array.from(document.querySelectorAll('.p-message_pane'));
-                if (messagePanes.length == 1) {
-                    callback(messagePanes[0]);
-                    return;
-                }
-
+        const messagePane = await retry(100, 100, () => {
+            const messagePanes = Array.from(document.querySelectorAll('.p-message_pane'));
+            if (messagePanes.length == 1) {
+                return messagePanes[0];
             }
-            error('[SFM]メッセージ領域を取得できませんでした。');
         });
+        if (messagePane === undefined) error('[SFM]メッセージ領域を取得できませんでした。');
 
         await delay(10000);
 
