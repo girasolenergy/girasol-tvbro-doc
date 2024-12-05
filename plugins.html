@@ -26,7 +26,7 @@
 
     </script>
 
-    <!-- Kanban Bro Plugin Repository Framework v0.1.1 -->
+    <!-- Kanban Bro Plugin Repository Framework v0.1.2 -->
 
     <title>Kanban Bro Plugin Repository</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -35,6 +35,9 @@
             document.title = title;
             $("#title").text(title);
             plugins.forEach(plugin => {
+                const container = $("<div>")
+                $("#plugin_container").append(container)
+
                 $.get(plugin.url, data => {
                     const lines = data.split("\n");
                     const headerLines = [];
@@ -55,114 +58,108 @@
                     const jsonString = headerLines.slice(1).join("");
                     const metadata = JSON.parse(jsonString);
 
-                    $("#plugin_container")
+                    container
                     .append(
-                        $("<div>")
+                        $("<h2>")
                         .append(
-                            $("<h2>")
-                            .append(
-                                $("<a>", {
-                                    id: metadata.name,
-                                    href: `#${metadata.name}`,
-                                    text: metadata.title
-                                })
-                            )
-                        )
-                        .append(
-                            $("<div>", {
-                                text: metadata.version
+                            $("<a>", {
+                                id: metadata.name,
+                                href: `#${metadata.name}`,
+                                text: metadata.title
                             })
                         )
+                    )
+                    .append(
+                        $("<div>", {
+                            text: metadata.version
+                        })
+                    )
+                    .append(
+                        $("<div>", {
+                            html: metadata.description
+                        })
+                    )
+                    .append(
+                        $("<div>", {
+                            text: metadata.name
+                        })
+                    )
+                    .append(
+                        $("<div>", {
+                            text: plugin.url
+                        })
+                    )
+                    .append(
+                        $("<p>")
                         .append(
-                            $("<div>", {
-                                html: metadata.description
+                            $("<a>", {
+                                href: plugin.url,
+                                text: "Src"
                             })
+                            .css("margin", "1em")
+                            .css("padding", "1em")
+                            .css("background-color", "#EEEEEE")
                         )
                         .append(
-                            $("<div>", {
-                                text: metadata.name
-                            })
-                        )
-                        .append(
-                            $("<div>", {
-                                text: plugin.url
-                            })
-                        )
-                        .append(
-                            $("<p>")
-                            .append(
-                                $("<a>", {
-                                    href: plugin.url,
-                                    text: "Src"
-                                })
-                                .css("margin", "1em")
-                                .css("padding", "1em")
-                                .css("background-color", "#EEEEEE")
-                            )
-                            .append(
-                                $("<a>", {
-                                    href: "javascript:void(0)",
-                                    text: "Install",
-                                    click: () => {
-                                        if (plugin.isPrivate) {
-                                            const url = new URL(document.location.href);
-                                            url.hash = metadata.name;
-                                            KanbanBro.showPluginAdditionDialog(url.toString(), data)
-                                        } else {
-                                            KanbanBro.showPluginAdditionDialog(plugin.url, null)
-                                        }
+                            $("<a>", {
+                                href: "javascript:void(0)",
+                                text: "Install",
+                                click: () => {
+                                    if (plugin.isPrivate) {
+                                        const url = new URL(document.location.href);
+                                        url.hash = metadata.name;
+                                        KanbanBro.showPluginAdditionDialog(url.toString(), data)
+                                    } else {
+                                        KanbanBro.showPluginAdditionDialog(plugin.url, null)
                                     }
-                                })
-                                .css("margin", "1em")
-                                .css("padding", "1em")
-                                .css("background-color", "#EEEEEE")
-                            )
+                                }
+                            })
+                            .css("margin", "1em")
+                            .css("padding", "1em")
+                            .css("background-color", "#EEEEEE")
                         )
                     );
                 }).fail((jqXHR, textStatus, errorThrown) => {
                     console.log("Load Error", textStatus, errorThrown);
 
-                    $("#plugin_container")
+                    container
                     .append(
-                        $("<div>")
+                        $("<h2>", {
+                            text: "Error"
+                        })
+                    )
+                    .append(
+                        $("<div>", {
+                            text: "" + textStatus
+                        })
+                    )
+                    .append(
+                        $("<div>", {
+                            text: "" + errorThrown
+                        })
+                    )
+                    .append(
+                        $("<p>")
                         .append(
-                            $("<h2>", {
-                                text: "Error"
+                            $("<a>", {
+                                href: plugin.url,
+                                text: "Src"
                             })
+                            .css("margin", "1em")
+                            .css("padding", "1em")
+                            .css("background-color", "#EEEEEE")
                         )
                         .append(
-                            $("<div>", {
-                                text: "" + textStatus
+                            $("<a>", {
+                                href: "javascript:void(0)",
+                                text: "Install",
+                                click: () => {
+                                    KanbanBro.showPluginAdditionDialog(plugin.url, null)
+                                }
                             })
-                        )
-                        .append(
-                            $("<div>", {
-                                text: "" + errorThrown
-                            })
-                        )
-                        .append(
-                            $("<p>")
-                            .append(
-                                $("<a>", {
-                                    href: plugin.url,
-                                    text: "Src"
-                                })
-                                .css("margin", "1em")
-                                .css("padding", "1em")
-                                .css("background-color", "#EEEEEE")
-                            )
-                            .append(
-                                $("<a>", {
-                                    href: "javascript:void(0)",
-                                    text: "Install",
-                                    click: () => {
-                                        KanbanBro.showPluginAdditionDialog(plugin.url, null)
-                                    }
-                                })
-                                .css("margin", "1em")
-                                .css("padding", "1em")
-                                .css("background-color", "#EEEEEE")
-                            )
+                            .css("margin", "1em")
+                            .css("padding", "1em")
+                            .css("background-color", "#EEEEEE")
                         )
                     );
                 })
