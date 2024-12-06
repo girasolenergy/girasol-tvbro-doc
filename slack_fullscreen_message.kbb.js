@@ -2,11 +2,21 @@
 // {
 //     "name": "co.pplc.kanbanbro.plugins.slack_fullscreen_message",
 //     "title": "Slack全画面メッセージ",
-//     "version": "1.4.0",
+//     "version": "1.4.1",
 //     "description": "Slackのメッセージ領域を全画面に表示します。"
 // }
 
 if (location.href.startsWith('https://app.slack.com/')) {
+    function hideSiblingsAndAncestorsSiblings(element) {
+        let current = element;
+        while (current) {
+            const siblings = Array.from(current.parentNode.children).filter(it => it !== current);
+            siblings.forEach(it => {
+                it.style.display = 'none';
+            });
+            current = current.parentNode;
+        }
+    }
     function error(message) {
         const warningBanner = document.createElement('div');
         warningBanner.style.position = 'fixed';
@@ -33,12 +43,14 @@ if (location.href.startsWith('https://app.slack.com/')) {
     if (messagePanes.length != 1) error('[SFM]メッセージ領域を取得できませんでした。');
     const messagePane = messagePanes[0];
 
-    // 一旦body配下の全要素を非表示
-    document.querySelectorAll('body > *').forEach(element => {
-        element.style.display = 'none';
-    });
+    // 全画面に表示する
+    messagePane.style.position = 'fixed';
+    messagePane.style.top = '0';
+    messagePane.style.left = '0';
+    messagePane.style.width = '100vw';
+    messagePane.style.height = '100vh';
 
-    // メッセージ領域をbody直下に移動
-    document.body.appendChild(messagePane);
+    // 余計なUI要素を非表示にする
+    hideSiblingsAndAncestorsSiblings(messagePane);
 
 }
