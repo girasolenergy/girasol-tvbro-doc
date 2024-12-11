@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Timer Page</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #timer {
+            font-size: 10vw;
+            color: #444;
+        }
+    </style>
+</head>
+<body>
+<div id="timer"></div>
+<script>
+    const timer = document.getElementById('timer');
+    const startTime = Date.now();
+    setInterval(() => {
+        const elapsedTime = Date.now() - startTime;
+        const hh = String(Math.floor(elapsedTime / 1000 / 60 / 60)).padStart(2, '0');
+        const mm = String(Math.floor(elapsedTime / 1000 / 60) % 60).padStart(2, '0');
+        const ss = String(Math.floor(elapsedTime / 1000) % 60).padStart(2, '0');
+        const SS = String(Math.floor(elapsedTime / 10) % 100).padStart(2, '0');
+        timer.textContent = `${hh}:${mm}:${ss}.${SS}`;
+    }, 30);
+</script>
+</body>
+</html>

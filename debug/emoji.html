@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Emoji Page</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-size: 3vw;
+        }
+    </style>
+</head>
+<body>
+<div id="emojis" style="text-align: center;"></div>
+<script>
+    function randomEmoji() {
+        return String.fromCodePoint(0x1F300 + Math.floor(Math.random() * (0x1F5FF - 0x1F300)));
+    }
+    function randomEmojis() {
+        return Array.from({length: 9}, () => Array.from({length: 12}, randomEmoji).join('')).join('<br>');
+    }
+    setInterval(() => {
+        document.getElementById('emojis').innerHTML = randomEmojis();
+    }, 100);
+</script>
+</body>
+</html>

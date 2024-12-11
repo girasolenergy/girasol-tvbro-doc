@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Memory Leak Page</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #444;
+        }
+        h1 {
+            font-size: 5vw;
+        }
+        p {
+            margin: 0.4em;
+            font-size: 2.5vw;
+        }
+        p.small {
+            font-size: 1.8vw;
+        }
+        button {
+            font-size: 3vw;
+            padding: 0.5em 1em;
+            margin: 1em;
+            border: none;
+            border-radius: 0.5em;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        a {
+            padding: 0.2em 0.4em;
+            margin: 0.1em;
+            border: none;
+            border-radius: 0.5em;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div style="text-align: center;">
+    <h1>Memory Leak Page</h1>
+
+    <p class="small">Limit JS Heap Size: <span id="limit"></span>MB</p>
+    <p class="small">Total JS Heap Size: <span id="total"></span>MB</p>
+    <p class="small">Used JS Heap Size: <span id="used"></span>MB</p>
+    <p>Total Garbage Size: <span id="totalGarbageSize"></span> items</p>
+    <p>Additional Garbage Size: <span id="additionalGarbageSize"></span> items / 10ms</p>
+    <p>Wait: <span id="wait"></span>s</p>
+    <p>
+        Seconds to x10: <span id="secondsToTenfold"></span>s
+        <a href='javascript:navigateWithSecondsToTenfold(0.5)'>0.5s</a>
+        <a href='javascript:navigateWithSecondsToTenfold(1)'>1s</a>
+        <a href='javascript:navigateWithSecondsToTenfold(2)'>2s</a>
+        <a href='javascript:navigateWithSecondsToTenfold(3)'>3s</a>
+        <a href='javascript:navigateWithSecondsToTenfold(5)'>5s</a>
+        <a href='javascript:navigateWithSecondsToTenfold(10)'>10s</a>
+    </p>
+
+    <button onclick="enabled = !enabled;">Toggle Memory Leak</button>
+    <button onclick="memoryArray = []; totalGarbageSize = 0; seconds = 0; wait = 0;">Reset</button>
+</div>
+<script>
+    let memoryArray = [];
+    let totalGarbageSize = 0;
+    let seconds = 0;
+    let enabled = true;
+    let wait = parseFloat(new URL(location).searchParams.get('wait')) || 0;
+    let secondsToTenfold = parseFloat(new URL(location).searchParams.get('secondsToTenfold')) || 3;
+
+    setInterval(() => {
+        document.getElementById('limit').textContent = (performance.memory.jsHeapSizeLimit / 1024 / 1024).toFixed(3);
+        document.getElementById('total').textContent = (performance.memory.totalJSHeapSize / 1024 / 1024).toFixed(3);
+        document.getElementById('used').textContent = (performance.memory.usedJSHeapSize / 1024 / 1024).toFixed(3);
+
+        const additionalGarbageSize = Math.floor(1000 * Math.pow(10, seconds / secondsToTenfold));
+        document.getElementById('additionalGarbageSize').textContent = additionalGarbageSize;
+
+        document.getElementById('wait').textContent = wait.toFixed(2);
+        document.getElementById('secondsToTenfold').textContent = secondsToTenfold.toFixed(1);
+
+
+        if (wait > 0) {
+            wait -= 0.01;
+            if (wait < 0) wait = 0;
+            return;
+        }
+
+        if (enabled) {
+            memoryArray.push(Array.from({length: additionalGarbageSize}, (_, index) => index));
+            totalGarbageSize += additionalGarbageSize;
+
+            seconds += 0.01;
+        }
+
+        document.getElementById('totalGarbageSize').textContent = totalGarbageSize;
+
+    }, 10);
+
+    function navigateWithSecondsToTenfold(secondsToTenfold) {
+        const url = new URL(window.location.href);
+        url.searchParams.set("secondsToTenfold", secondsToTenfold);
+        window.location.href = url;
+    }
+</script>
+</body>
+</html>
