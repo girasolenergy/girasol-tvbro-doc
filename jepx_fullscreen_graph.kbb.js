@@ -1,9 +1,9 @@
 // @KanbanBroPlugin
 // {
-//     "name": "co.pplc.kanbanbro.plugins.jpex_fullscreen_graph",
-//     "title": "JPEX全画面グラフ",
+//     "name": "co.pplc.kanbanbro.plugins.jepx_fullscreen_graph",
+//     "title": "JEPX全画面グラフ",
 //     "version": "1.0.1",
-//     "description": "JPEXのページでグラフを全画面にし、すべての項目を表示します。"
+//     "description": "JEPXのページでグラフを全画面にし、すべての項目を表示します。"
 // }
 
 if (window.location.href == 'https://www.jepx.info/spot_free') {
