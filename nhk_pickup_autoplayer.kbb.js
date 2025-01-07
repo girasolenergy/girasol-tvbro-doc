@@ -2,7 +2,7 @@
 // {
 //   "name": "co.pplc.kanbanbro.plugins.nhk_pickup_autoplayer",
 //   "title": "NHK Pickup Autoplayer",
-//   "version": "0.0.2",
+//   "version": "0.0.3",
 //   "description": "NHKのPickup NEWSに以下の機能を追加します。<ul><li>自動再生</li><li>自動ループ</li></ul>"
 // }
 
@@ -14,7 +14,7 @@ if (window.location.href == "https://www3.nhk.or.jp/news/pickup_news16/pickup_ne
     return new Promise(async callback => {
       for (let t = 0; t < limit; t++) {
         if (t > 0) await delay(wait);
-        const result = getter();
+        const result = await getter();
         if (result !== undefined) {
           callback(result);
           return;
@@ -29,10 +29,26 @@ if (window.location.href == "https://www3.nhk.or.jp/news/pickup_news16/pickup_ne
       return video === null ? undefined : video;
     });
     if (video === undefined) {
-      console.error('Failed to get video element: `#nPlayerContainerAltContentVideoContent > video`');
+      console.error('[nhk_pickup_autoplayer] Failed to get video element: `#nPlayerContainerAltContentVideoContent > video`');
       return;
     }
+    console.log('[nhk_pickup_autoplayer] video: ' + video);
     video.setAttribute('loop', '');
-    document.getElementById("nPlayerContainerAltContentVideoContentPosterFrame").click();
+    await retry(1000, 10, async () => {
+      const poster = document.getElementById("nPlayerContainerAltContentVideoContentPosterFrame");
+      if (poster === null) {
+        console.log('[nhk_pickup_autoplayer] poster = null');
+        return null;
+      }
+      poster.click();
+      console.log('[nhk_pickup_autoplayer] clicked');
+      await delay(1000);
+      if (document.getElementById("nPlayerContainerAltContentVideoContentPosterFrame") !== null) {
+        console.log('[nhk_pickup_autoplayer] retry');
+        return undefined;
+      } else {
+        return null;
+      }
+    });
   });
 }
