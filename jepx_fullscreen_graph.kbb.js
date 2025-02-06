@@ -2,7 +2,7 @@
 // {
 //     "name": "co.pplc.kanbanbro.plugins.jepx_fullscreen_graph",
 //     "title": "JEPX全画面グラフ",
-//     "version": "1.0.2",
+//     "version": "1.0.3",
 //     "description": "JEPXのページでグラフを全画面にし、すべての項目を表示します。"
 // }
 
@@ -55,9 +55,20 @@ if (window.location.href == 'https://www.jepx.info/spot_free') {
       });
     });
     console.log("[jepx_fullscreen_graph] check all: areaCard = " + areaCard);
+    let count = 0; // DEBUG
     Array.from(areaCard.querySelectorAll('.card-body input[type="checkbox"]')).forEach(checkbox => {
-      if (!checkbox.checked) checkbox.click();
+      console.log("[jepx_fullscreen_graph] checkbox = " + checkbox);
+      if (!checkbox.checked) {
+        console.log("[jepx_fullscreen_graph] checking");
+        checkbox.click();
+        count++; // DEBUG
+      }
     });
     console.log("[jepx_fullscreen_graph] check all: post");
+    if (count == 0) { // DEBUG
+      console.log("[jepx_fullscreen_graph] rollback");
+      document.querySelectorAll('.card')[3].style.position = 'static';
+      document.documentElement.style.overflow = 'scroll';
+    }
   })
 }
