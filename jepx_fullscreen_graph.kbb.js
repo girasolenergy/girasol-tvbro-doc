@@ -2,7 +2,7 @@
 // {
 //     "name": "co.pplc.kanbanbro.plugins.jepx_fullscreen_graph",
 //     "title": "JEPX全画面グラフ",
-//     "version": "1.0.3",
+//     "version": "1.0.4",
 //     "description": "JEPXのページでグラフを全画面にし、すべての項目を表示します。"
 // }
 
@@ -24,6 +24,34 @@ if (window.location.href == 'https://www.jepx.info/spot_free') {
     });
   }
   new Promise(async () => {
+
+    // すべての項目にチェックが入っている場合、先頭だけをチェックした状態にする
+    {
+      console.log("[jepx_fullscreen_graph] uncheck all: pre");
+      const areaCard = await retry(1000, 10, () => {
+        return Array.from(document.querySelectorAll('.card')).find(card => {
+          const header = card.querySelector('.card-header');
+          return header && header.innerText == '表示したいエリアを選択してください';
+        });
+      });
+      const checkboxes = Array.from(areaCard.querySelectorAll('.card-body input[type="checkbox"]'));
+      const unchecked = checkboxes.map(c => c.checked ? 0 : 1).reduce((a, b) => a + b, 0);
+      console.log("[jepx_fullscreen_graph] uncheck all: unchecked = " + unchecked);
+      if (unchecked == 0) {
+        console.log("[jepx_fullscreen_graph] uncheck all: unckecking");
+        for (const [index, checkbox] of checkboxes.entries()) {
+          const expected = index == 0 ? true : false;
+          const actual = checkbox.checked;
+          if (actual != expected) {
+            console.log("[jepx_fullscreen_graph] uncheck all: clicking");
+            checkbox.click();
+            await delay(1000);
+          }
+        }
+      }
+      console.log("[jepx_fullscreen_graph] uncheck all: post");
+    }
+
     // ページ全体のスクロールバーを消す
     console.log("[jepx_fullscreen_graph] hide scrollbar: pre");
     document.documentElement.style.overflow = 'hidden';
@@ -70,5 +98,6 @@ if (window.location.href == 'https://www.jepx.info/spot_free') {
       document.querySelectorAll('.card')[3].style.position = 'static';
       document.documentElement.style.overflow = 'scroll';
     }
+
   })
 }
