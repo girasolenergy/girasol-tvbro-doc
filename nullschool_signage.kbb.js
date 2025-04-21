@@ -2,11 +2,12 @@
 // {
 //     "name": "co.pplc.kanbanbro.plugins.nullschool_signage",
 //     "title": "nullschool Signage",
-//     "version": "1.0.1",
+//     "version": "1.0.2",
 //     "description": "nullschool signage"
 // }
 
 if (location.hostname == "earth.nullschool.net") {
+    conolg.log("[nullschool_signage] Start");
     new Promise(async () => {
         function make(e, block) {
             block(e);
