@@ -2,12 +2,12 @@
 // {
 //     "name": "co.pplc.kanbanbro.plugins.nullschool_signage",
 //     "title": "nullschool Signage",
-//     "version": "1.0.2",
+//     "version": "1.0.3",
 //     "description": "nullschool signage"
 // }
 
 if (location.hostname == "earth.nullschool.net") {
-    conolg.log("[nullschool_signage] Start");
+    console.log("[nullschool_signage] Start");
     new Promise(async () => {
         function make(e, block) {
             block(e);
@@ -62,7 +62,7 @@ if (location.hostname == "earth.nullschool.net") {
             label.innerText = modeUi.currentButton.querySelectorAll("span")[0].innerText.trim() + " / " + overlayUi.currentButton.querySelectorAll("span")[0].innerText.trim();
         }
 
-        conolg.log("[nullschool_signage] Starting nullschool signage plugin");
+        console.log("[nullschool_signage] Starting nullschool signage plugin");
 
         // Create label
         let label = null;
@@ -77,23 +77,23 @@ if (location.hostname == "earth.nullschool.net") {
             div.style.margin = "1rem 1rem 0 1rem";
             label = div;
         }));
-        conolg.log("[nullschool_signage] Label created");
+        console.log("[nullschool_signage] Label created");
 
         // Hide UI
         document.getElementById("location-mark").style.display = "none";
-        conolg.log("[nullschool_signage] location-mark hidden");
+        console.log("[nullschool_signage] location-mark hidden");
         document.querySelectorAll(".stack").forEach(e => {
             e.style.display = "none";
         });
-        conolg.log("[nullschool_signage] .stack hidden");
+        console.log("[nullschool_signage] .stack hidden");
         document.querySelectorAll(".cta-bar").forEach(e => {
             e.style.display = "none";
         });
-        conolg.log("[nullschool_signage] .cta-bar hidden");
+        console.log("[nullschool_signage] .cta-bar hidden");
         document.querySelectorAll(".earth-bar").forEach(e => {
             e.style.display = "none";
         });
-        conolg.log("[nullschool_signage] .earth-bar hidden");
+        console.log("[nullschool_signage] .earth-bar hidden");
 
         // Update label
         updateLabel();
@@ -114,7 +114,7 @@ if (location.hostname == "earth.nullschool.net") {
                     overlayUi.nextButton.click();
                 }
                 updateLabel();
-                conolg.log("[nullschool_signage] Overlay changed");
+                console.log("[nullschool_signage] Overlay changed");
             }
 
         }
