@@ -2,7 +2,7 @@
 // {
 //     "name": "co.pplc.kanbanbro.plugins.nullschool_signage",
 //     "title": "nullschool Signage",
-//     "version": "1.0.3",
+//     "version": "1.0.4",
 //     "description": "nullschool signage"
 // }
 
@@ -80,7 +80,10 @@ if (location.hostname == "earth.nullschool.net") {
         console.log("[nullschool_signage] Label created");
 
         // Hide UI
-        document.getElementById("location-mark").style.display = "none";
+        {
+            const e = document.getElementById("location-mark");
+            if (e != null) e.style.display = "none";
+        }
         console.log("[nullschool_signage] location-mark hidden");
         document.querySelectorAll(".stack").forEach(e => {
             e.style.display = "none";
