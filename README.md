@@ -16,3 +16,7 @@
 ## デバッグページ
 
 - [デバッグページ](https://girasolenergy.github.io/girasol-tvbro-doc/debug/)
+
+## Kanban Bro Heartbeat Monitor
+
+[Kanban Bro Heartbeat Monitor](kanban_bro_heartbeat_monitor.html)
