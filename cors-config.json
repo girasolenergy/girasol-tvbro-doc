@@ -1,7 +1,8 @@
 [
   {
     "origin": [
-      "https://girasolenergy.github.io"
+      "https://girasolenergy.github.io",
+      "http://localhost:8080"
     ],
     "method": [
       "GET"
