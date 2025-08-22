@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Card Viewer</title>
+    <style>
+
+        :root {
+            --edge: 8px;
+            --gap: 8px;
+            --base: 300px;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+        }
+
+        #topbar {
+            position: sticky;
+            top: 0;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            padding: 8px;
+            background: #fff;
+            border-bottom: 1px solid #ddd;
+            z-index: 10;
+        }
+        #topbar-right-container {
+            margin-left: auto;
+        }
+        #topbar-left-container,
+        #topbar-right-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #topbar button {
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background: #f6f6f6;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        #topbar button:hover {
+            background: #eee;
+        }
+        #topbar .topbar-title {
+            display: inline;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 60vw;
+            margin-left: 8px;
+            margin-right: 8px;
+        }
+        #topbar .topbar-property {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+        #topbar select {
+            padding: 6px 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background: #fff;
+            font-weight: 600;
+        }
+        #topbar .user-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 2px 8px;
+            border: 1px solid #ddd;
+            border-radius: 9999px;
+            background: #fafafa;
+            min-width: 0;
+            max-width: 40vw;
+            overflow: hidden;
+        }
+        #topbar .user-avatar {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            flex: 0 0 auto;
+        }
+        #topbar .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        #topbar .user-name {
+            flex: 1 1 auto;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: 600;
+        }
+
+        #cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(var(--base), 1fr));
+            gap: var(--gap);
+            padding: var(--edge);
+            align-items: stretch;
+        }
+        #cards .card {
+            display: grid;
+            grid-template-rows: minmax(0, 1fr) auto;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px;
+        }
+        #cards .card.yellow-alert {
+            background: #fffbe6;
+        }
+        #cards .card.red-alert {
+            background: #ffe6e6;
+        }
+        #cards .card .screenshot {
+            display: grid;
+            place-items: center;
+            position: relative;
+            min-height: 0;
+            min-width: 0;
+            width: 100%;
+            margin: 0;
+        }
+        #cards .card .screenshot > img {
+            display: block;
+            width: auto;
+            height: auto;
+            max-width: min(100%, var(--base));
+            max-height: var(--base);
+        }
+        #cards .card .screenshot.yellow-alert > img {
+            opacity: .45;
+        }
+        #cards .card .alerts {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            align-content: center;
+            justify-items: center;
+            gap: 8px;
+            padding: 0 5%;
+            pointer-events: none;
+        }
+        #cards .card .alert {
+            display: inline-grid;
+            place-items: center;
+            min-width: 60%;
+            max-width: 90%;
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-weight: 700;
+            text-align: center;
+            line-height: 1.2;
+        }
+        #cards .card .alert-1 {
+            background: rgba(255, 214, 0, .88);
+            color: #3a2a00;
+        }
+        #cards .card .alert-2 {
+            background: rgba(234, 67, 53, .90);
+            color: #fff;
+        }
+        #cards .card .texts {
+            display: grid;
+            justify-items: center;
+            align-items: end;
+            text-align: center;
+            overflow-wrap: anywhere;
+            min-width: 0;
+        }
+        #cards .card .texts > * {
+            max-width: 100%;
+        }
+
+    </style>
+</head>
+<body>
+<div id="topbar">
+    <div id="topbar-left-container"></div>
+    <div id="topbar-right-container"></div>
+</div>
+<div id="cards"></div>
+<script>
+
+    window.KanbanBro = {};
+
+    function also(element, block) {
+        block(element);
+        return element;
+    }
+
+    function getPageParameter(key) {
+        const params = new URLSearchParams(window.location.search);
+        return params.get(key);
+    }
+
+    function setPageParameter(key, value) {
+        const url = new URL(window.location.href);
+        if (value == null || value === "") {
+            url.searchParams.delete(key);
+        } else {
+            url.searchParams.set(key, value);
+        }
+        history.replaceState(null, "", url);
+    }
+
+    function setImageBlob(img, blob) {
+        const url = URL.createObjectURL(blob);
+        const cleanup = () => {
+            URL.revokeObjectURL(url);
+            img.removeEventListener('load', cleanup);
+            img.removeEventListener('error', cleanup);
+        };
+        img.addEventListener('load', cleanup, { once: true });
+        img.addEventListener('error', cleanup, { once: true });
+        img.src = url;
+    }
+
+    function createDispatcher(concurrency) {
+        let active = 0;
+        const queue = [];
+
+        function schedule() {
+            while (active < concurrency && queue.length > 0) {
+                const task = queue.shift();
+                active++;
+                Promise.resolve()
+                    .then(task.fn)
+                    .then(task.resolve, task.reject)
+                    .finally(() => {
+                    active--;
+                    schedule();
+                });
+            }
+        }
+
+        return fn => new Promise((resolve, reject) => {
+            queue.push({ fn, resolve, reject });
+            schedule();
+        });
+    }
+
+    window.KanbanBro.dispatcher = createDispatcher(4);
+
+    /**
+     * CardProvider := () => Promise<{
+     *   image: Element,
+     *   alerts: {
+     *     message: Element,
+     *     level: (1|2)
+     *   }[],
+     *   texts: Element
+     * }>[]
+     */
+    window.KanbanBro.cardProviders = [];
+
+    let currentUpdateAbortController = null;
+
+    function scheduleUpdate() {
+        if (currentUpdateAbortController) {
+            try {
+                currentUpdateAbortController.abort();
+                currentUpdateAbortController = null;
+            } catch {
+
+            }
+        }
+        const abortController = new AbortController();
+        currentUpdateAbortController = abortController;
+
+        document.getElementById("cards").innerHTML = "";
+        for (const cardPromise of window.KanbanBro.cardProviders.flatMap(provider => provider(abortController.signal))) {
+            document.getElementById("cards").append(
+                also(document.createElement("div"), cardDiv => {
+                    cardDiv.className = "card";
+
+                    cardPromise.then(card => {
+                        abortController.signal.throwIfAborted();
+                        cardDiv.append(
+                            also(document.createElement("div"), screenshotDiv => {
+                                screenshotDiv.className = "screenshot";
+                                screenshotDiv.append(card.image);
+
+                                if (card.alerts.length > 0) {
+                                    cardDiv.classList.add("yellow-alert");
+                                    screenshotDiv.classList.add("yellow-alert");
+                                    if (card.alerts.some(a => a.level === 2)) {
+                                        cardDiv.classList.add("red-alert");
+                                    }
+
+                                    screenshotDiv.append(
+                                        also(document.createElement("div"), alertsDiv => {
+                                            alertsDiv.className = "alerts";
+                                            for (const alert of card.alerts) {
+                                                alertsDiv.append(
+                                                    also(document.createElement("div"), alertDiv => {
+                                                        alertDiv.className = `alert alert-${alert.level}`;
+                                                        alertDiv.append(alert.message);
+                                                    }),
+                                                );
+                                            }
+                                        }),
+                                    );
+                                }
+                            }),
+                            also(document.createElement("div"), textsDiv => {
+                                textsDiv.className = "texts";
+                                textsDiv.append(
+                                    also(document.createElement("div"), textDiv => {
+                                        for (const text of card.texts) {
+                                            textDiv.append(text);
+                                        }
+                                    }),
+                                );
+                            }),
+                        );
+                    });
+                }),
+            );
+        }
+    }
+
+    window.addEventListener("load", () => scheduleUpdate());
+
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+
+        (await import("./FaviconPlugin.js")).apply("../icon.png");
+        (await import("./TitlePlugin.js")).apply("Kanban Bro Heartbeat Monitor");
+        (await import("./UpdatePlugin.js")).apply();
+        (await import("./AutoRefreshPlugin.js")).apply();
+        //(await import("./SampleCardProviderPlugin.js")).apply();
+        (await import("./FirebaseLoginPlugin.js")).apply();
+        (await import("./KanbanBroFirebaseHeartbeatCardProviderPlugin.js")).apply();
+
+    }, { once: true });
+</script>
+</body>
+</html>
