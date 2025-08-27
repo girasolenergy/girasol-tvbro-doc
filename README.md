@@ -19,4 +19,4 @@
 
 ## Kanban Bro Heartbeat Monitor
 
-[Kanban Bro Heartbeat Monitor](https://girasolenergy.github.io/girasol-tvbro-doc/heartbeat_monitor/)
+- [Kanban Bro Heartbeat Monitor](https://girasolenergy.github.io/girasol-tvbro-doc/heartbeat_monitor/)
