@@ -19,4 +19,4 @@
 
 ## Kanban Bro Heartbeat Monitor
 
-[Kanban Bro Heartbeat Monitor](kanban_bro_heartbeat_monitor.html)
+[Kanban Bro Heartbeat Monitor](heartbeat_monitor/)
