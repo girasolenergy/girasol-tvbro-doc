@@ -51,20 +51,20 @@ export function apply() {
                             if (settings.main_activity_has_focus === false) alerts.push({ message: createSpan("Lost Focus"), level: 1 });
                             if (settings.main_activity_resumed === false) alerts.push({ message: createSpan("Not Resumed"), level: 2 });
                             if (Date.now() - Date.parse(metadata.updated) >= 1000 * 60 * 60 * 2) {
-                                alerts.push({ message: createSpan("No updates (2h+)"), level: 2 });
+                                alerts.push({ message: createSpan("No updates (2 Hours+)"), level: 2 });
                             }
                             return alerts;
                         })(),
                         texts: (() => {
                             const texts = [];
-                            texts.push(also(document.createElement('div'), d => {
-                                d.textContent = settings.title ?? folderRef.name;
-                                d.style.fontWeight = '700';
+                            texts.push(also(document.createElement('div'), div => {
+                                div.className = 'name';
+                                div.textContent = settings.title ?? folderRef.name;
                             }));
-                            texts.push(also(document.createElement('div'), d => {
-                                d.textContent = `${metadata.updated}`;
-                                d.style.fontSize = '12px';
-                                d.style.color = '#555';
+                            texts.push(also(document.createElement('div'), div => {
+                                div.className = 'datetime';
+                                div.textContent = new Date(metadata.updated).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'medium' });
+                                div.title = `${metadata.updated}`;
                             }));
                             return texts;
                         })(),
