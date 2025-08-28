@@ -31,6 +31,8 @@ export function apply() {
                     signal.throwIfAborted();
 
                     const settings = JSON.parse(new TextDecoder().decode(settingsBytes));
+                    const name = settings.settings_code.settings.heartbeat_title || folderRef.name;
+                    console.log(`${name}`, settings);
 
                     return {
                         image: (() => {
@@ -38,7 +40,7 @@ export function apply() {
                                 img.loading = 'lazy';
                                 img.decoding = 'async';
                                 setImageBlob(img, new Blob([imageBytes], { type: 'image/png' }));
-                                img.alt = settings.title ?? folderRef.name;
+                                img.alt = name;
                             });
                         })(),
                         alerts: (() => {
@@ -59,7 +61,7 @@ export function apply() {
                             const texts = [];
                             texts.push(also(document.createElement('div'), div => {
                                 div.className = 'name';
-                                div.textContent = settings.title ?? folderRef.name;
+                                div.textContent = name;
                             }));
                             texts.push(also(document.createElement('div'), div => {
                                 div.className = 'datetime';
