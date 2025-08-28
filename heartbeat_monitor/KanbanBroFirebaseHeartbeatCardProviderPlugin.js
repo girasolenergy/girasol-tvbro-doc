@@ -42,7 +42,15 @@ export function apply() {
                             });
                         })(),
                         alerts: (() => {
-                            return [];
+                            function createSpan(message) {
+                                return also(document.createElement("span"), span => {
+                                    span.textContent = message;
+                                });
+                            }
+                            const alerts = [];
+                            if (settings.main_activity_has_focus === false) alerts.push({ message: createSpan("Lost Focus"), level: 1 });
+                            if (settings.main_activity_resumed === false) alerts.push({ message: createSpan("Not Resumed"), level: 2 });
+                            return alerts;
                         })(),
                         texts: (() => {
                             const texts = [];
@@ -64,9 +72,7 @@ export function apply() {
         scheduleUpdate();
     }
 
-    window.KanbanBro.cardProviders.push(signal => {
-        return providers.map(p => p(signal));
-    });
+    window.KanbanBro.cardProviders.push(signal => providers.map(p => p(signal)));
 
     window.KanbanBro.onUserChangedListeners.push(user => rebuild(user));
     rebuild(window.KanbanBro.firebase.auth.currentUser);
