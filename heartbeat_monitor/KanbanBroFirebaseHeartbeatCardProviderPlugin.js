@@ -2,9 +2,10 @@ export function apply() {
 
     const providers = [];
 
-    async function rebuild(user) {
+    async function rebuild() {
         providers.length = 0;
 
+        const user = window.KanbanBro.firebase.auth.currentUser;
         if (!user) {
             scheduleUpdate();
             return;
@@ -80,7 +81,7 @@ export function apply() {
 
     window.KanbanBro.cardProviders.push(signal => providers.map(p => p(signal)));
 
-    window.KanbanBro.onUserChangedListeners.push(user => rebuild(user));
-    rebuild(window.KanbanBro.firebase.auth.currentUser);
+    window.KanbanBro.userEvent.addEventListener("changed", () => rebuild());
+    rebuild();
 
 }

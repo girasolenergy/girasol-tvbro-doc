@@ -33,12 +33,18 @@ window.KanbanBro.firebase = {
     getMetadata,
 };
 
-window.KanbanBro.onUserChangedListeners = [];
+window.KanbanBro.userEvent = new EventTarget();
 
 export function apply() {
 
     function openLoginDialog() {
         showDialog((container, dialogEvent) => {
+            const attachTempUserListener = fn => {
+                window.KanbanBro.userEvent.addEventListener("changed", fn);
+                dialogEvent.addEventListener("close", () => {
+                    window.KanbanBro.userEvent.removeEventListener("changed", fn);
+                }, { once: true });
+            };
             container.append(
                 also(document.createElement("div"), titleDiv => {
                     titleDiv.textContent = "Account";
@@ -60,12 +66,15 @@ export function apply() {
                                     dialogEvent.dispatchEvent(new Event("close"));
                                 } catch (e) {
                                     console.error("Sign in failed", e);
-                                    showToast(`Failed to sign in: ${e && e.message ? e.message : e}`);
+                                    let msg = e && e.message ? e.message : String(e);
+                                    if (e && e.code === 'auth/popup-blocked') msg = 'Popup was blocked by the browser.';
+                                    if (e && e.code === 'auth/popup-closed-by-user') msg = 'Popup closed before completing sign in.';
+                                    showToast(`Failed to sign in: ${msg}`);
                                 } finally {
                                     googleButton.disabled = false;
                                 }
                             });
-                            window.KanbanBro.onUserChangedListeners.push(user => {
+                            attachTempUserListener(user => {
                                 googleButton.style.display = window.KanbanBro.firebase.auth.currentUser ? "none" : "inline-block";
                             });
                             googleButton.style.display = window.KanbanBro.firebase.auth.currentUser ? "none" : "inline-block";
@@ -105,10 +114,11 @@ export function apply() {
                                     emailSignInButton.disabled = false;
                                 }
                             });
-                            window.KanbanBro.onUserChangedListeners.push(user => {
-                                emailSignInButton.style.display = window.KanbanBro.firebase.auth.currentUser ? "none" : "inline-block";
-                            });
-                            emailSignInButton.style.display = window.KanbanBro.firebase.auth.currentUser ? "none" : "inline-block";
+                            const emailVisibilityHandler = (user) => {
+                                emailSignInButton.style.display = user ? "none" : "inline-block";
+                            };
+                            attachTempUserListener(emailVisibilityHandler);
+                            emailVisibilityHandler(window.KanbanBro.firebase.auth.currentUser);
                         }),
                         also(document.createElement("button"), linkEmailButton => {
                             linkEmailButton.type = "button";
@@ -153,7 +163,7 @@ export function apply() {
                                 const hasPassword = !!(user && user.providerData && user.providerData.some(p => p && p.providerId === 'password'));
                                 linkEmailButton.style.display = user && !hasPassword ? "inline-block" : "none";
                             };
-                            window.KanbanBro.onUserChangedListeners.push(user => updateLinkEmailVisibility(user));
+                            attachTempUserListener(updateLinkEmailVisibility);
                             updateLinkEmailVisibility(window.KanbanBro.firebase.auth.currentUser);
                         }),
                         also(document.createElement("button"), logoutButton => {
@@ -172,7 +182,7 @@ export function apply() {
                                     logoutButton.disabled = false;
                                 }
                             });
-                            window.KanbanBro.onUserChangedListeners.push(user => {
+                            window.KanbanBro.userEvent.addEventListener("changed", () => {
                                 logoutButton.style.display = window.KanbanBro.firebase.auth.currentUser ? "inline-block" : "none";
                             });
                             logoutButton.style.display = window.KanbanBro.firebase.auth.currentUser ? "inline-block" : "none";
@@ -216,15 +226,19 @@ export function apply() {
                 }),
                 also(document.createElement("div"), userBadgeDiv => {
                     userBadgeDiv.className = "user-badge";
-                    userBadgeDiv.style.display = "none";
-                    window.KanbanBro.onUserChangedListeners.push(user => {
+                    function updateUserBadge() {
+                        const user = window.KanbanBro.firebase.auth.currentUser;
                         userBadgeDiv.style.display = user ? "inline-flex" : "none";
+                    }
+                    window.KanbanBro.userEvent.addEventListener("changed", () => {
+                        updateUserBadge();
                     });
+                    updateUserBadge();
                     userBadgeDiv.append(
                         also(document.createElement("div"), avatarDiv => {
                             avatarDiv.className = "user-avatar";
-                            window.KanbanBro.onUserChangedListeners.push(user => {
-                                avatarDiv.innerHTML = "";
+                            function updateAvatar() {
+                                const user = window.KanbanBro.firebase.auth.currentUser;
                                 if (user) {
                                     avatarDiv.append(
                                         also(new Image(), img => {
@@ -233,14 +247,25 @@ export function apply() {
                                             img.referrerPolicy = "no-referrer";
                                         }),
                                     );
+                                } else {
+                                    avatarDiv.innerHTML = "";
                                 }
+                            }
+                            window.KanbanBro.userEvent.addEventListener("changed", () => {
+                                updateAvatar();
                             });
+                            updateAvatar();
                         }),
                         also(document.createElement("span"), nameSpan => {
                             nameSpan.className = "user-name";
-                            window.KanbanBro.onUserChangedListeners.push(user => {
+                            function updateUesrName() {
+                                const user = window.KanbanBro.firebase.auth.currentUser;
                                 nameSpan.textContent = user == null ? "" : user.displayName || user.email || `UID:${user.uid}`;
+                            }
+                            window.KanbanBro.userEvent.addEventListener("changed", () => {
+                                updateUesrName();
                             });
+                            updateUesrName();
                         }),
                     );
                 }),
@@ -249,12 +274,6 @@ export function apply() {
     );
 
     window.KanbanBro.firebase.onAuthStateChanged(window.KanbanBro.firebase.auth, user => {
-        for (const listener of window.KanbanBro.onUserChangedListeners) {
-            try {
-                listener(user);
-            } catch (e) {
-                console.error(e);
-            }
-        }
+        window.KanbanBro.userEvent.dispatchEvent(new Event("changed"));
     });
 }
