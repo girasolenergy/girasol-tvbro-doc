@@ -39,11 +39,12 @@ export function apply() {
 
     function openLoginDialog() {
         showDialog((container, dialogEvent) => {
-            const attachTempUserListener = fn => {
-                window.KanbanBro.userEvent.addEventListener("changed", fn);
+            const registerUserListener = fn => {
+                window.KanbanBro.userEvent.addEventListener("changed", e => fn(e.detail));
                 dialogEvent.addEventListener("close", () => {
-                    window.KanbanBro.userEvent.removeEventListener("changed", fn);
+                    window.KanbanBro.userEvent.removeEventListener("changed", e => fn(e.detail));
                 }, { once: true });
+                fn(window.KanbanBro.firebase.auth.currentUser);
             };
             container.append(
                 also(document.createElement("div"), titleDiv => {
@@ -74,10 +75,9 @@ export function apply() {
                                     googleButton.disabled = false;
                                 }
                             });
-                            attachTempUserListener(user => {
-                                googleButton.style.display = window.KanbanBro.firebase.auth.currentUser ? "none" : "inline-block";
+                            registerUserListener(user => {
+                                googleButton.style.display = user ? "none" : "inline-block";
                             });
-                            googleButton.style.display = window.KanbanBro.firebase.auth.currentUser ? "none" : "inline-block";
                         }),
                         also(document.createElement("button"), emailSignInButton => {
                             emailSignInButton.type = "button";
@@ -114,11 +114,9 @@ export function apply() {
                                     emailSignInButton.disabled = false;
                                 }
                             });
-                            const emailVisibilityHandler = (user) => {
+                            registerUserListener(user => {
                                 emailSignInButton.style.display = user ? "none" : "inline-block";
-                            };
-                            attachTempUserListener(emailVisibilityHandler);
-                            emailVisibilityHandler(window.KanbanBro.firebase.auth.currentUser);
+                            });
                         }),
                         also(document.createElement("button"), linkEmailButton => {
                             linkEmailButton.type = "button";
@@ -159,12 +157,10 @@ export function apply() {
                                     linkEmailButton.disabled = false;
                                 }
                             });
-                            const updateLinkEmailVisibility = user => {
+                            registerUserListener(user => {
                                 const hasPassword = !!(user && user.providerData && user.providerData.some(p => p && p.providerId === 'password'));
                                 linkEmailButton.style.display = user && !hasPassword ? "inline-block" : "none";
-                            };
-                            attachTempUserListener(updateLinkEmailVisibility);
-                            updateLinkEmailVisibility(window.KanbanBro.firebase.auth.currentUser);
+                            });
                         }),
                         also(document.createElement("button"), logoutButton => {
                             logoutButton.type = "button";
@@ -182,10 +178,9 @@ export function apply() {
                                     logoutButton.disabled = false;
                                 }
                             });
-                            window.KanbanBro.userEvent.addEventListener("changed", () => {
-                                logoutButton.style.display = window.KanbanBro.firebase.auth.currentUser ? "inline-block" : "none";
+                            registerUserListener(user => {
+                                logoutButton.style.display = user ? "inline-block" : "none";
                             });
-                            logoutButton.style.display = window.KanbanBro.firebase.auth.currentUser ? "inline-block" : "none";
                         }),
                     );
                 }),
@@ -226,19 +221,18 @@ export function apply() {
                 }),
                 also(document.createElement("div"), userBadgeDiv => {
                     userBadgeDiv.className = "user-badge";
-                    function updateUserBadge() {
-                        const user = window.KanbanBro.firebase.auth.currentUser;
+                    function updateUserBadge(user) {
                         userBadgeDiv.style.display = user ? "inline-flex" : "none";
                     }
-                    window.KanbanBro.userEvent.addEventListener("changed", () => {
-                        updateUserBadge();
+                    window.KanbanBro.userEvent.addEventListener("changed", e => {
+                        updateUserBadge(e.detail);
                     });
-                    updateUserBadge();
+                    updateUserBadge(window.KanbanBro.firebase.auth.currentUser);
                     userBadgeDiv.append(
                         also(document.createElement("div"), avatarDiv => {
                             avatarDiv.className = "user-avatar";
-                            function updateAvatar() {
-                                const user = window.KanbanBro.firebase.auth.currentUser;
+                            function updateAvatar(user) {
+                                avatarDiv.innerHTML = "";
                                 if (user) {
                                     avatarDiv.append(
                                         also(new Image(), img => {
@@ -247,25 +241,22 @@ export function apply() {
                                             img.referrerPolicy = "no-referrer";
                                         }),
                                     );
-                                } else {
-                                    avatarDiv.innerHTML = "";
                                 }
                             }
-                            window.KanbanBro.userEvent.addEventListener("changed", () => {
-                                updateAvatar();
+                            window.KanbanBro.userEvent.addEventListener("changed", e => {
+                                updateAvatar(e.detail);
                             });
-                            updateAvatar();
+                            updateAvatar(window.KanbanBro.firebase.auth.currentUser);
                         }),
                         also(document.createElement("span"), nameSpan => {
                             nameSpan.className = "user-name";
-                            function updateUesrName() {
-                                const user = window.KanbanBro.firebase.auth.currentUser;
+                            function updateUserName(user) {
                                 nameSpan.textContent = user == null ? "" : user.displayName || user.email || `UID:${user.uid}`;
                             }
-                            window.KanbanBro.userEvent.addEventListener("changed", () => {
-                                updateUesrName();
+                            window.KanbanBro.userEvent.addEventListener("changed", e => {
+                                updateUserName(e.detail);
                             });
-                            updateUesrName();
+                            updateUserName(window.KanbanBro.firebase.auth.currentUser);
                         }),
                     );
                 }),
@@ -274,6 +265,6 @@ export function apply() {
     );
 
     window.KanbanBro.firebase.onAuthStateChanged(window.KanbanBro.firebase.auth, user => {
-        window.KanbanBro.userEvent.dispatchEvent(new Event("changed"));
+        window.KanbanBro.userEvent.dispatchEvent(new CustomEvent("changed", { detail: user }));
     });
 }
