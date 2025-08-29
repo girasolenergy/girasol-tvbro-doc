@@ -4,7 +4,7 @@ export function apply() {
             container.className = "topbar-property";
             container.append(
                 also(document.createElement("span"), span => {
-                    span.textContent = "Auto Refresh:";
+                    span.textContent = "Auto Update:";
                 }),
                 also(document.createElement("select"), select => {
                     let timerId = null;
