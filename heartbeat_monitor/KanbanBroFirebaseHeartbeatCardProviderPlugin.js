@@ -50,8 +50,9 @@ export function apply() {
                                 });
                             }
                             const alerts = [];
-                            if (settings.main_activity_has_focus === false) alerts.push({ message: createSpan("Lost Focus"), level: 1 });
+                            if (settings.main_activity_has_focus === false) alerts.push({ message: createSpan("Lost Focus"), level: 2 });
                             if (settings.main_activity_resumed === false) alerts.push({ message: createSpan("Not Resumed"), level: 2 });
+                            if (settings.main_activity_ui_active === true) alerts.push({ message: createSpan("UI Opened"), level: 1 });
                             if (Date.now() - Date.parse(metadata.updated) >= 1000 * 60 * 60 * 2) {
                                 alerts.push({ message: createSpan("No updates (2 Hours+)"), level: 2 });
                             }
