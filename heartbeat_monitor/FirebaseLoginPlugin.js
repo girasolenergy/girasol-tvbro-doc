@@ -40,9 +40,10 @@ export function apply() {
     function openLoginDialog() {
         showDialog((container, dialogEvent) => {
             const registerUserListener = fn => {
-                window.KanbanBro.userEvent.addEventListener("changed", e => fn(e.detail));
+                const handler = e => fn(e.detail);
+                window.KanbanBro.userEvent.addEventListener("changed", handler);
                 dialogEvent.addEventListener("close", () => {
-                    window.KanbanBro.userEvent.removeEventListener("changed", e => fn(e.detail));
+                    window.KanbanBro.userEvent.removeEventListener("changed", handler);
                 }, { once: true });
                 fn(window.KanbanBro.firebase.auth.currentUser);
             };
