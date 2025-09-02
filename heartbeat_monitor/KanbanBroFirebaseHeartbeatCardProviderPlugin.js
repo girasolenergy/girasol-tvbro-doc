@@ -35,6 +35,7 @@ export function apply() {
                     console.log(`${name}`, settings);
 
                     return {
+                        keys: { name },
                         image: (() => {
                             return also(new Image(), img => {
                                 img.loading = 'lazy';

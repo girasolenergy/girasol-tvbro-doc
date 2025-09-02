@@ -410,12 +410,26 @@
 
         document.getElementById("cards").innerHTML = "";
         for (const cardPromise of window.KanbanBro.cardProviders.flatMap(provider => provider(abortController.signal))) {
-            document.getElementById("cards").append(
-                also(document.createElement("div"), cardDiv => {
-                    cardDiv.className = "card";
+            cardPromise.then(card => {
+                abortController.signal.throwIfAborted();
 
-                    cardPromise.then(card => {
-                        abortController.signal.throwIfAborted();
+                const cardContainer = document.getElementById("cards");
+
+                let refNode = null;
+                const newName = card.keys?.name ?? "";
+                for (const child of Array.from(cardContainer.children)) {
+                    const existingName = child.card.keys?.name ?? "";
+                    if (existingName.localeCompare(newName) > 0) {
+                        refNode = child;
+                        break;
+                    }
+                }
+
+                cardContainer.insertBefore(
+                    also(document.createElement("div"), cardDiv => {
+                        cardDiv.className = "card";
+                        cardDiv.card = card;
+
                         cardDiv.append(
                             also(document.createElement("div"), screenshotDiv => {
                                 screenshotDiv.className = "screenshot";
@@ -454,9 +468,10 @@
                                 );
                             }),
                         );
-                    });
-                }),
-            );
+                    }),
+                    refNode,
+                );
+            });
         }
     }
 

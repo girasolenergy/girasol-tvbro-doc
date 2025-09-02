@@ -11,6 +11,7 @@ export function apply() {
             });
             signal.throwIfAborted();
             return {
+                keys: { name: String(number) },
                 image: (() => {
                     return also(new Image(), img => {
                         img.loading = "lazy";
