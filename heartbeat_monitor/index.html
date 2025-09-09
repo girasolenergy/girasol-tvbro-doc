@@ -10,7 +10,41 @@
             --edge: 8px;
             --gap: 8px;
             --base: 300px;
+        }
+        :root {
+            --gray-text-color: #555555;
+            --overlay-background-color: rgba(0, 0, 0, 0.4);
 
+            --topbar-background-color: rgba(255, 255, 255, 0.5);
+            --topbar-border-color: #dddddd;
+
+            --button-background-color: #f6f6f6;
+            --button-hover-background-color: #eeeeee;
+            --button-border-color: #cccccc;
+            --area-background-color: #ffffff;
+
+            --badge-background-color: #fafafa;
+            --badge-border-color: #dddddd;
+            --avatar-background-color: #e0e0e0;
+
+            --card-background-color: rgba(255, 255, 255, 0.5);
+            --card-border-color: #dddddd;
+            --card-yellow-alert-background-color: #fffbe6;
+            --card-red-alert-background-color: #ffe6e6;
+            --card-alert1-background-color: rgba(255, 214, 0, 0.88);
+            --card-alert1-text-color: #3a2a00;
+            --card-alert2-background-color: rgba(234, 67, 53, 0.90);
+            --card-alert2-text-color: #ffffff;
+
+            --dialog-background-color: #ffffff;
+            --dialog-border-color: #dddddd;
+            --dialog-shadow-color: rgba(0, 0, 0, 0.15);
+
+            --toast-background-color: #323232;
+            --toast-text-color: #ffffff;
+            --toast-shadow-color: rgba(0, 0, 0, 0.24);
+        }
+        :root[data-theme="dark"] {
             --gray-text-color: #555555;
             --overlay-background-color: rgba(0, 0, 0, 0.4);
 
@@ -520,6 +554,25 @@
     }
 
     window.addEventListener("load", () => scheduleUpdate());
+
+
+    window.KanbanBro.theme = null;
+
+    function updateTheme() {
+        const theme = window.KanbanBro.theme === null
+            ? window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+            : window.KanbanBro.theme;
+        document.documentElement.setAttribute('data-theme', theme);
+        document.documentElement.style.colorScheme = theme;
+    }
+
+    function setThemeOverride(theme) {
+        window.KanbanBro.theme = theme;
+        updateTheme();
+    }
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => updateTheme());
+    updateTheme();
 
 </script>
 <script>
