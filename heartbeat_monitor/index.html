@@ -12,10 +12,11 @@
             --base: 300px;
         }
         :root {
+            --text-color: #111111;
             --gray-text-color: #555555;
             --overlay-background-color: rgba(0, 0, 0, 0.4);
 
-            --topbar-background-color: rgba(255, 255, 255, 0.5);
+            --topbar-background-color: rgba(255, 255, 255, 0.3);
             --topbar-border-color: #dddddd;
 
             --button-background-color: #f6f6f6;
@@ -27,7 +28,7 @@
             --badge-border-color: #dddddd;
             --avatar-background-color: #e0e0e0;
 
-            --card-background-color: rgba(255, 255, 255, 0.5);
+            --card-background-color: rgba(255, 255, 255, 0.3);
             --card-border-color: #dddddd;
             --card-yellow-alert-background-color: #fffbe6;
             --card-red-alert-background-color: #ffe6e6;
@@ -45,37 +46,38 @@
             --toast-shadow-color: rgba(0, 0, 0, 0.24);
         }
         :root[data-theme="dark"] {
-            --gray-text-color: #555555;
-            --overlay-background-color: rgba(0, 0, 0, 0.4);
+            --text-color: #e8e8e8;
+            --gray-text-color: #b0b0b0;
+            --overlay-background-color: rgba(0, 0, 0, 0.7);
 
-            --topbar-background-color: rgba(255, 255, 255, 0.5);
-            --topbar-border-color: #dddddd;
+            --topbar-background-color: rgba(0, 0, 0, 0.3);
+            --topbar-border-color: #333333;
 
-            --button-background-color: #f6f6f6;
-            --button-hover-background-color: #eeeeee;
-            --button-border-color: #cccccc;
-            --area-background-color: #ffffff;
+            --button-background-color: #2b2b2b;
+            --button-hover-background-color: #222222;
+            --button-border-color: #444444;
+            --area-background-color: #111111;
 
-            --badge-background-color: #fafafa;
-            --badge-border-color: #dddddd;
-            --avatar-background-color: #e0e0e0;
+            --badge-background-color: #222222;
+            --badge-border-color: #333333;
+            --avatar-background-color: #3a3a3a;
 
-            --card-background-color: rgba(255, 255, 255, 0.5);
-            --card-border-color: #dddddd;
-            --card-yellow-alert-background-color: #fffbe6;
-            --card-red-alert-background-color: #ffe6e6;
-            --card-alert1-background-color: rgba(255, 214, 0, 0.88);
-            --card-alert1-text-color: #3a2a00;
-            --card-alert2-background-color: rgba(234, 67, 53, 0.90);
+            --card-background-color: rgba(0, 0, 0, 0.3);
+            --card-border-color: #333333;
+            --card-yellow-alert-background-color: rgba(255, 214, 0, 0.13);
+            --card-red-alert-background-color: rgba(234, 67, 53, 0.13);
+            --card-alert1-background-color: rgba(255, 214, 0, 0.90);
+            --card-alert1-text-color: #1a1400;
+            --card-alert2-background-color: rgba(234, 67, 53, 0.92);
             --card-alert2-text-color: #ffffff;
 
-            --dialog-background-color: #ffffff;
-            --dialog-border-color: #dddddd;
-            --dialog-shadow-color: rgba(0, 0, 0, 0.15);
+            --dialog-background-color: #1f1f1f;
+            --dialog-border-color: #333333;
+            --dialog-shadow-color: rgba(0, 0, 0, 0.5);
 
-            --toast-background-color: #323232;
-            --toast-text-color: #ffffff;
-            --toast-shadow-color: rgba(0, 0, 0, 0.24);
+            --toast-background-color: #2b2b2b;
+            --toast-text-color: #f0f0f0;
+            --toast-shadow-color: rgba(0, 0, 0, 0.6);
         }
         * {
             box-sizing: border-box;
@@ -83,6 +85,7 @@
         body {
             margin: 0;
             background-image: url("background.png");
+            color: var(--text-color);
         }
 
         #topbar {
