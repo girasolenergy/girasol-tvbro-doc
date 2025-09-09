@@ -349,6 +349,8 @@
 
     window.KanbanBro = {};
 
+    window.KanbanBro.event = new EventTarget();
+
     function also(element, block) {
         block(element);
         return element;
@@ -558,21 +560,25 @@
 
     window.KanbanBro.theme = null;
 
-    function updateTheme() {
+    window.KanbanBro.event.addEventListener('themeChanged', () => {
         const theme = window.KanbanBro.theme === null
             ? window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
             : window.KanbanBro.theme;
         document.documentElement.setAttribute('data-theme', theme);
         document.documentElement.style.colorScheme = theme;
+    });
+
+    function updateTheme() {
+        window.KanbanBro.event.dispatchEvent(new Event('themeChanged'));
     }
 
-    function setThemeOverride(theme) {
+    function setTheme(theme) {
         window.KanbanBro.theme = theme;
         updateTheme();
     }
 
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => updateTheme());
-    updateTheme();
+    window.KanbanBro.event.addEventListener("pluginLoaded", () => updateTheme());
 
 </script>
 <script>
@@ -581,6 +587,7 @@
         (await import("./FaviconPlugin.js")).apply("../icon.png");
 
         (await import("./TitlePlugin.js")).apply("Kanban Bro Heartbeat Monitor");
+        (await import("./ThemeTogglePlugin.js")).apply();
         (await import("./AutoUpdatePlugin.js")).apply();
         (await import("./UpdatePlugin.js")).apply();
 
@@ -588,6 +595,7 @@
         (await import("./FirebaseLoginPlugin.js")).apply();
         (await import("./KanbanBroFirebaseHeartbeatCardProviderPlugin.js")).apply();
 
+        window.KanbanBro.event.dispatchEvent(new Event('pluginLoaded'));
     }, { once: true });
 </script>
 </body>
