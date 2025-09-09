@@ -558,7 +558,7 @@
     window.addEventListener("load", () => scheduleUpdate());
 
 
-    window.KanbanBro.theme = null;
+    window.KanbanBro.theme = localStorage.getItem('kanbanbro.theme');
 
     window.KanbanBro.event.addEventListener('themeChanged', () => {
         const theme = window.KanbanBro.theme === null
@@ -574,6 +574,11 @@
 
     function setTheme(theme) {
         window.KanbanBro.theme = theme;
+        if (theme === null) {
+            localStorage.removeItem('kanbanbro.theme');
+        } else {
+            localStorage.setItem('kanbanbro.theme', theme);
+        }
         updateTheme();
     }
 
