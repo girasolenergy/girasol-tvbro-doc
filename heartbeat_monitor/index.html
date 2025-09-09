@@ -10,6 +10,38 @@
             --edge: 8px;
             --gap: 8px;
             --base: 300px;
+
+            --gray-text-color: #555555;
+            --overlay-background-color: rgba(0, 0, 0, 0.4);
+
+            --topbar-background-color: rgba(255, 255, 255, 0.5);
+            --topbar-border-color: #dddddd;
+
+            --button-background-color: #f6f6f6;
+            --button-hover-background-color: #eeeeee;
+            --button-border-color: #cccccc;
+            --area-background-color: #ffffff;
+
+            --badge-background-color: #fafafa;
+            --badge-border-color: #dddddd;
+            --avatar-background-color: #e0e0e0;
+
+            --card-background-color: rgba(255, 255, 255, 0.5);
+            --card-border-color: #dddddd;
+            --card-yellow-alert-background-color: #fffbe6;
+            --card-red-alert-background-color: #ffe6e6;
+            --card-alert1-background-color: rgba(255, 214, 0, 0.88);
+            --card-alert1-text-color: #3a2a00;
+            --card-alert2-background-color: rgba(234, 67, 53, 0.90);
+            --card-alert2-text-color: #ffffff;
+
+            --dialog-background-color: #ffffff;
+            --dialog-border-color: #dddddd;
+            --dialog-shadow-color: rgba(0, 0, 0, 0.15);
+
+            --toast-background-color: #323232;
+            --toast-text-color: #ffffff;
+            --toast-shadow-color: rgba(0, 0, 0, 0.24);
         }
         * {
             box-sizing: border-box;
@@ -26,8 +58,8 @@
             gap: var(--gap);
             align-items: center;
             padding: var(--gap);
-            background: rgba(255, 255, 255, 0.5);
-            border-bottom: 1px solid #ddd;
+            background: var(--topbar-background-color);
+            border-bottom: 1px solid var(--topbar-border-color);
             z-index: 10;
         }
         #topbar-right-container {
@@ -42,14 +74,14 @@
 
         #topbar button {
             padding: 6px 12px;
-            border: 1px solid #ccc;
+            border: 1px solid var(--button-border-color);
             border-radius: 6px;
-            background: #f6f6f6;
+            background: var(--button-background-color);
             cursor: pointer;
             font-weight: 600;
         }
         #topbar button:hover {
-            background: #eee;
+            background: var(--button-hover-background-color);
         }
         #topbar .topbar-title {
             display: inline;
@@ -69,9 +101,9 @@
         }
         #topbar select {
             padding: 6px 8px;
-            border: 1px solid #ccc;
+            border: 1px solid var(--button-border-color);
             border-radius: 6px;
-            background: #fff;
+            background: var(--area-background-color);
             font-weight: 600;
         }
         #topbar .user-badge {
@@ -79,9 +111,9 @@
             align-items: center;
             gap: 6px;
             padding: 4px 12px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--badge-border-color);
             border-radius: 9999px;
-            background: #fafafa;
+            background: var(--badge-background-color);
             min-width: 0;
             max-width: 40vw;
             overflow: hidden;
@@ -91,7 +123,7 @@
             width: 20px;
             height: 20px;
             border-radius: 50%;
-            background: #e0e0e0;
+            background: var(--avatar-background-color);
             display: grid;
             place-items: center;
             overflow: hidden;
@@ -122,17 +154,17 @@
         #cards .card {
             display: grid;
             grid-template-rows: minmax(0, 1fr) auto;
-            background: rgba(255, 255, 255, 0.5);
-            border: 1px solid #ddd;
+            background: var(--card-background-color);
+            border: 1px solid var(--card-border-color);
             border-radius: 8px;
             padding: var(--gap);
             gap: var(--gap);
         }
         #cards .card.yellow-alert {
-            background: #fffbe6;
+            background: var(--card-yellow-alert-background-color);
         }
         #cards .card.red-alert {
-            background: #ffe6e6;
+            background: var(--card-red-alert-background-color);
         }
         #cards .card .screenshot {
             display: grid;
@@ -175,12 +207,12 @@
             line-height: 1.2;
         }
         #cards .card .alert-1 {
-            background: rgba(255, 214, 0, .88);
-            color: #3a2a00;
+            background: var(--card-alert1-background-color);
+            color: var(--card-alert1-text-color);
         }
         #cards .card .alert-2 {
-            background: rgba(234, 67, 53, .90);
-            color: #fff;
+            background: var(--card-alert2-background-color);
+            color: var(--card-alert2-text-color);
         }
         #cards .card .texts {
             display: grid;
@@ -197,7 +229,7 @@
             font-weight: 700;
         }
         #cards .card .texts .datetime {
-            color: #555;
+            color: var(--gray-text-color);
             font-size: 80%;
         }
 
@@ -213,11 +245,11 @@
         }
         #toast-container .toast {
             max-width: min(92vw, 520px);
-            background: #323232;
-            color: #fff;
+            background: var(--toast-background-color);
+            color: var(--toast-text-color);
             padding: 10px 14px;
             border-radius: 10px;
-            box-shadow: 0 6px 24px rgba(0,0,0,.24);
+            box-shadow: 0 6px 24px var(--toast-shadow-color);
             font-size: 14px;
             line-height: 1.4;
             pointer-events: auto;
@@ -234,27 +266,38 @@
         .dialog-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,.4);
+            background: var(--overlay-background-color);
             display: grid;
             place-items: center;
             z-index: 1000;
         }
         .dialog-container {
             width: min(92vw, 420px);
-            background: #fff;
-            border: 1px solid #ddd;
+            background: var(--dialog-background-color);
+            border: 1px solid var(--dialog-border-color);
             border-radius: 12px;
             padding: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,.15);
+            box-shadow: 0 10px 30px var(--dialog-shadow-color);
             display: grid;
             gap: 12px;
+        }
+        .dialog-button {
+            border: 1px solid var(--button-border-color);
+            background: var(--button-background-color);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .dialog-button:hover {
+            background: var(--button-hover-background-color);
         }
 
         .auth-button {
             padding: 10px 14px;
-            border: 1px solid #ccc;
+            border: 1px solid var(--button-border-color);
             border-radius: 8px;
-            background: #fff;
+            background: var(--button-background-color);
             cursor: pointer;
             font-weight: 700;
         }

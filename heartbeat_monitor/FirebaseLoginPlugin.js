@@ -193,12 +193,7 @@ export function apply() {
                         also(document.createElement("button"), cancelButton => {
                             cancelButton.type = "button";
                             cancelButton.textContent = "Cancel";
-                            cancelButton.style.padding = "8px 12px";
-                            cancelButton.style.border = "1px solid #ccc";
-                            cancelButton.style.borderRadius = "8px";
-                            cancelButton.style.background = "#f6f6f6";
-                            cancelButton.style.cursor = "pointer";
-                            cancelButton.style.fontWeight = "600";
+                            cancelButton.classList.add("dialog-button");
                             cancelButton.addEventListener("click", () => dialogEvent.dispatchEvent(new Event("close")));
                         }),
                     );
