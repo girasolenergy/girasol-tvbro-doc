@@ -477,7 +477,23 @@
      */
     window.KanbanBro.cardProviders = [];
 
+    window.KanbanBro.cardComparators = {
+        "name": (a, b) => (a.keys?.name ?? "").localeCompare(b.keys?.name ?? ""),
+    };
+    window.KanbanBro.selectedCardComparatorSpecifiers = ["name"];
+
     let currentUpdateAbortController = null;
+
+    function compareCards(a, b) {
+        for (let i = 0; i < window.KanbanBro.selectedCardComparatorSpecifiers.length; i++) {
+            const cardComparatorSpecifier = window.KanbanBro.selectedCardComparatorSpecifiers[i];
+            const isDescending = cardComparatorSpecifier.startsWith("-");
+            const cardComparator = window.KanbanBro.cardComparators[isDescending ? cardComparatorSpecifier.substring(1) : cardComparatorSpecifier];
+            const cmp = cardComparator(a, b);
+            if (cmp !== 0) return isDescending ? -cmp : cmp;
+        }
+        return 0;
+    }
 
     function scheduleUpdate() {
         if (currentUpdateAbortController) {
@@ -499,10 +515,8 @@
                 const cardContainer = document.getElementById("cards");
 
                 let refNode = null;
-                const newName = card.keys?.name ?? "";
                 for (const child of Array.from(cardContainer.children)) {
-                    const existingName = child.card.keys?.name ?? "";
-                    if (existingName.localeCompare(newName) > 0) {
+                    if (compareCards(child.card, card) > 0) {
                         refNode = child;
                         break;
                     }
