@@ -493,17 +493,45 @@
         "name": (a, b) => (a.keys?.name ?? "").localeCompare(b.keys?.name ?? ""),
         "updated": (a, b) => (a.keys?.updated ?? 0) - (b.keys?.updated ?? 0),
     };
-    window.KanbanBro.selectedCardComparatorSpecifiers = ["name"];
 
     function compareCards(a, b) {
-        for (let i = 0; i < window.KanbanBro.selectedCardComparatorSpecifiers.length; i++) {
-            const cardComparatorSpecifier = window.KanbanBro.selectedCardComparatorSpecifiers[i];
+        for (let i = 0; i < window.KanbanBro.cardComparatorSpecifiers.length; i++) {
+            const cardComparatorSpecifier = window.KanbanBro.cardComparatorSpecifiers[i];
             const isDescending = cardComparatorSpecifier.startsWith("-");
             const cardComparator = window.KanbanBro.cardComparators[isDescending ? cardComparatorSpecifier.substring(1) : cardComparatorSpecifier];
             const cmp = cardComparator(a, b);
             if (cmp !== 0) return isDescending ? -cmp : cmp;
         }
         return 0;
+    }
+
+
+    // CardComparatorSpecifiers
+
+    {
+        const item = localStorage.getItem('kanbanbro.cardComparatorSpecifiers');
+        window.KanbanBro.cardComparatorSpecifiers = item != null ? JSON.parse(item) : ["name"];
+    }
+
+    window.KanbanBro.event.addEventListener('cardComparatorSpecifiersChanged', () => {
+        const cardContainer = document.getElementById("cards");
+        const cardElements = Array.from(cardContainer.children);
+        cardElements.sort((a, b) => compareCards(a.card, b.card));
+        const fragment = document.createDocumentFragment();
+        for (const cardElement of cardElements) {
+            fragment.appendChild(cardElement);
+        }
+        cardContainer.appendChild(fragment);
+    });
+
+    function updateCardComparatorSpecifiers() {
+        window.KanbanBro.event.dispatchEvent(new Event('cardComparatorSpecifiersChanged'));
+    }
+
+    function setCardComparatorSpecifiers(cardComparatorSpecifiers) {
+        window.KanbanBro.cardComparatorSpecifiers = cardComparatorSpecifiers;
+        localStorage.setItem('kanbanbro.cardComparatorSpecifiers', JSON.stringify(cardComparatorSpecifiers));
+        updateCardComparatorSpecifiers();
     }
 
 
