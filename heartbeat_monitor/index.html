@@ -479,6 +479,7 @@
 
     window.KanbanBro.cardComparators = {
         "name": (a, b) => (a.keys?.name ?? "").localeCompare(b.keys?.name ?? ""),
+        "updated": (a, b) => (a.keys?.updated ?? 0) - (b.keys?.updated ?? 0),
     };
     window.KanbanBro.selectedCardComparatorSpecifiers = ["name"];
 

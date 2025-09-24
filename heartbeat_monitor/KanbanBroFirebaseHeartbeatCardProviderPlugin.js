@@ -35,7 +35,10 @@ export function apply() {
                     console.log(`${name}`, settings, metadata);
 
                     return {
-                        keys: { name },
+                        keys: {
+                            name,
+                            updated: Date.parse(metadata.updated),
+                        },
                         image: (() => {
                             return also(new Image(), img => {
                                 img.loading = 'lazy';
