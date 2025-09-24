@@ -497,10 +497,8 @@
     function compareCards(a, b) {
         for (let i = 0; i < window.KanbanBro.cardComparatorSpecifiers.length; i++) {
             const cardComparatorSpecifier = window.KanbanBro.cardComparatorSpecifiers[i];
-            const isDescending = cardComparatorSpecifier.startsWith("-");
-            const cardComparator = window.KanbanBro.cardComparators[isDescending ? cardComparatorSpecifier.substring(1) : cardComparatorSpecifier];
-            const cmp = cardComparator(a, b);
-            if (cmp !== 0) return isDescending ? -cmp : cmp;
+            const cmp = window.KanbanBro.cardComparators[cardComparatorSpecifier.type](a, b);
+            if (cmp !== 0) return cardComparatorSpecifier.isDescending ? -cmp : cmp;
         }
         return 0;
     }
@@ -510,7 +508,12 @@
 
     {
         const item = localStorage.getItem('kanbanbro.cardComparatorSpecifiers');
-        window.KanbanBro.cardComparatorSpecifiers = item != null ? JSON.parse(item) : ["name"];
+        window.KanbanBro.cardComparatorSpecifiers = item != null ? JSON.parse(item) : [
+            {
+                type: "name",
+                isDescending: false,
+            },
+        ];
     }
 
     window.KanbanBro.event.addEventListener('cardComparatorSpecifiersChanged', () => {

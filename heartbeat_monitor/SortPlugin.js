@@ -1,29 +1,38 @@
 export function apply() {
     const cardComparatorSpecifierEntries = [
         {
-            cardComparatorSpecifier: "name",
+            type: "name",
+            isDescending: false,
             title: "Name",
         },
         {
-            cardComparatorSpecifier: "-name",
+            type: "name",
+            isDescending: true,
             title: "Name (desc)",
         },
         {
-            cardComparatorSpecifier: "updated",
+            type: "updated",
+            isDescending: false,
             title: "Newest Update",
         },
         {
-            cardComparatorSpecifier: "-updated",
+            type: "updated",
+            isDescending: true,
             title: "Oldest Update",
         },
     ];
 
     function cycleSort() {
         const oldIndex = cardComparatorSpecifierEntries.findIndex(cardComparatorSpecifierEntry => {
-            return cardComparatorSpecifierEntry.cardComparatorSpecifier === window.KanbanBro.cardComparatorSpecifiers[0];
+            if (cardComparatorSpecifierEntry.type != window.KanbanBro.cardComparatorSpecifiers[0].type) return false;
+            if (cardComparatorSpecifierEntry.isDescending != window.KanbanBro.cardComparatorSpecifiers[0].isDescending) return false;
+            return true;
         });
         const newIndex = (oldIndex + 1) % cardComparatorSpecifierEntries.length;
-        setCardComparatorSpecifiers([cardComparatorSpecifierEntries[newIndex].cardComparatorSpecifier]);
+        setCardComparatorSpecifiers([{
+            type: cardComparatorSpecifierEntries[newIndex].type,
+            isDescending: cardComparatorSpecifierEntries[newIndex].isDescending,
+        }]);
     }
 
     function openSortDialog() {
@@ -39,7 +48,9 @@ export function apply() {
 
                     function updateButton() {
                         const index = cardComparatorSpecifierEntries.findIndex(cardComparatorSpecifierEntry => {
-                            return cardComparatorSpecifierEntry.cardComparatorSpecifier === window.KanbanBro.cardComparatorSpecifiers[0];
+                            if (cardComparatorSpecifierEntry.type != window.KanbanBro.cardComparatorSpecifiers[0].type) return false;
+                            if (cardComparatorSpecifierEntry.isDescending != window.KanbanBro.cardComparatorSpecifiers[0].isDescending) return false;
+                            return true;
                         });
                         toggleButton.textContent = cardComparatorSpecifierEntries[index].title;
                     }
