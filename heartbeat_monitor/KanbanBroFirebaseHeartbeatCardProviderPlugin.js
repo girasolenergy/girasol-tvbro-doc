@@ -32,7 +32,7 @@ export function apply() {
 
                     const settings = JSON.parse(new TextDecoder().decode(settingsBytes));
                     const name = settings.settings_code.settings.heartbeat_title || folderRef.name;
-                    console.log(`${name}`, settings);
+                    console.log(`${name}`, settings, metadata);
 
                     return {
                         keys: { name },
