@@ -12,12 +12,12 @@ export function apply() {
         },
         {
             type: "updated",
-            isDescending: false,
+            isDescending: true,
             title: "Newest Update",
         },
         {
             type: "updated",
-            isDescending: true,
+            isDescending: false,
             title: "Oldest Update",
         },
     ];
