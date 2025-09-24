@@ -354,6 +354,9 @@
 
     window.KanbanBro.event = new EventTarget();
 
+
+    // Utils
+
     function also(element, block) {
         block(element);
         return element;
@@ -439,6 +442,9 @@
         img.src = url;
     }
 
+
+    // Dispatcher
+
     function createDispatcher(concurrency) {
         let active = 0;
         const queue = [];
@@ -465,6 +471,9 @@
 
     window.KanbanBro.dispatcher = createDispatcher(4);
 
+
+    // CardProvider
+
     /**
      * CardProvider := () => Promise<{
      *   image: Element,
@@ -477,13 +486,14 @@
      */
     window.KanbanBro.cardProviders = [];
 
+
+    // CardComparator
+
     window.KanbanBro.cardComparators = {
         "name": (a, b) => (a.keys?.name ?? "").localeCompare(b.keys?.name ?? ""),
         "updated": (a, b) => (a.keys?.updated ?? 0) - (b.keys?.updated ?? 0),
     };
     window.KanbanBro.selectedCardComparatorSpecifiers = ["name"];
-
-    let currentUpdateAbortController = null;
 
     function compareCards(a, b) {
         for (let i = 0; i < window.KanbanBro.selectedCardComparatorSpecifiers.length; i++) {
@@ -495,6 +505,11 @@
         }
         return 0;
     }
+
+
+    // Update
+
+    let currentUpdateAbortController = null;
 
     function scheduleUpdate() {
         if (currentUpdateAbortController) {
@@ -575,6 +590,8 @@
 
     window.addEventListener("load", () => scheduleUpdate());
 
+
+    // Theme
 
     window.KanbanBro.theme = localStorage.getItem('kanbanbro.theme');
 
