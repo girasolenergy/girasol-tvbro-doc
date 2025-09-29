@@ -46,14 +46,10 @@ export function apply() {
                             toggleButton.textContent = getTitle(window.KanbanBro.cardComparatorSpecifiers[0]) + "+" + (window.KanbanBro.cardComparatorSpecifiers.length - 1);
                         }
                     }
-                    window.KanbanBro.event.addEventListener('cardComparatorSpecifiersChanged', () => {
-                        updateButton();
-                    });
+                    window.KanbanBro.event.addEventListener('cardComparatorSpecifiersChanged', () => updateButton());
                     updateButton();
 
-                    toggleButton.addEventListener("click", () => {
-                        cycleSort();
-                    });
+                    toggleButton.addEventListener("click", () => cycleSort());
                 }),
                 also(document.createElement("div"), actionsDiv => {
                     actionsDiv.style.display = "flex";
@@ -89,9 +85,7 @@ export function apply() {
                             sortButton.textContent = getTitle(window.KanbanBro.cardComparatorSpecifiers[0]) + "+" + (window.KanbanBro.cardComparatorSpecifiers.length - 1);
                         }
                     }
-                    window.KanbanBro.event.addEventListener('cardComparatorSpecifiersChanged', () => {
-                        updateButton();
-                    });
+                    window.KanbanBro.event.addEventListener('cardComparatorSpecifiersChanged', () => updateButton());
                     updateButton();
 
                     sortButton.addEventListener("click", () => openSortDialog());

@@ -211,18 +211,14 @@ export function apply() {
                     accountButton.textContent = "Account";
                     accountButton.style.display = "inline-block";
 
-                    accountButton.addEventListener("click", () => {
-                        openLoginDialog();
-                    });
+                    accountButton.addEventListener("click", () => openLoginDialog());
                 }),
                 also(document.createElement("div"), userBadgeDiv => {
                     userBadgeDiv.className = "user-badge";
                     function updateUserBadge(user) {
                         userBadgeDiv.style.display = user ? "inline-flex" : "none";
                     }
-                    window.KanbanBro.userEvent.addEventListener("changed", e => {
-                        updateUserBadge(e.detail);
-                    });
+                    window.KanbanBro.userEvent.addEventListener("changed", e => updateUserBadge(e.detail));
                     updateUserBadge(window.KanbanBro.firebase.auth.currentUser);
                     userBadgeDiv.append(
                         also(document.createElement("div"), avatarDiv => {
@@ -239,9 +235,7 @@ export function apply() {
                                     );
                                 }
                             }
-                            window.KanbanBro.userEvent.addEventListener("changed", e => {
-                                updateAvatar(e.detail);
-                            });
+                            window.KanbanBro.userEvent.addEventListener("changed", e => updateAvatar(e.detail));
                             updateAvatar(window.KanbanBro.firebase.auth.currentUser);
                         }),
                         also(document.createElement("span"), nameSpan => {
@@ -249,9 +243,7 @@ export function apply() {
                             function updateUserName(user) {
                                 nameSpan.textContent = user == null ? "" : user.displayName || user.email || `UID:${user.uid}`;
                             }
-                            window.KanbanBro.userEvent.addEventListener("changed", e => {
-                                updateUserName(e.detail);
-                            });
+                            window.KanbanBro.userEvent.addEventListener("changed", e => updateUserName(e.detail));
                             updateUserName(window.KanbanBro.firebase.auth.currentUser);
                         }),
                     );
