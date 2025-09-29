@@ -1,38 +1,29 @@
 export function apply() {
-    const cardComparatorSpecifierEntries = [
-        {
-            type: "name",
-            isDescending: false,
-            title: "Name",
-        },
-        {
-            type: "name",
-            isDescending: true,
-            title: "Name (desc)",
-        },
-        {
-            type: "updated",
-            isDescending: true,
-            title: "Newest Update",
-        },
-        {
-            type: "updated",
-            isDescending: false,
-            title: "Oldest Update",
-        },
+    function getTitle(cardComparatorSpecifier) {
+        if (cardComparatorSpecifier.type == "name") {
+            return cardComparatorSpecifier.isDescending ? "Name (desc)" : "Name";
+        } else if (cardComparatorSpecifier.type == "updated") {
+            return cardComparatorSpecifier.isDescending ? "Newest Update" : "Oldest Update";
+        } else {
+            return "Unknown";
+        }
+    }
+
+    const cyclerCardComparatorSpecifiers = [
+        { type: "name", isDescending: false },
+        { type: "name", isDescending: true },
+        { type: "updated", isDescending: true },
+        { type: "updated", isDescending: false },
     ];
 
     function cycleSort() {
-        const oldIndex = cardComparatorSpecifierEntries.findIndex(cardComparatorSpecifierEntry => {
+        const oldIndex = cyclerCardComparatorSpecifiers.findIndex(cardComparatorSpecifierEntry => {
             if (cardComparatorSpecifierEntry.type != window.KanbanBro.cardComparatorSpecifiers[0].type) return false;
             if (cardComparatorSpecifierEntry.isDescending != window.KanbanBro.cardComparatorSpecifiers[0].isDescending) return false;
             return true;
         });
-        const newIndex = (oldIndex + 1) % cardComparatorSpecifierEntries.length;
-        setCardComparatorSpecifiers([{
-            type: cardComparatorSpecifierEntries[newIndex].type,
-            isDescending: cardComparatorSpecifierEntries[newIndex].isDescending,
-        }]);
+        const newIndex = oldIndex == -1 ? 0 : (oldIndex + 1) % cyclerCardComparatorSpecifiers.length;
+        setCardComparatorSpecifiers([cyclerCardComparatorSpecifiers[newIndex]]);
     }
 
     function openSortDialog() {
@@ -47,12 +38,13 @@ export function apply() {
                     toggleButton.classList.add("dialog-button");
 
                     function updateButton() {
-                        const index = cardComparatorSpecifierEntries.findIndex(cardComparatorSpecifierEntry => {
-                            if (cardComparatorSpecifierEntry.type != window.KanbanBro.cardComparatorSpecifiers[0].type) return false;
-                            if (cardComparatorSpecifierEntry.isDescending != window.KanbanBro.cardComparatorSpecifiers[0].isDescending) return false;
-                            return true;
-                        });
-                        toggleButton.textContent = cardComparatorSpecifierEntries[index].title;
+                        if (window.KanbanBro.cardComparatorSpecifiers.length == 0) {
+                            toggleButton.textContent = "(Default)";
+                        } else if (window.KanbanBro.cardComparatorSpecifiers.length == 1) {
+                            toggleButton.textContent = getTitle(window.KanbanBro.cardComparatorSpecifiers[0]);
+                        } else {
+                            toggleButton.textContent = getTitle(window.KanbanBro.cardComparatorSpecifiers[0]) + "+" + (window.KanbanBro.cardComparatorSpecifiers.length - 1);
+                        }
                     }
                     window.KanbanBro.event.addEventListener('cardComparatorSpecifiersChanged', () => {
                         updateButton();
