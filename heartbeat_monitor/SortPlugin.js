@@ -79,6 +79,21 @@ export function apply() {
                 also(document.createElement("button"), sortButton => {
                     sortButton.type = "button";
                     sortButton.textContent = "Sort";
+
+                    function updateButton() {
+                        if (window.KanbanBro.cardComparatorSpecifiers.length == 0) {
+                            sortButton.textContent = "(Default)";
+                        } else if (window.KanbanBro.cardComparatorSpecifiers.length == 1) {
+                            sortButton.textContent = getTitle(window.KanbanBro.cardComparatorSpecifiers[0]);
+                        } else {
+                            sortButton.textContent = getTitle(window.KanbanBro.cardComparatorSpecifiers[0]) + "+" + (window.KanbanBro.cardComparatorSpecifiers.length - 1);
+                        }
+                    }
+                    window.KanbanBro.event.addEventListener('cardComparatorSpecifiersChanged', () => {
+                        updateButton();
+                    });
+                    updateButton();
+
                     sortButton.addEventListener("click", () => openSortDialog());
                 }),
             );
