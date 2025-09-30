@@ -490,6 +490,10 @@
     // CardComparator
 
     window.KanbanBro.cardComparators = {
+        "empty": {
+            compare: (specifier, a, b) => 0,
+            getTitle: specifier => "None",
+        },
         "name": {
             compare: (specifier, a, b) => {
                 const cmp = (a.keys?.name ?? "").localeCompare(b.keys?.name ?? "");

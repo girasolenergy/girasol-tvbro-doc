@@ -6,6 +6,7 @@ export function apply() {
     }
 
     const cyclerCardComparatorSpecifiers = [
+        { type: "empty" },
         { type: "name", isDescending: false },
         { type: "name", isDescending: true },
         { type: "updated", isDescending: true },
@@ -15,7 +16,9 @@ export function apply() {
     function cycleSort() {
         const oldIndex = cyclerCardComparatorSpecifiers.findIndex(cardComparatorSpecifierEntry => {
             if (cardComparatorSpecifierEntry.type != window.KanbanBro.cardComparatorSpecifiers[0].type) return false;
-            if (cardComparatorSpecifierEntry.isDescending != window.KanbanBro.cardComparatorSpecifiers[0].isDescending) return false;
+            if (cardComparatorSpecifierEntry.isDescending !== undefined) {
+                if (cardComparatorSpecifierEntry.isDescending != window.KanbanBro.cardComparatorSpecifiers[0].isDescending) return false;
+            }
             return true;
         });
         const newIndex = oldIndex == -1 ? 0 : (oldIndex + 1) % cyclerCardComparatorSpecifiers.length;
