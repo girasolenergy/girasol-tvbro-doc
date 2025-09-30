@@ -22,6 +22,8 @@
             --button-background-color: #f6f6f6;
             --button-hover-background-color: #eeeeee;
             --button-border-color: #cccccc;
+            --transparent-button-border-color: #cccccc;
+            --transparent-button-hover-border-color: #888888;
             --area-background-color: #ffffff;
 
             --badge-background-color: #fafafa;
@@ -56,6 +58,8 @@
             --button-background-color: #2b2b2b;
             --button-hover-background-color: #222222;
             --button-border-color: #444444;
+            --transparent-button-border-color: #444444;
+            --transparent-button-hover-border-color: #666666;
             --area-background-color: #111111;
 
             --badge-background-color: #222222;
@@ -308,15 +312,28 @@
             place-items: center;
             z-index: 1000;
         }
-        .dialog-container {
+        .dialog-frame {
             width: min(92vw, 420px);
             background: var(--dialog-background-color);
             border: 1px solid var(--dialog-border-color);
             border-radius: 12px;
             padding: 16px;
             box-shadow: 0 10px 30px var(--dialog-shadow-color);
+        }
+        .dialog-container {
             display: grid;
             gap: 12px;
+        }
+        .dialog-transparent-button {
+            border: 1px solid var(--transparent-button-border-color);
+            background: transparent;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .dialog-transparent-button:hover {
+            border: 1px solid var(--transparent-button-hover-border-color);
         }
         .dialog-button {
             border: 1px solid var(--button-border-color);
@@ -406,9 +423,14 @@
                 }, { once: true });
 
                 overlayDiv.append(
-                    also(document.createElement("div"), containerDiv => {
-                        containerDiv.className = "dialog-container";
-                        initializer(containerDiv, dialogEvent)
+                    also(document.createElement("div"), frameDiv => {
+                        frameDiv.className = "dialog-frame";
+                        frameDiv.append(
+                            also(document.createElement("div"), containerDiv => {
+                                containerDiv.className = "dialog-container";
+                                initializer(containerDiv, dialogEvent)
+                            }),
+                        );
                     }),
                 );
             }),
