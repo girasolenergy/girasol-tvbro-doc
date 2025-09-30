@@ -1,4 +1,23 @@
 export function apply() {
+    window.KanbanBro.cardComparators["empty"] = {
+        compare: (specifier, a, b) => 0,
+        getTitle: specifier => "Unsorted",
+    };
+    window.KanbanBro.cardComparators["name"] = {
+        compare: (specifier, a, b) => {
+            const cmp = (a.keys?.name ?? "").localeCompare(b.keys?.name ?? "");
+            return specifier.isDescending ? -cmp : cmp;
+        },
+        getTitle: specifier => specifier.isDescending ? "Name (desc)" : "Name",
+    };
+    window.KanbanBro.cardComparators["updated"] = {
+        compare: (specifier, a, b) => {
+            const cmp = (a.keys?.updated ?? 0) - (b.keys?.updated ?? 0);
+            return specifier.isDescending ? -cmp : cmp;
+        },
+        getTitle: specifier => specifier.isDescending ? "Newest Update" : "Oldest Update",
+    };
+
     function getTitle(cardComparatorSpecifier) {
         const cardComparator = window.KanbanBro.cardComparators[cardComparatorSpecifier.type];
         if (cardComparator == null) return "Invalid Comparator";
@@ -38,7 +57,7 @@ export function apply() {
 
                     function updateButton() {
                         if (window.KanbanBro.cardComparatorSpecifiers.length == 0) {
-                            toggleButton.textContent = "(Default)";
+                            toggleButton.textContent = "Unsorted";
                         } else if (window.KanbanBro.cardComparatorSpecifiers.length == 1) {
                             toggleButton.textContent = getTitle(window.KanbanBro.cardComparatorSpecifiers[0]);
                         } else {
@@ -77,7 +96,7 @@ export function apply() {
 
                     function updateButton() {
                         if (window.KanbanBro.cardComparatorSpecifiers.length == 0) {
-                            sortButton.textContent = "(Default)";
+                            sortButton.textContent = "Unsorted";
                         } else if (window.KanbanBro.cardComparatorSpecifiers.length == 1) {
                             sortButton.textContent = getTitle(window.KanbanBro.cardComparatorSpecifiers[0]);
                         } else {
