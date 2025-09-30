@@ -32,23 +32,16 @@ export function apply() {
         { type: "empty" },
     ];
 
-    function cycleSort() {
-        if (window.KanbanBro.cardComparatorSpecifiers.length == 0) {
-            setCardComparatorSpecifiers([cyclerCardComparatorSpecifiers[0]]);
-            return;
-        }
-        const oldIndex = cyclerCardComparatorSpecifiers.findIndex(cardComparatorSpecifierEntry => {
-            if (cardComparatorSpecifierEntry.type != window.KanbanBro.cardComparatorSpecifiers[0].type) return false;
-            if (cardComparatorSpecifierEntry.isDescending !== undefined) {
-                if (cardComparatorSpecifierEntry.isDescending != window.KanbanBro.cardComparatorSpecifiers[0].isDescending) return false;
+    function getNextCardComparatorSpecifier(cardComparatorSpecifier) {
+        const oldIndex = cyclerCardComparatorSpecifiers.findIndex(cyclerCardComparatorSpecifier => {
+            if (cyclerCardComparatorSpecifier.type != cardComparatorSpecifier.type) return false;
+            if (cyclerCardComparatorSpecifier.isDescending !== undefined) {
+                if (cyclerCardComparatorSpecifier.isDescending != cardComparatorSpecifier.isDescending) return false;
             }
             return true;
         });
-        if (oldIndex == -1) {
-            setCardComparatorSpecifiers([cyclerCardComparatorSpecifiers[0]]);
-            return;
-        }
-        setCardComparatorSpecifiers([cyclerCardComparatorSpecifiers[(oldIndex + 1) % cyclerCardComparatorSpecifiers.length]]);
+        if (oldIndex == -1) return cyclerCardComparatorSpecifiers[0];
+        return cyclerCardComparatorSpecifiers[(oldIndex + 1) % cyclerCardComparatorSpecifiers.length];
     }
 
     function openSortDialog() {
@@ -58,23 +51,61 @@ export function apply() {
                     titleDiv.textContent = "Sort";
                     titleDiv.style.fontWeight = "700";
                 }),
-                also(document.createElement("button"), toggleButton => {
-                    toggleButton.type = "button";
-                    toggleButton.classList.add("dialog-button");
-
-                    function updateButton() {
-                        if (window.KanbanBro.cardComparatorSpecifiers.length == 0) {
-                            toggleButton.textContent = "Unsorted";
-                        } else if (window.KanbanBro.cardComparatorSpecifiers.length == 1) {
-                            toggleButton.textContent = getTitle(window.KanbanBro.cardComparatorSpecifiers[0]);
-                        } else {
-                            toggleButton.textContent = getTitle(window.KanbanBro.cardComparatorSpecifiers[0]) + "+" + (window.KanbanBro.cardComparatorSpecifiers.length - 1);
-                        }
+                also(document.createElement("div"), buttonsDiv => {
+                    buttonsDiv.className = "dialog-container";
+                    function updateButtons() {
+                        buttonsDiv.innerHTML = "";
+                        window.KanbanBro.cardComparatorSpecifiers.forEach((cardComparatorSpecifier, index) => {
+                            buttonsDiv.append(
+                                also(document.createElement("div"), buttonDiv => {
+                                    buttonDiv.style.display = "flex";
+                                    buttonDiv.style.gap = "12px";
+                                    buttonDiv.style.alignItems = "center";
+                                    buttonDiv.append(
+                                        also(document.createElement("div"), leftDiv => {
+                                            leftDiv.append(
+                                                also(document.createElement("button"), toggleButton => {
+                                                    toggleButton.type = "button";
+                                                    toggleButton.classList.add("dialog-button");
+                                                    toggleButton.textContent = getTitle(cardComparatorSpecifier);
+                                                    toggleButton.addEventListener("click", () => {
+                                                        const newCardComparatorSpecifiers = [...window.KanbanBro.cardComparatorSpecifiers];
+                                                        newCardComparatorSpecifiers[index] = getNextCardComparatorSpecifier(newCardComparatorSpecifiers[index]);
+                                                        setCardComparatorSpecifiers(newCardComparatorSpecifiers);
+                                                    });
+                                                }),
+                                            );
+                                        }),
+                                        also(document.createElement("div"), rightDiv => {
+                                            rightDiv.style.marginLeft = "auto";
+                                            rightDiv.append(
+                                                also(document.createElement("button"), removeButton => {
+                                                    removeButton.type = "button";
+                                                    removeButton.classList.add("dialog-button");
+                                                    removeButton.textContent = "🗑️";
+                                                    removeButton.addEventListener("click", () => {
+                                                        const newCardComparatorSpecifiers = [...window.KanbanBro.cardComparatorSpecifiers];
+                                                        newCardComparatorSpecifiers.splice(index, 1);
+                                                        setCardComparatorSpecifiers(newCardComparatorSpecifiers);
+                                                    });
+                                                }),
+                                            );
+                                        }),
+                                    );
+                                }),
+                            );
+                        });
                     }
-                    window.KanbanBro.event.addEventListener('cardComparatorSpecifiersChanged', () => updateButton());
-                    updateButton();
-
-                    toggleButton.addEventListener("click", () => cycleSort());
+                    window.KanbanBro.event.addEventListener('cardComparatorSpecifiersChanged', () => updateButtons());
+                    updateButtons();
+                }),
+                also(document.createElement("button"), addButton => {
+                    addButton.type = "button";
+                    addButton.classList.add("dialog-transparent-button");
+                    addButton.textContent = "＋";
+                    addButton.addEventListener("click", () => {
+                        setCardComparatorSpecifiers([...window.KanbanBro.cardComparatorSpecifiers, { type: "empty" }]);
+                    });
                 }),
                 also(document.createElement("div"), actionsDiv => {
                     actionsDiv.style.display = "flex";
