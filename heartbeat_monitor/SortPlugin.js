@@ -1,12 +1,8 @@
 export function apply() {
     function getTitle(cardComparatorSpecifier) {
-        if (cardComparatorSpecifier.type == "name") {
-            return cardComparatorSpecifier.isDescending ? "Name (desc)" : "Name";
-        } else if (cardComparatorSpecifier.type == "updated") {
-            return cardComparatorSpecifier.isDescending ? "Newest Update" : "Oldest Update";
-        } else {
-            return "Unknown";
-        }
+        const cardComparator = window.KanbanBro.cardComparators[cardComparatorSpecifier.type];
+        if (cardComparator == null) return "Invalid Comparator";
+        return cardComparator.getTitle(cardComparatorSpecifier);
     }
 
     const cyclerCardComparatorSpecifiers = [

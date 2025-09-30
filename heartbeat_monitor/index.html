@@ -490,15 +490,30 @@
     // CardComparator
 
     window.KanbanBro.cardComparators = {
-        "name": (a, b) => (a.keys?.name ?? "").localeCompare(b.keys?.name ?? ""),
-        "updated": (a, b) => (a.keys?.updated ?? 0) - (b.keys?.updated ?? 0),
+        "name": {
+            compare: (specifier, a, b) => {
+                const cmp = (a.keys?.name ?? "").localeCompare(b.keys?.name ?? "");
+                return specifier.isDescending ? -cmp : cmp;
+            },
+            getTitle: specifier => specifier.isDescending ? "Name (desc)" : "Name",
+        },
+        "updated": {
+            compare: (specifier, a, b) => {
+                const cmp = (a.keys?.updated ?? 0) - (b.keys?.updated ?? 0);
+                return specifier.isDescending ? -cmp : cmp;
+            },
+            getTitle: specifier => specifier.isDescending ? "Newest Update" : "Oldest Update",
+        },
     };
 
     function compareCards(a, b) {
         for (let i = 0; i < window.KanbanBro.cardComparatorSpecifiers.length; i++) {
             const cardComparatorSpecifier = window.KanbanBro.cardComparatorSpecifiers[i];
-            const cmp = window.KanbanBro.cardComparators[cardComparatorSpecifier.type](a, b);
-            if (cmp !== 0) return cardComparatorSpecifier.isDescending ? -cmp : cmp;
+            const cardComparator = window.KanbanBro.cardComparators[cardComparatorSpecifier.type];
+            if (cardComparator != null) {
+                const cmp = cardComparator.compare(cardComparatorSpecifier, a, b);
+                if (cmp !== 0) return cmp;
+            }
         }
         return 0;
     }
