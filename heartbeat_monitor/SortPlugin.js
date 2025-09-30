@@ -25,14 +25,18 @@ export function apply() {
     }
 
     const cyclerCardComparatorSpecifiers = [
-        { type: "empty" },
         { type: "name", isDescending: false },
         { type: "name", isDescending: true },
         { type: "updated", isDescending: true },
         { type: "updated", isDescending: false },
+        { type: "empty" },
     ];
 
     function cycleSort() {
+        if (window.KanbanBro.cardComparatorSpecifiers.length == 0) {
+            setCardComparatorSpecifiers([cyclerCardComparatorSpecifiers[0]]);
+            return;
+        }
         const oldIndex = cyclerCardComparatorSpecifiers.findIndex(cardComparatorSpecifierEntry => {
             if (cardComparatorSpecifierEntry.type != window.KanbanBro.cardComparatorSpecifiers[0].type) return false;
             if (cardComparatorSpecifierEntry.isDescending !== undefined) {
@@ -40,8 +44,11 @@ export function apply() {
             }
             return true;
         });
-        const newIndex = oldIndex == -1 ? 0 : (oldIndex + 1) % cyclerCardComparatorSpecifiers.length;
-        setCardComparatorSpecifiers([cyclerCardComparatorSpecifiers[newIndex]]);
+        if (oldIndex == -1) {
+            setCardComparatorSpecifiers([cyclerCardComparatorSpecifiers[0]]);
+            return;
+        }
+        setCardComparatorSpecifiers([cyclerCardComparatorSpecifiers[(oldIndex + 1) % cyclerCardComparatorSpecifiers.length]]);
     }
 
     function openSortDialog() {
