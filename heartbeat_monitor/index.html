@@ -522,17 +522,15 @@
         cardContainer.appendChild(fragment);
     });
 
-    function updateCardComparatorSpecifiers() {
-        window.KanbanBro.event.dispatchEvent(new Event('cardComparatorSpecifiersChanged'));
-    }
-
     function setCardComparatorSpecifiers(cardComparatorSpecifiers) {
         window.KanbanBro.cardComparatorSpecifiers = cardComparatorSpecifiers;
         localStorage.setItem('kanbanbro.cardComparatorSpecifiers', JSON.stringify(cardComparatorSpecifiers));
-        updateCardComparatorSpecifiers();
+        window.KanbanBro.event.dispatchEvent(new Event('cardComparatorSpecifiersChanged'));
     }
 
-    window.KanbanBro.event.addEventListener("pluginLoaded", () => updateCardComparatorSpecifiers());
+    window.KanbanBro.event.addEventListener("pluginLoaded", () => {
+        window.KanbanBro.event.dispatchEvent(new Event('cardComparatorSpecifiersChanged'));
+    });
 
 
     // Update
@@ -631,10 +629,6 @@
         document.documentElement.style.colorScheme = theme;
     });
 
-    function updateTheme() {
-        window.KanbanBro.event.dispatchEvent(new Event('themeChanged'));
-    }
-
     function setTheme(theme) {
         window.KanbanBro.theme = theme;
         if (theme === null) {
@@ -642,11 +636,15 @@
         } else {
             localStorage.setItem('kanbanbro.theme', theme);
         }
-        updateTheme();
+        window.KanbanBro.event.dispatchEvent(new Event('themeChanged'));
     }
 
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => updateTheme());
-    window.KanbanBro.event.addEventListener("pluginLoaded", () => updateTheme());
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        window.KanbanBro.event.dispatchEvent(new Event('themeChanged'));
+    });
+    window.KanbanBro.event.addEventListener("pluginLoaded", () => {
+        window.KanbanBro.event.dispatchEvent(new Event('themeChanged'));
+    });
 
 </script>
 <script>
