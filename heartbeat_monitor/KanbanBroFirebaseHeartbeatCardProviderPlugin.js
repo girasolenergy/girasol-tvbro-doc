@@ -1,18 +1,29 @@
+import { getStorage, ref, listAll, getBytes, getMetadata } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
+
 export function apply() {
 
-    const providers = [];
+    let providers = [];
 
-    async function rebuild(user) {
-        providers.length = 0;
+    async function rebuild() {
+        const providers2 = [];
+        window.KanbanBro.appNames.forEach(appName => {
+            rebuildForApp(window.KanbanBro.firebase.getApp(appName), providers2);
+        });
+        providers = providers2;
+    }
+
+    async function rebuildForApp(app, providers) {
+        const user = window.KanbanBro.firebase.getAuth(app).currentUser;
 
         if (!user) {
+            console.warn('No user logged in for app', app.name);
             scheduleUpdate();
             return;
         }
 
         let files;
         try {
-            files = await window.KanbanBro.firebase.listAll(window.KanbanBro.firebase.ref(window.KanbanBro.firebase.storage, `users/${user.uid}`));
+            files = await listAll(ref(getStorage(app), `users/${user.uid}`));
         } catch (e) {
             console.error('Failed to list heartbeat roots', e);
             scheduleUpdate();
@@ -23,11 +34,11 @@ export function apply() {
             providers.push(signal => {
                 return window.KanbanBro.dispatcher(async () => {
                     signal.throwIfAborted();
-                    const imageBytes = await window.KanbanBro.firebase.getBytes(window.KanbanBro.firebase.ref(folderRef, 'screenshot.png'));
+                    const imageBytes = await getBytes(ref(folderRef, 'screenshot.png'));
                     signal.throwIfAborted();
-                    const settingsBytes = await window.KanbanBro.firebase.getBytes(window.KanbanBro.firebase.ref(folderRef, 'settings.json'));
+                    const settingsBytes = await getBytes(ref(folderRef, 'settings.json'));
                     signal.throwIfAborted();
-                    const metadata = await window.KanbanBro.firebase.getMetadata(window.KanbanBro.firebase.ref(folderRef, 'settings.json'));
+                    const metadata = await getMetadata(ref(folderRef, 'settings.json'));
                     signal.throwIfAborted();
 
                     const settings = JSON.parse(new TextDecoder().decode(settingsBytes));
@@ -75,6 +86,13 @@ export function apply() {
                             }));
                             return texts;
                         })(),
+                        _debug: {
+                            appName: app.name,
+                            app,
+                            user,
+                            settings,
+                            metadata,
+                        },
                     };
                 });
             });
@@ -84,7 +102,14 @@ export function apply() {
 
     window.KanbanBro.cardProviders.push(signal => providers.map(p => p(signal)));
 
-    window.KanbanBro.userEvent.addEventListener("changed", e => rebuild(e.detail));
-    rebuild(window.KanbanBro.firebase.auth.currentUser);
+    window.KanbanBro.appsEvent.addEventListener("appNamesChanged", () => rebuild());
+    const unsubscribers = {};
+    window.KanbanBro.appsEvent.addEventListener("added", e => {
+        unsubscribers[e.detail.name] = window.KanbanBro.firebase.onAuthStateChanged(window.KanbanBro.firebase.getAuth(e.detail), () => rebuild());
+    });
+    window.KanbanBro.appsEvent.addEventListener("removed", e => {
+        unsubscribers[e.detail.name]();
+    });
+    rebuild();
 
 }

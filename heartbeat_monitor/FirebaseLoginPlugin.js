@@ -1,6 +1,5 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getApp, initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut, EmailAuthProvider, linkWithCredential, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-import { getStorage, ref, listAll, getBytes, getMetadata } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDZrghHsrdUM6WN0ArOcIchEqn5y4bBZGk",
@@ -12,50 +11,81 @@ const firebaseConfig = {
     measurementId: "G-N3C4HWN670"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const storage = getStorage(app);
-
 window.KanbanBro.firebase = {
-    app,
-    auth,
-    storage,
-    GoogleAuthProvider,
+    getApp,
+    getAuth,
     onAuthStateChanged,
-    signInWithPopup,
-    signOut,
-    EmailAuthProvider,
-    linkWithCredential,
-    signInWithEmailAndPassword,
-    ref,
-    listAll,
-    getBytes,
-    getMetadata,
 };
 
-window.KanbanBro.userEvent = new EventTarget();
+window.KanbanBro.appsEvent = new EventTarget();
+window.KanbanBro.appNames = [];
+
+function setAppNames(appNames) {
+    window.KanbanBro.appNames = appNames;
+    localStorage.setItem("kanbanbro.appNames", JSON.stringify(appNames));
+    window.KanbanBro.appsEvent.dispatchEvent(new Event("appNamesChanged"));
+}
 
 export function apply() {
 
-    function openLoginDialog() {
+    function registerUserListener(app, closeEvent, fn) {
+        const unsubscriber = onAuthStateChanged(getAuth(app), fn);
+        closeEvent.addEventListener("close", () => {
+            unsubscriber();
+        }, { once: true });
+        fn();
+    }
+
+    function createUserBadge(app, closeEvent) {
+        return also(document.createElement("div"), userBadgeDiv => {
+            userBadgeDiv.className = "user-badge";
+            registerUserListener(app, closeEvent, () => {
+                userBadgeDiv.style.display = getAuth(app).currentUser ? null : "none";
+            });
+            userBadgeDiv.append(
+                also(document.createElement("div"), avatarDiv => {
+                    avatarDiv.className = "user-avatar";
+                    registerUserListener(app, closeEvent, () => {
+                        const user = getAuth(app).currentUser;
+                        avatarDiv.innerHTML = "";
+                        if (user) {
+                            avatarDiv.append(
+                                also(new Image(), img => {
+                                    img.src = user.photoURL;
+                                    img.alt = "";
+                                    img.referrerPolicy = "no-referrer";
+                                }),
+                            );
+                        }
+                    });
+                }),
+                also(document.createElement("span"), nameSpan => {
+                    nameSpan.className = "user-name";
+                    registerUserListener(app, closeEvent, () => {
+                        const user = getAuth(app).currentUser;
+                        nameSpan.textContent = user == null ? "" : user.displayName || user.email || `UID:${user.uid}`;
+                    });
+                }),
+            );
+        });
+    }
+
+    function openLoginDialog(app) {
         showDialog((container, dialogEvent) => {
-            const registerUserListener = fn => {
-                const handler = e => fn(e.detail);
-                window.KanbanBro.userEvent.addEventListener("changed", handler);
-                dialogEvent.addEventListener("close", () => {
-                    window.KanbanBro.userEvent.removeEventListener("changed", handler);
-                }, { once: true });
-                fn(window.KanbanBro.firebase.auth.currentUser);
-            };
             container.append(
+
+                // タイトル
                 also(document.createElement("div"), titleDiv => {
                     titleDiv.textContent = "Account";
                     titleDiv.style.fontWeight = "700";
                 }),
+
+                // ボタングループ
                 also(document.createElement("div"), buttonsDiv => {
-                    buttonsDiv.style.display = "grid";
-                    buttonsDiv.style.gap = "8px";
+                    buttonsDiv.className = "dialog-container";
                     buttonsDiv.append(
+
+                        // Googleログインボタン
                         also(document.createElement("button"), googleButton => {
                             googleButton.type = "button";
                             googleButton.textContent = "Sign in with Google";
@@ -63,8 +93,8 @@ export function apply() {
                             googleButton.addEventListener("click", async () => {
                                 googleButton.disabled = true;
                                 try {
-                                    const provider = new window.KanbanBro.firebase.GoogleAuthProvider();
-                                    await window.KanbanBro.firebase.signInWithPopup(window.KanbanBro.firebase.auth, provider);
+                                    const provider = new GoogleAuthProvider();
+                                    await signInWithPopup(getAuth(app), provider);
                                     dialogEvent.dispatchEvent(new Event("close"));
                                 } catch (e) {
                                     console.error("Sign in failed", e);
@@ -76,10 +106,12 @@ export function apply() {
                                     googleButton.disabled = false;
                                 }
                             });
-                            registerUserListener(user => {
-                                googleButton.style.display = user ? "none" : "inline-block";
+                            registerUserListener(app, dialogEvent, () => {
+                                googleButton.style.display = getAuth(app).currentUser ? "none" : null;
                             });
                         }),
+
+                        // メールアドレスでログインボタン
                         also(document.createElement("button"), emailSignInButton => {
                             emailSignInButton.type = "button";
                             emailSignInButton.textContent = "Sign in with Email / Password";
@@ -91,7 +123,7 @@ export function apply() {
                                     if (!email) return;
                                     const password = prompt("Enter password");
                                     if (!password) return;
-                                    await window.KanbanBro.firebase.signInWithEmailAndPassword(window.KanbanBro.firebase.auth, email, password);
+                                    await signInWithEmailAndPassword(getAuth(app), email, password);
                                     showToast("Signed in successfully.");
                                     dialogEvent.dispatchEvent(new Event("close"));
                                 } catch (e) {
@@ -115,16 +147,18 @@ export function apply() {
                                     emailSignInButton.disabled = false;
                                 }
                             });
-                            registerUserListener(user => {
-                                emailSignInButton.style.display = user ? "none" : "inline-block";
+                            registerUserListener(app, dialogEvent, () => {
+                                emailSignInButton.style.display = getAuth(app).currentUser ? "none" : null;
                             });
                         }),
+
+                        // メールアドレスをリンクボタン
                         also(document.createElement("button"), linkEmailButton => {
                             linkEmailButton.type = "button";
                             linkEmailButton.textContent = "Link Email / Password";
                             linkEmailButton.classList.add("auth-button");
                             linkEmailButton.addEventListener("click", async () => {
-                                const currentUser = window.KanbanBro.firebase.auth.currentUser;
+                                const currentUser = getAuth(app).currentUser;
                                 if (!currentUser) {
                                     showToast("Please sign in first.");
                                     return;
@@ -139,8 +173,8 @@ export function apply() {
                                         showToast("Password must be at least 6 characters.");
                                         return;
                                     }
-                                    const credential = window.KanbanBro.firebase.EmailAuthProvider.credential(email, password);
-                                    await window.KanbanBro.firebase.linkWithCredential(currentUser, credential);
+                                    const credential = EmailAuthProvider.credential(email, password);
+                                    await linkWithCredential(currentUser, credential);
                                     showToast("Linked email/password to your account.");
                                     dialogEvent.dispatchEvent(new Event("close"));
                                 } catch (e) {
@@ -158,11 +192,14 @@ export function apply() {
                                     linkEmailButton.disabled = false;
                                 }
                             });
-                            registerUserListener(user => {
+                            registerUserListener(app, dialogEvent, () => {
+                                const user = getAuth(app).currentUser;
                                 const hasPassword = !!(user && user.providerData && user.providerData.some(p => p && p.providerId === 'password'));
-                                linkEmailButton.style.display = user && !hasPassword ? "inline-block" : "none";
+                                linkEmailButton.style.display = user && !hasPassword ? null : "none";
                             });
                         }),
+
+                        // ログアウトボタン
                         also(document.createElement("button"), logoutButton => {
                             logoutButton.type = "button";
                             logoutButton.textContent = "Logout";
@@ -170,7 +207,7 @@ export function apply() {
                             logoutButton.addEventListener("click", async () => {
                                 logoutButton.disabled = true;
                                 try {
-                                    await window.KanbanBro.firebase.signOut(window.KanbanBro.firebase.auth);
+                                    await signOut(getAuth(app));
                                     dialogEvent.dispatchEvent(new Event("close"));
                                 } catch (e) {
                                     console.error("Sign out failed", e);
@@ -179,12 +216,15 @@ export function apply() {
                                     logoutButton.disabled = false;
                                 }
                             });
-                            registerUserListener(user => {
-                                logoutButton.style.display = user ? "inline-block" : "none";
+                            registerUserListener(app, dialogEvent, () => {
+                                logoutButton.style.display = getAuth(app).currentUser ? null : "none";
                             });
                         }),
+
                     );
                 }),
+
+                // Closeボタン
                 also(document.createElement("div"), actionsDiv => {
                     actionsDiv.style.display = "flex";
                     actionsDiv.style.justifyContent = "end";
@@ -198,33 +238,150 @@ export function apply() {
                         }),
                     );
                 }),
+
             );
         });
     }
 
+    function openAccountsDialog() {
+        showDialog((container, dialogEvent) => {
+            container.append(
+
+                // タイトル
+                also(document.createElement("div"), titleDiv => {
+                    titleDiv.textContent = "Accounts";
+                    titleDiv.style.fontWeight = "700";
+                }),
+
+                // ユーザーリスト
+                also(document.createElement("div"), buttonsDiv => {
+                    buttonsDiv.className = "dialog-container";
+                    function updateButtons() {
+                        buttonsDiv.innerHTML = "";
+                        window.KanbanBro.appNames.forEach(appName => {
+                            const app = getApp(appName);
+                            buttonsDiv.append(
+                                also(document.createElement("div"), buttonDiv => {
+                                    buttonDiv.style.display = "flex";
+                                    buttonDiv.style.gap = "12px";
+                                    buttonDiv.style.alignItems = "center";
+                                    buttonDiv.append(
+                                        also(document.createElement("div"), leftDiv => {
+                                            leftDiv.style.display = "flex";
+                                            leftDiv.style.gap = "12px";
+                                            leftDiv.style.alignItems = "center";
+                                            leftDiv.append(
+
+                                                // ログインボタン
+                                                also(document.createElement("button"), loginButton => {
+                                                    loginButton.type = "button";
+                                                    loginButton.classList.add("dialog-button");
+                                                    loginButton.textContent = "Login";
+                                                    loginButton.addEventListener("click", () => openLoginDialog(app));
+                                                }),
+
+                                                // ユーザバッジ
+                                                createUserBadge(app, dialogEvent),
+
+                                            );
+                                        }),
+                                        also(document.createElement("div"), rightDiv => {
+                                            rightDiv.style.marginLeft = "auto";
+                                            rightDiv.append(
+
+                                                // ログアウトボタン
+                                                also(document.createElement("button"), removeButton => {
+                                                    removeButton.type = "button";
+                                                    removeButton.classList.add("dialog-button");
+                                                    removeButton.textContent = "🗑️";
+                                                    removeButton.addEventListener("click", () => {
+                                                        (async () => {
+                                                            await signOut(getAuth(app));
+                                                            deleteApp(app);
+                                                            setAppNames(window.KanbanBro.appNames.filter(appName => appName != app.name));
+                                                            window.KanbanBro.appsEvent.dispatchEvent(new CustomEvent("removed", { detail: app }));
+                                                        })();
+                                                    });
+                                                }),
+
+                                            );
+                                        }),
+                                    );
+                                }),
+                            );
+                        });
+                    }
+                    window.KanbanBro.appsEvent.addEventListener("appNamesChanged", () => updateButtons());
+                    updateButtons();
+                }),
+
+                // 追加ボタン
+                also(document.createElement("button"), addButton => {
+                    addButton.type = "button";
+                    addButton.classList.add("dialog-transparent-button");
+                    addButton.textContent = "＋";
+                    addButton.addEventListener("click", () => {
+                        const appName = window.KanbanBro.appNames.includes("[DEFAULT]") ? crypto.randomUUID() : "[DEFAULT]";
+                        const app = initializeApp(firebaseConfig, appName);
+                        setAppNames([...window.KanbanBro.appNames, appName]);
+                        window.KanbanBro.appsEvent.dispatchEvent(new CustomEvent("added", { detail: app }));
+                    });
+                }),
+
+                // Closeボタン
+                also(document.createElement("div"), actionsDiv => {
+                    actionsDiv.style.display = "flex";
+                    actionsDiv.style.justifyContent = "end";
+                    actionsDiv.style.gap = "8px";
+                    actionsDiv.append(
+                        also(document.createElement("button"), closeButton => {
+                            closeButton.type = "button";
+                            closeButton.textContent = "Close";
+                            closeButton.classList.add("dialog-button");
+                            closeButton.addEventListener("click", () => dialogEvent.dispatchEvent(new Event("close")));
+                        }),
+                    );
+                }),
+
+            );
+        });
+    }
+
+    // トップバー左のAccountsボタン
     document.getElementById("topbar-left-container").append(
         also(document.createElement("div"), container => {
             container.className = "topbar-property";
             container.append(
-                also(document.createElement("button"), accountButton => {
-                    accountButton.type = "button";
-                    accountButton.textContent = "Account";
-                    accountButton.style.display = "inline-block";
-
-                    accountButton.addEventListener("click", () => openLoginDialog());
+                also(document.createElement("button"), accountsButton => {
+                    accountsButton.type = "button";
+                    accountsButton.textContent = "Accounts";
+                    accountsButton.addEventListener("click", () => openAccountsDialog());
                 }),
-                also(document.createElement("div"), userBadgeDiv => {
-                    userBadgeDiv.className = "user-badge";
-                    function updateUserBadge(user) {
-                        userBadgeDiv.style.display = user ? "inline-flex" : "none";
-                    }
-                    window.KanbanBro.userEvent.addEventListener("changed", e => updateUserBadge(e.detail));
-                    updateUserBadge(window.KanbanBro.firebase.auth.currentUser);
-                    userBadgeDiv.append(
+            );
+        }),
+    );
+
+    // トップバー左のアバター
+    document.getElementById("topbar-left-container").append(
+        also(document.createElement("div"), container => {
+            container.className = "topbar-property";
+
+            let closeEvent = null;
+
+            function updateAvatar() {
+                if (closeEvent != null) closeEvent.dispatchEvent(new Event("close"));
+                closeEvent = new EventTarget();
+
+                container.innerHTML = "";
+                window.KanbanBro.appNames.forEach(appName => {
+                    const app = getApp(appName);
+                    container.append(
                         also(document.createElement("div"), avatarDiv => {
                             avatarDiv.className = "user-avatar";
-                            function updateAvatar(user) {
+                            registerUserListener(app, closeEvent, () => {
+                                const user = getAuth(app).currentUser;
                                 avatarDiv.innerHTML = "";
+                                avatarDiv.style.display = user ? null : "none";
                                 if (user) {
                                     avatarDiv.append(
                                         also(new Image(), img => {
@@ -234,25 +391,26 @@ export function apply() {
                                         }),
                                     );
                                 }
-                            }
-                            window.KanbanBro.userEvent.addEventListener("changed", e => updateAvatar(e.detail));
-                            updateAvatar(window.KanbanBro.firebase.auth.currentUser);
-                        }),
-                        also(document.createElement("span"), nameSpan => {
-                            nameSpan.className = "user-name";
-                            function updateUserName(user) {
-                                nameSpan.textContent = user == null ? "" : user.displayName || user.email || `UID:${user.uid}`;
-                            }
-                            window.KanbanBro.userEvent.addEventListener("changed", e => updateUserName(e.detail));
-                            updateUserName(window.KanbanBro.firebase.auth.currentUser);
+                            });
                         }),
                     );
-                }),
-            );
+                });
+            }
+            window.KanbanBro.appsEvent.addEventListener("appNamesChanged", () => updateAvatar());
+            updateAvatar();
         }),
     );
 
-    window.KanbanBro.firebase.onAuthStateChanged(window.KanbanBro.firebase.auth, user => {
-        window.KanbanBro.userEvent.dispatchEvent(new CustomEvent("changed", { detail: user }));
+    window.KanbanBro.event.addEventListener("pluginLoaded", () => {
+        window.KanbanBro.appNames = JSON.parse(localStorage.getItem("kanbanbro.appNames")) ?? [];
+        window.KanbanBro.appNames.forEach(appName => {
+            initializeApp(firebaseConfig, appName);
+        });
+        window.KanbanBro.appNames.forEach(appName => {
+            window.KanbanBro.appsEvent.dispatchEvent(new CustomEvent("added", { detail: getApp(appName) }));
+        });
+        window.KanbanBro.appsEvent.dispatchEvent(new Event("appNamesChanged"));
     });
+
+
 }
