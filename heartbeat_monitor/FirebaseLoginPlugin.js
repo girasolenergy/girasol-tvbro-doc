@@ -402,7 +402,7 @@ export function apply() {
     );
 
     window.KanbanBro.event.addEventListener("pluginLoaded", () => {
-        window.KanbanBro.appNames = JSON.parse(localStorage.getItem("kanbanbro.appNames")) ?? [];
+        window.KanbanBro.appNames = JSON.parse(localStorage.getItem("kanbanbro.appNames")) ?? ["[DEFAULT]"];
         window.KanbanBro.appNames.forEach(appName => {
             initializeApp(firebaseConfig, appName);
         });
