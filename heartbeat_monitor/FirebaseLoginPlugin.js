@@ -412,5 +412,4 @@ export function apply() {
         window.KanbanBro.appsEvent.dispatchEvent(new Event("appNamesChanged"));
     });
 
-
 }
