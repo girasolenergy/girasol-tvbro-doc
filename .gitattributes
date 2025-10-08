@@ -1,3 +1,10 @@
-*       text eol=lf
-*.png  -text eol=lf
-*.pdn  -text eol=lf
+*              -text
+*.bash          text eol=lf
+*.html          text eol=lf
+*.js            text eol=lf
+*.json          text eol=lf
+*.md            text eol=lf
+*.pdn          -text
+*.png          -text
+.gitattributes  text eol=lf
+.gitignore      text eol=lf
