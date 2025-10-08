@@ -1,10 +1,16 @@
 *              -text
 *.bash          text eol=lf
+*.bat           text eol=crlf
 *.html          text eol=lf
+*.jar          -text
 *.js            text eol=lf
 *.json          text eol=lf
+*.kt            text eol=lf
+*.kts           text eol=lf
 *.md            text eol=lf
 *.pdn          -text
 *.png          -text
+*.properties    text eol=lf
 .gitattributes  text eol=lf
 .gitignore      text eol=lf
+gradlew         text eol=lf
