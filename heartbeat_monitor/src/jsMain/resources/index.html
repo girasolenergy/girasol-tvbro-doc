@@ -671,12 +671,14 @@
     });
 
 </script>
-<script>
+<script type="module">
+    import { getPlugin } from "./heartbeat_monitor.js";
+
     document.addEventListener('DOMContentLoaded', async () => {
 
         (await import("./FaviconPlugin.js")).apply("../icon.png");
 
-        (await import("./TitlePlugin.js")).apply("Kanban Bro Heartbeat Monitor");
+        getPlugin("TitlePlugin").apply();
         (await import("./ThemeTogglePlugin.js")).apply();
         (await import("./AutoUpdatePlugin.js")).apply();
         (await import("./UpdatePlugin.js")).apply();

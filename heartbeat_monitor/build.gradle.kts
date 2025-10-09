@@ -14,7 +14,7 @@ kotlin {
         binaries.executable()
         compilerOptions {
             moduleKind.set(JsModuleKind.MODULE_ES)
-            moduleName.set(rootProject.name)
+            moduleName.set("heartbeat_monitor")
         }
     }
 
