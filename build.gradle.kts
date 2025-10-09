@@ -2,7 +2,7 @@ plugins {
     java
 }
 
-val buildPagesTask = tasks.register<Copy>("buildPages") {
+val buildPagesTask = tasks.register<Sync>("buildPages") {
     group = "build"
     val destDir = project.layout.buildDirectory.dir("pages")
     into(destDir)

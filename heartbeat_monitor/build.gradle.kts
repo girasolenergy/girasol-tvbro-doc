@@ -21,6 +21,7 @@ kotlin {
     sourceSets {
         val jsMain by getting {
             resources.srcDir("src/main/resources")
+            resources.exclude("**/*.pdn")
         }
     }
 }
