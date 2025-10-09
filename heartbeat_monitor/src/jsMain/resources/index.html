@@ -681,7 +681,7 @@
         getPlugin("TitlePlugin").apply();
         (await import("./ThemeTogglePlugin.js")).apply();
         (await import("./AutoUpdatePlugin.js")).apply();
-        (await import("./UpdatePlugin.js")).apply();
+        getPlugin("UpdatePlugin").apply();
 
         //(await import("./SampleCardProviderPlugin.js")).apply();
         (await import("./FirebaseLoginPlugin.js")).apply();
