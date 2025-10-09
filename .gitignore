@@ -1,5 +1,5 @@
 /.idea/
-/.gradle/
-/.kotlin/
-/kotlin-js-store/
-/build/
+.gradle/
+.kotlin/
+kotlin-js-store/
+build/

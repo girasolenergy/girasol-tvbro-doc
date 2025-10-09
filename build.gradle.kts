@@ -1,26 +1,14 @@
-import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
-
 plugins {
-    kotlin("multiplatform") version "2.2.20"
+    java
 }
 
-repositories {
-    mavenCentral()
-}
-
-kotlin {
-    js {
-        browser()
-        binaries.executable()
-        compilerOptions {
-            moduleKind.set(JsModuleKind.MODULE_ES)
-            moduleName.set(rootProject.name)
-        }
+val buildPagesTask = tasks.register<Copy>("buildPages") {
+    group = "build"
+    val destDir = project.layout.buildDirectory.dir("pages")
+    into(destDir)
+    from(project("heartbeat_monitor").tasks.named("jsBrowserDistribution")) {
+        into("heartbeat_monitor")
     }
-
-    sourceSets {
-        val jsMain by getting {
-            resources.srcDir("src/main/resources")
-        }
-    }
+    from(sourceSets.named("main").get().resources)
 }
+tasks.named("build").configure { dependsOn(buildPagesTask) }
