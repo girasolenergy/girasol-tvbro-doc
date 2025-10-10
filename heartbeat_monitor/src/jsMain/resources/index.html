@@ -676,7 +676,7 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
 
-        (await import("./FaviconPlugin.js")).apply("../icon.png");
+        getPlugin("FaviconPlugin").apply();
 
         getPlugin("TitlePlugin").apply();
         (await import("./ThemeTogglePlugin.js")).apply();
