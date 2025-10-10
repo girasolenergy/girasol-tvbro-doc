@@ -679,7 +679,7 @@
         getPlugin("FaviconPlugin").apply();
 
         getPlugin("TitlePlugin").apply();
-        (await import("./ThemeTogglePlugin.js")).apply();
+        getPlugin("ThemeTogglePlugin").apply();
         (await import("./AutoUpdatePlugin.js")).apply();
         getPlugin("UpdatePlugin").apply();
 
