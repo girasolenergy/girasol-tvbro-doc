@@ -5,4 +5,5 @@ fun main() {
     Plugins.plugins["TitlePlugin"] = TitlePlugin
     Plugins.plugins["ThemeTogglePlugin"] = ThemeTogglePlugin
     Plugins.plugins["UpdatePlugin"] = UpdatePlugin
+    Plugins.plugins["SampleCardProviderPlugin"] = SampleCardProviderPlugin
 }
