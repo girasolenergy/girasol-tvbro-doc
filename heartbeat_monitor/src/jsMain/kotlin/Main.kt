@@ -7,4 +7,5 @@ fun main() {
     Plugins.plugins["UpdatePlugin"] = UpdatePlugin
     Plugins.plugins["SampleCardProviderPlugin"] = SampleCardProviderPlugin
     Plugins.plugins["AutoUpdatePlugin"] = AutoUpdatePlugin
+    Plugins.plugins["SortPlugin"] = SortPlugin
 }
