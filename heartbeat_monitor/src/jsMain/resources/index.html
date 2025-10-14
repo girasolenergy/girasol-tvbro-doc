@@ -680,7 +680,7 @@
 
         getPlugin("TitlePlugin").apply();
         getPlugin("ThemeTogglePlugin").apply();
-        (await import("./AutoUpdatePlugin.js")).apply();
+        getPlugin("AutoUpdatePlugin").apply();
         getPlugin("UpdatePlugin").apply();
 
         if (false) getPlugin("SampleCardProviderPlugin").apply();
