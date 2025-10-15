@@ -672,26 +672,8 @@
 
 </script>
 <script type="module">
-    import { init, getPlugin } from "./heartbeat_monitor.js";
-
+    import { init } from "./heartbeat_monitor.js";
     await init();
-
-    document.addEventListener('DOMContentLoaded', async () => {
-
-        await getPlugin("FaviconPlugin").apply();
-
-        await getPlugin("TitlePlugin").apply();
-        await getPlugin("ThemeTogglePlugin").apply();
-        await getPlugin("AutoUpdatePlugin").apply();
-        await getPlugin("UpdatePlugin").apply();
-
-        if (false) await getPlugin("SampleCardProviderPlugin").apply();
-        await getPlugin("FirebaseLoginPlugin").apply();
-        await getPlugin("SortPlugin").apply();
-        await getPlugin("KanbanBroFirebaseHeartbeatCardProviderPlugin").apply();
-
-        window.KanbanBro.event.dispatchEvent(new Event('pluginLoaded'));
-    }, { once: true });
 </script>
 </body>
 </html>

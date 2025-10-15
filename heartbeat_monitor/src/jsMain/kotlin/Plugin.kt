@@ -4,21 +4,9 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.promise
 import kotlin.js.Promise
 
-@JsExport
 interface Plugin {
     fun apply(): Promise<Unit>
 }
-
-@JsExport
-fun getPlugin(name: String): Plugin? = Plugins.plugins[name]
-
-@JsExport
-fun getAllPlugins(): Array<Plugin> = Plugins.plugins.values.toTypedArray()
-
-object Plugins {
-    val plugins = mutableMapOf<String, Plugin>()
-}
-
 
 abstract class AbstractPlugin(val name: String) : Plugin {
     final override fun apply(): Promise<Unit> {
@@ -29,7 +17,5 @@ abstract class AbstractPlugin(val name: String) : Plugin {
 
     protected abstract suspend fun applyImpl()
 
-    open suspend fun init() {
-        Plugins.plugins[name] = this
-    }
+    open suspend fun init() = Unit
 }

@@ -1,6 +1,8 @@
 package hello
 
+import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.await
 import kotlinx.coroutines.promise
 import kotlin.js.Promise
 
@@ -15,4 +17,20 @@ fun init(): Promise<Unit> = MainScope().promise {
     SortPlugin.init()
     FirebaseLoginPlugin.init()
     KanbanBroFirebaseHeartbeatCardProviderPlugin.init()
+
+
+    FaviconPlugin.apply().await()
+
+    TitlePlugin.apply().await()
+    ThemeTogglePlugin.apply().await()
+    AutoUpdatePlugin.apply().await()
+    UpdatePlugin.apply().await()
+
+    if (false) SampleCardProviderPlugin.apply().await()
+    FirebaseLoginPlugin.apply().await()
+    SortPlugin.apply().await()
+    KanbanBroFirebaseHeartbeatCardProviderPlugin.apply().await()
+
+    KanbanBro.event.dispatchEvent(new(window.asDynamic().Event, "pluginLoaded"))
+
 }
