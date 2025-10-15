@@ -3,7 +3,7 @@ package hello
 import kotlinx.browser.document
 import kotlinx.browser.window
 
-object AutoUpdatePlugin : AbstractPlugin() {
+object AutoUpdatePlugin : AbstractPlugin("AutoUpdatePlugin") {
     override suspend fun applyImpl() {
         UiContainers.topbarRightContainer.prepend(
             document.createElement("div").also { container ->

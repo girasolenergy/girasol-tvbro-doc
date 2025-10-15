@@ -20,7 +20,7 @@ object Plugins {
 }
 
 
-abstract class AbstractPlugin : Plugin {
+abstract class AbstractPlugin(val name: String) : Plugin {
     final override fun apply(): Promise<Unit> {
         return MainScope().promise {
             applyImpl()
@@ -28,4 +28,8 @@ abstract class AbstractPlugin : Plugin {
     }
 
     protected abstract suspend fun applyImpl()
+
+    open suspend fun init() {
+        Plugins.plugins[name] = this
+    }
 }

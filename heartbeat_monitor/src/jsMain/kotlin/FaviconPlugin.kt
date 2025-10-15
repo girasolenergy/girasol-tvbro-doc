@@ -2,7 +2,7 @@ package hello
 
 import kotlinx.browser.document
 
-object FaviconPlugin : AbstractPlugin() {
+object FaviconPlugin : AbstractPlugin("FaviconPlugin") {
     override suspend fun applyImpl() {
         document.head!!.append(
             document.createElement("link").also { link ->

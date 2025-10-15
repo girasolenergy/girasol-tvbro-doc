@@ -3,7 +3,7 @@ package hello
 import kotlinx.browser.document
 import kotlinx.browser.window
 
-object SortPlugin : AbstractPlugin() {
+object SortPlugin : AbstractPlugin("SortPlugin") {
     override suspend fun applyImpl() {
         KanbanBro.cardComparators["empty"] = jsObjectOf(
             "compare" to { _: dynamic, _: dynamic, _: dynamic -> 0 },

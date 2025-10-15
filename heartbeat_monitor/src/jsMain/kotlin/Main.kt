@@ -1,12 +1,17 @@
 package hello
 
-fun main() {
-    Plugins.plugins["FaviconPlugin"] = FaviconPlugin
-    Plugins.plugins["TitlePlugin"] = TitlePlugin
-    Plugins.plugins["ThemeTogglePlugin"] = ThemeTogglePlugin
-    Plugins.plugins["UpdatePlugin"] = UpdatePlugin
-    Plugins.plugins["SampleCardProviderPlugin"] = SampleCardProviderPlugin
-    Plugins.plugins["AutoUpdatePlugin"] = AutoUpdatePlugin
-    Plugins.plugins["SortPlugin"] = SortPlugin
-    Plugins.plugins["KanbanBroFirebaseHeartbeatCardProviderPlugin"] = KanbanBroFirebaseHeartbeatCardProviderPlugin
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.promise
+import kotlin.js.Promise
+
+@JsExport
+fun init(): Promise<Unit> = MainScope().promise {
+    FaviconPlugin.init()
+    TitlePlugin.init()
+    ThemeTogglePlugin.init()
+    UpdatePlugin.init()
+    SampleCardProviderPlugin.init()
+    AutoUpdatePlugin.init()
+    SortPlugin.init()
+    KanbanBroFirebaseHeartbeatCardProviderPlugin.init()
 }
