@@ -686,7 +686,7 @@
         if (false) await getPlugin("SampleCardProviderPlugin").apply();
         (await import("./FirebaseLoginPlugin.js")).apply();
         await getPlugin("SortPlugin").apply();
-        (await import("./KanbanBroFirebaseHeartbeatCardProviderPlugin.js")).apply();
+        await getPlugin("KanbanBroFirebaseHeartbeatCardProviderPlugin").apply();
 
         window.KanbanBro.event.dispatchEvent(new Event('pluginLoaded'));
     }, { once: true });

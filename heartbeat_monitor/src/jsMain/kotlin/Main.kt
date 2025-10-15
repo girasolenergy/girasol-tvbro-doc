@@ -8,4 +8,5 @@ fun main() {
     Plugins.plugins["SampleCardProviderPlugin"] = SampleCardProviderPlugin
     Plugins.plugins["AutoUpdatePlugin"] = AutoUpdatePlugin
     Plugins.plugins["SortPlugin"] = SortPlugin
+    Plugins.plugins["KanbanBroFirebaseHeartbeatCardProviderPlugin"] = KanbanBroFirebaseHeartbeatCardProviderPlugin
 }
