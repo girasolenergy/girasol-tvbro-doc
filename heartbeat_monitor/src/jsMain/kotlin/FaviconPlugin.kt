@@ -2,8 +2,8 @@ package hello
 
 import kotlinx.browser.document
 
-object FaviconPlugin : Plugin {
-    override fun apply() {
+object FaviconPlugin : AbstractPlugin() {
+    override suspend fun applyImpl() {
         document.head!!.append(
             document.createElement("link").also { link ->
                 link.asDynamic().rel = "icon"

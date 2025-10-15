@@ -2,8 +2,8 @@ package hello
 
 import kotlinx.browser.document
 
-object TitlePlugin : Plugin {
-    override fun apply() {
+object TitlePlugin : AbstractPlugin() {
+    override suspend fun applyImpl() {
         document.title = "Kanban Bro Heartbeat Monitor"
         UiContainers.topbarRightContainer.prepend(
             document.createElement("div").also { titleDiv ->

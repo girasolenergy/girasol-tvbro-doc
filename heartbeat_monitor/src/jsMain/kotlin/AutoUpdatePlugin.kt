@@ -3,8 +3,8 @@ package hello
 import kotlinx.browser.document
 import kotlinx.browser.window
 
-object AutoUpdatePlugin : Plugin {
-    override fun apply() {
+object AutoUpdatePlugin : AbstractPlugin() {
+    override suspend fun applyImpl() {
         UiContainers.topbarRightContainer.prepend(
             document.createElement("div").also { container ->
                 container.className = "topbar-property"
