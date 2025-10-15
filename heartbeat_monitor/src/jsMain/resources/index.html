@@ -686,7 +686,7 @@
         await getPlugin("UpdatePlugin").apply();
 
         if (false) await getPlugin("SampleCardProviderPlugin").apply();
-        (await import("./FirebaseLoginPlugin.js")).apply();
+        await getPlugin("FirebaseLoginPlugin").apply();
         await getPlugin("SortPlugin").apply();
         await getPlugin("KanbanBroFirebaseHeartbeatCardProviderPlugin").apply();
 

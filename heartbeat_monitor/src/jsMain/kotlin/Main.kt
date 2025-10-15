@@ -13,5 +13,6 @@ fun init(): Promise<Unit> = MainScope().promise {
     SampleCardProviderPlugin.init()
     AutoUpdatePlugin.init()
     SortPlugin.init()
+    FirebaseLoginPlugin.init()
     KanbanBroFirebaseHeartbeatCardProviderPlugin.init()
 }
