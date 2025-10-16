@@ -2,6 +2,7 @@ package heartbeatmonitor.plugins
 
 import KanbanBro
 import heartbeatmonitor.core.AbstractPlugin
+import heartbeatmonitor.core.Card
 import heartbeatmonitor.util.jsObjectOf
 import heartbeatmonitor.util.new
 import kotlinx.browser.document
@@ -119,7 +120,7 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                 rebuildForApp(KanbanBro.firebase.getApp(appName), providers2)
             }
             providers = providers2
-            window.asDynamic().scheduleUpdate()
+            Card.scheduleUpdate()
             console.log("[KanbanBroFirebaseHeartbeatCardProviderPlugin] Rebuilt: found ${providers.size} providers")
         }
 

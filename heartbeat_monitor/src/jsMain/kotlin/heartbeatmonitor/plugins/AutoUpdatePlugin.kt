@@ -1,6 +1,7 @@
 package heartbeatmonitor.plugins
 
 import heartbeatmonitor.core.AbstractPlugin
+import heartbeatmonitor.core.Card
 import heartbeatmonitor.core.UiContainers
 import kotlinx.browser.document
 import kotlinx.browser.window
@@ -41,7 +42,7 @@ object AutoUpdatePlugin : AbstractPlugin("AutoUpdatePlugin") {
                             }
                             if (option != null) {
                                 timerId = window.setInterval({
-                                    window.asDynamic().scheduleUpdate()
+                                    Card.scheduleUpdate()
                                 }, option.intervalMilliseconds)
                             }
                         }
