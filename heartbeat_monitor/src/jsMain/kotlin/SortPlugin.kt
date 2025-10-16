@@ -2,6 +2,7 @@ package hello
 
 import kotlinx.browser.document
 import kotlinx.browser.window
+import org.w3c.dom.events.Event
 
 object SortPlugin : AbstractPlugin("SortPlugin") {
     override suspend fun applyImpl() {
@@ -124,7 +125,7 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
                                 closeButton.asDynamic().type = "button"
                                 closeButton.textContent = "Close"
                                 closeButton.classList.add("dialog-button")
-                                closeButton.addEventListener("click", { dialogEvent.dispatchEvent(new(window.asDynamic().Event, "close")) })
+                                closeButton.addEventListener("click", { dialogEvent.dispatchEvent(Event("close")) })
                             },
                         )
                     },

@@ -1,9 +1,9 @@
 package hello
 
-import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.await
 import kotlinx.coroutines.promise
+import org.w3c.dom.events.Event
 import kotlin.js.Promise
 
 @JsExport
@@ -31,6 +31,6 @@ fun init(): Promise<Unit> = MainScope().promise {
     SortPlugin.apply().await()
     KanbanBroFirebaseHeartbeatCardProviderPlugin.apply().await()
 
-    KanbanBro.event.dispatchEvent(new(window.asDynamic().Event, "pluginLoaded"))
+    KanbanBro.event.dispatchEvent(Event("pluginLoaded"))
 
 }

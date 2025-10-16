@@ -6,9 +6,11 @@ import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.await
 import kotlinx.coroutines.promise
+import org.w3c.dom.CustomEvent
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.Image
+import org.w3c.dom.events.Event
 import kotlin.js.Promise
 
 val firebaseConfig = jsObjectOf(
@@ -54,7 +56,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
         fun setAppNames(appNames: Array<dynamic>) {
             KanbanBro.appNames = appNames
             localStorage.setItem("kanbanbro.appNames", JSON.stringify(appNames))
-            KanbanBro.appsEvent.dispatchEvent(new(window.asDynamic().Event, "appNamesChanged"))
+            KanbanBro.appsEvent.dispatchEvent(Event("appNamesChanged"))
         }
 
         applier = {
@@ -125,7 +127,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                             try {
                                                 val provider = new(GoogleAuthProvider)
                                                 (signInWithPopup(getAuth(app), provider) as Promise<dynamic>).await()
-                                                dialogEvent.dispatchEvent(new(window.asDynamic().Event, "close"))
+                                                dialogEvent.dispatchEvent(Event("close"))
                                             } catch (e: dynamic) {
                                                 console.error("Sign in failed", e)
                                                 val msg = when (e?.code as String?) {
@@ -157,7 +159,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                                 val password = window.prompt("Enter password") ?: return@promise
                                                 (signInWithEmailAndPassword(getAuth(app), email, password) as Promise<dynamic>).await()
                                                 window.asDynamic().showToast("Signed in successfully.")
-                                                dialogEvent.dispatchEvent(new(window.asDynamic().Event, "close"))
+                                                dialogEvent.dispatchEvent(Event("close"))
                                             } catch (e: dynamic) {
                                                 console.error("Email sign in failed", e)
                                                 val msg = when (e?.code as String?) {
@@ -203,7 +205,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                                 val credential = EmailAuthProvider.credential(email, password)
                                                 (linkWithCredential(currentUser, credential) as Promise<dynamic>).await()
                                                 window.asDynamic().showToast("Linked email/password to your account.")
-                                                dialogEvent.dispatchEvent(new(window.asDynamic().Event, "close"))
+                                                dialogEvent.dispatchEvent(Event("close"))
                                             } catch (e: dynamic) {
                                                 console.error("Link email failed", e)
                                                 val msg = when (e?.code as String?) {
@@ -235,7 +237,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                             logoutButton.disabled = true
                                             try {
                                                 (signOut(getAuth(app)) as Promise<dynamic>).await()
-                                                dialogEvent.dispatchEvent(new(window.asDynamic().Event, "close"))
+                                                dialogEvent.dispatchEvent(Event("close"))
                                             } catch (e: dynamic) {
                                                 console.error("Sign out failed", e)
                                                 window.asDynamic().showToast("Failed to sign out: ${if (e != null && e.message != null) e.message as String else "$e"}")
@@ -262,7 +264,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                     (cancelButton as HTMLButtonElement).type = "button"
                                     cancelButton.textContent = "Cancel"
                                     cancelButton.classList.add("dialog-button")
-                                    cancelButton.addEventListener("click", { dialogEvent.dispatchEvent(new(window.asDynamic().Event, "close")) })
+                                    cancelButton.addEventListener("click", { dialogEvent.dispatchEvent(Event("close")) })
                                 },
                             )
                         },
@@ -327,7 +329,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                                                     (signOut(getAuth(app)) as Promise<dynamic>).await()
                                                                     deleteApp(app)
                                                                     setAppNames((KanbanBro.appNames as Array<dynamic>).filter { appName -> appName != app.name }.toTypedArray())
-                                                                    KanbanBro.appsEvent.dispatchEvent(new(window.asDynamic().CustomEvent, "removed", jsObjectOf("detail" to app)))
+                                                                    KanbanBro.appsEvent.dispatchEvent(CustomEvent("removed", jsObjectOf("detail" to app)))
                                                                 }
                                                             })
                                                         },
@@ -352,7 +354,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                 val appName = if ("[DEFAULT]" in (KanbanBro.appNames as Array<dynamic>)) window.asDynamic().crypto.randomUUID() as String else "[DEFAULT]"
                                 val app = initializeApp(firebaseConfig, appName)
                                 setAppNames(((KanbanBro.appNames as Array<dynamic>).toList() + appName).toTypedArray())
-                                KanbanBro.appsEvent.dispatchEvent(new(window.asDynamic().CustomEvent, "added", jsObjectOf("detail" to app)))
+                                KanbanBro.appsEvent.dispatchEvent(CustomEvent("added", jsObjectOf("detail" to app)))
                             })
                         },
 
@@ -366,7 +368,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                     (closeButton as HTMLButtonElement).type = "button"
                                     closeButton.textContent = "Close"
                                     closeButton.classList.add("dialog-button")
-                                    closeButton.addEventListener("click", { dialogEvent.dispatchEvent(new(window.asDynamic().Event, "close")) })
+                                    closeButton.addEventListener("click", { dialogEvent.dispatchEvent(Event("close")) })
                                 },
                             )
                         },
@@ -397,7 +399,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                     var closeEvent: dynamic = null
 
                     fun updateAvatar() {
-                        if (closeEvent != null) closeEvent.dispatchEvent(new(window.asDynamic().Event, "close"))
+                        if (closeEvent != null) closeEvent.dispatchEvent(Event("close"))
                         closeEvent = new(window.asDynamic().EventTarget)
 
                         container.innerHTML = ""
@@ -435,9 +437,9 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                     initializeApp(firebaseConfig, appName)
                 }
                 (KanbanBro.appNames as Array<dynamic>).forEach { appName ->
-                    KanbanBro.appsEvent.dispatchEvent(new(window.asDynamic().CustomEvent, "added", jsObjectOf("detail" to getApp(appName))))
+                    KanbanBro.appsEvent.dispatchEvent(CustomEvent("added", jsObjectOf("detail" to getApp(appName))))
                 }
-                KanbanBro.appsEvent.dispatchEvent(new(window.asDynamic().Event, "appNamesChanged"))
+                KanbanBro.appsEvent.dispatchEvent(Event("appNamesChanged"))
             })
 
         }
