@@ -1,4 +1,4 @@
-package hello.heartbeatmonitor.util
+package heartbeatmonitor.util
 
 import org.w3c.dom.Storage
 import org.w3c.dom.get

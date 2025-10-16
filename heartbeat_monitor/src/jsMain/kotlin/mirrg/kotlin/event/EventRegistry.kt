@@ -1,4 +1,4 @@
-package hello.mirrg.kotlin.event
+package mirrg.kotlin.event
 
 interface EventRegistry<I, O> {
     fun register(listener: (I) -> O): Remover

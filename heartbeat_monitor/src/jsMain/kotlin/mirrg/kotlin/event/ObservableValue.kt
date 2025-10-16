@@ -1,4 +1,4 @@
-package hello.mirrg.kotlin.event
+package mirrg.kotlin.event
 
 class ObservableValue<T>(default: T) : MutableListEventRegistry<Unit, T, Unit>() {
 

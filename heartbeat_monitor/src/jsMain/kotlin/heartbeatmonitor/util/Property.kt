@@ -1,4 +1,4 @@
-package hello.heartbeatmonitor.util
+package heartbeatmonitor.util
 
 import kotlin.reflect.KProperty
 

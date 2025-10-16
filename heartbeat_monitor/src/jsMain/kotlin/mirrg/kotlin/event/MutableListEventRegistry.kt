@@ -1,4 +1,4 @@
-package hello.mirrg.kotlin.event
+package mirrg.kotlin.event
 
 abstract class MutableListEventRegistry<E, I, O> : EmittableEventRegistry<E, I, O> {
 

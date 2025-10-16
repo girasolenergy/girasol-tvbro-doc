@@ -1,4 +1,4 @@
-package hello.mirrg.kotlin.event
+package mirrg.kotlin.event
 
 interface Subscriber {
     fun <I, O> subscribe(eventRegistry: EventRegistry<I, O>, listener: (I) -> O): Remover

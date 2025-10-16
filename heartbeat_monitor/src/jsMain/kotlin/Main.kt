@@ -1,5 +1,4 @@
-package hello
-
+import heartbeatmonitor.core.Theme
 import heartbeatmonitor.plugins.AutoUpdatePlugin
 import heartbeatmonitor.plugins.FaviconPlugin
 import heartbeatmonitor.plugins.FirebaseLoginPlugin
@@ -9,7 +8,6 @@ import heartbeatmonitor.plugins.SortPlugin
 import heartbeatmonitor.plugins.ThemeTogglePlugin
 import heartbeatmonitor.plugins.TitlePlugin
 import heartbeatmonitor.plugins.UpdatePlugin
-import hello.heartbeatmonitor.core.Theme
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.promise
 import org.w3c.dom.events.Event

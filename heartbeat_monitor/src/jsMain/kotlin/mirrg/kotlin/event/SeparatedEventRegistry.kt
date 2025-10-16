@@ -1,4 +1,4 @@
-package hello.mirrg.kotlin.event
+package mirrg.kotlin.event
 
 interface SeparatedEventRegistry<I, O> {
     fun register(listener: (I) -> O)

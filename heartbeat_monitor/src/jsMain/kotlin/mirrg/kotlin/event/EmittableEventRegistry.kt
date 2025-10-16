@@ -1,4 +1,4 @@
-package hello.mirrg.kotlin.event
+package mirrg.kotlin.event
 
 interface EmittableEventRegistry<E, I, O> : EventRegistry<I, O> {
     fun emit(event: E)

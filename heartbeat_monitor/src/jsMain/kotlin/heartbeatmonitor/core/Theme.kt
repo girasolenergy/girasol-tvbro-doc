@@ -1,16 +1,16 @@
-package hello.heartbeatmonitor.core
+package heartbeatmonitor.core
 
-import hello.KanbanBro
-import hello.heartbeatmonitor.util.getValue
-import hello.heartbeatmonitor.util.property
-import hello.heartbeatmonitor.util.setValue
-import hello.heartbeatmonitor.util.xmap
-import hello.mirrg.kotlin.event.EventRegistry
-import hello.mirrg.kotlin.event.ObservableValue
-import hello.mirrg.kotlin.event.emit
+import KanbanBro
+import heartbeatmonitor.util.getValue
+import heartbeatmonitor.util.property
+import heartbeatmonitor.util.setValue
+import heartbeatmonitor.util.xmap
 import kotlinx.browser.document
 import kotlinx.browser.localStorage
 import kotlinx.browser.window
+import mirrg.kotlin.event.EventRegistry
+import mirrg.kotlin.event.ObservableValue
+import mirrg.kotlin.event.emit
 
 enum class Theme(val slug: String, val title: String) {
     LIGHT("light", "Light"),

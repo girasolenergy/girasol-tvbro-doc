@@ -1,10 +1,10 @@
 package heartbeatmonitor.plugins
 
-import hello.heartbeatmonitor.core.AbstractPlugin
-import hello.heartbeatmonitor.core.Theme
-import hello.heartbeatmonitor.core.UiContainers
-import hello.mirrg.kotlin.event.initialEmit
+import heartbeatmonitor.core.AbstractPlugin
+import heartbeatmonitor.core.Theme
+import heartbeatmonitor.core.UiContainers
 import kotlinx.browser.document
+import mirrg.kotlin.event.initialEmit
 
 object ThemeTogglePlugin : AbstractPlugin("ThemeTogglePlugin") {
     override suspend fun apply() {
