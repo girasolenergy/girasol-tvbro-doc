@@ -638,36 +638,6 @@
 
     window.KanbanBro.event.addEventListener("pluginLoaded", () => scheduleUpdate());
 
-
-    // Theme
-
-    window.KanbanBro.theme = localStorage.getItem('kanbanbro.theme');
-
-    window.KanbanBro.event.addEventListener('themeChanged', () => {
-        const theme = window.KanbanBro.theme === null
-            ? window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-            : window.KanbanBro.theme;
-        document.documentElement.setAttribute('data-theme', theme);
-        document.documentElement.style.colorScheme = theme;
-    });
-
-    function setTheme(theme) {
-        window.KanbanBro.theme = theme;
-        if (theme === null) {
-            localStorage.removeItem('kanbanbro.theme');
-        } else {
-            localStorage.setItem('kanbanbro.theme', theme);
-        }
-        window.KanbanBro.event.dispatchEvent(new Event('themeChanged'));
-    }
-
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-        window.KanbanBro.event.dispatchEvent(new Event('themeChanged'));
-    });
-    window.KanbanBro.event.addEventListener("pluginLoaded", () => {
-        window.KanbanBro.event.dispatchEvent(new Event('themeChanged'));
-    });
-
 </script>
 <script type="module">
     import { init } from "./heartbeat_monitor.js";

@@ -1,5 +1,6 @@
 package hello
 
+import hello.heartbeatmonitor.modules.initTheme
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.await
 import kotlinx.coroutines.promise
@@ -8,6 +9,10 @@ import kotlin.js.Promise
 
 @JsExport
 fun init(): Promise<Unit> = MainScope().promise {
+
+    initTheme()
+
+
     FaviconPlugin.init()
     TitlePlugin.init()
     ThemeTogglePlugin.init()
