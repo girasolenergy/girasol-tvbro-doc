@@ -1,3 +1,4 @@
+import heartbeatmonitor.core.Card
 import heartbeatmonitor.core.Theme
 import heartbeatmonitor.plugins.AutoUpdatePlugin
 import heartbeatmonitor.plugins.FaviconPlugin
@@ -16,6 +17,7 @@ import kotlin.js.Promise
 @JsExport
 fun init(): Promise<Unit> = MainScope().promise {
 
+    Card.init()
     Theme.init()
 
 
