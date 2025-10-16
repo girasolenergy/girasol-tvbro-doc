@@ -1,4 +1,4 @@
-package hello
+package hello.heartbeatmonitor.core
 
 interface Plugin {
     suspend fun apply()

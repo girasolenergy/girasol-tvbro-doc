@@ -1,6 +1,6 @@
 package heartbeatmonitor.plugins
 
-import hello.AbstractPlugin
+import hello.heartbeatmonitor.core.AbstractPlugin
 import kotlinx.browser.document
 
 object FaviconPlugin : AbstractPlugin("FaviconPlugin") {

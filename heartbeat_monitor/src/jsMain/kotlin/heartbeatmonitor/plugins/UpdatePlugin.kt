@@ -1,7 +1,7 @@
 package heartbeatmonitor.plugins
 
-import hello.AbstractPlugin
 import hello.UiContainers
+import hello.heartbeatmonitor.core.AbstractPlugin
 import kotlinx.browser.document
 import kotlinx.browser.window
 

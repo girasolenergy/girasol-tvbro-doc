@@ -3,8 +3,8 @@ package heartbeatmonitor.plugins
 import heartbeatmonitor.util.isPrime
 import heartbeatmonitor.util.jsObjectOf
 import heartbeatmonitor.util.primeFactors
-import hello.AbstractPlugin
 import hello.KanbanBro
+import hello.heartbeatmonitor.core.AbstractPlugin
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
