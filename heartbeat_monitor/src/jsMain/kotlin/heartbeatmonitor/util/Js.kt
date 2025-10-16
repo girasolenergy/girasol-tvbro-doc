@@ -1,4 +1,4 @@
-package hello
+package heartbeatmonitor.util
 
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -17,34 +17,6 @@ fun <T> suspendingPromise(block: suspend ((T) -> Unit, (dynamic) -> Unit) -> Uni
 }
 
 fun new(constructor: dynamic, vararg args: dynamic): dynamic = js("Reflect.construct")(constructor, args)
-
-fun isPrime(n: Int): Boolean {
-    if (n < 2) return false
-    var d = 2
-    while (d * d <= n) {
-        if (n % d == 0) return false
-        d++
-    }
-    return true
-}
-
-fun primeFactors(n: Int): List<Int> {
-    var n = n
-    val factors = mutableListOf<Int>()
-    var d = 2
-    while (n > 1) {
-        while (n % d === 0) {
-            factors += d
-            n /= d
-        }
-        d++
-        if (d * d > n && n > 1) {
-            factors += n
-            break
-        }
-    }
-    return factors
-}
 
 fun jsObjectOf(vararg pairs: Pair<String, dynamic>): dynamic {
     val obj = js("({})")

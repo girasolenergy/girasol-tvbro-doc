@@ -1,9 +1,9 @@
 package heartbeatmonitor.plugins
 
+import heartbeatmonitor.util.jsObjectOf
 import hello.AbstractPlugin
 import hello.KanbanBro
 import hello.UiContainers
-import hello.jsObjectOf
 import kotlinx.browser.document
 import kotlinx.browser.window
 import org.w3c.dom.events.Event
