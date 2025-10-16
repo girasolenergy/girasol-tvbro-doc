@@ -467,35 +467,6 @@
     }
 
 
-    // Dispatcher
-
-    function createDispatcher(concurrency) {
-        let active = 0;
-        const queue = [];
-
-        function schedule() {
-            while (active < concurrency && queue.length > 0) {
-                const task = queue.shift();
-                active++;
-                Promise.resolve()
-                    .then(task.fn)
-                    .then(task.resolve, task.reject)
-                    .finally(() => {
-                    active--;
-                    schedule();
-                });
-            }
-        }
-
-        return fn => new Promise((resolve, reject) => {
-            queue.push({ fn, resolve, reject });
-            schedule();
-        });
-    }
-
-    window.KanbanBro.dispatcher = createDispatcher(4);
-
-
     // CardProvider
 
     /**

@@ -3,6 +3,7 @@ package heartbeatmonitor.plugins
 import KanbanBro
 import heartbeatmonitor.core.AbstractPlugin
 import heartbeatmonitor.core.Card
+import heartbeatmonitor.core.Dispatcher
 import heartbeatmonitor.util.jsObjectOf
 import heartbeatmonitor.util.new
 import kotlinx.browser.document
@@ -43,8 +44,8 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
 
             (files.prefixes as Array<dynamic>).forEach { folderRef ->
                 providers.add { signal: dynamic ->
-                    KanbanBro.dispatcher {
-                        MainScope().promise {
+                    MainScope().promise {
+                        Dispatcher.dispatch {
                             signal.throwIfAborted()
                             val imageBytes = (getBytes(ref(folderRef, "screenshot.png")) as Promise<dynamic>).await()
                             signal.throwIfAborted()

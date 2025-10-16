@@ -2,17 +2,16 @@ package heartbeatmonitor.plugins
 
 import KanbanBro
 import heartbeatmonitor.core.AbstractPlugin
+import heartbeatmonitor.core.Dispatcher
 import heartbeatmonitor.util.isPrime
 import heartbeatmonitor.util.jsObjectOf
 import heartbeatmonitor.util.primeFactors
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.await
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.promise
 import org.w3c.dom.Image
-import kotlin.js.Promise
 import kotlin.math.floor
 
 object SampleCardProviderPlugin : AbstractPlugin("SampleCardProviderPlugin") {
@@ -21,14 +20,12 @@ object SampleCardProviderPlugin : AbstractPlugin("SampleCardProviderPlugin") {
             (0 until 100).map { index ->
                 MainScope().promise {
                     signal.throwIfAborted()
-                    val number = (KanbanBro.dispatcher {
-                        MainScope().promise {
-                            signal.throwIfAborted()
-                            delay(20L + floor(window.asDynamic().Math.random() * 120.0).toLong())
-                            signal.throwIfAborted()
-                            index + 1
-                        }
-                    } as Promise<Int>).await()
+                    val number = Dispatcher.dispatch {
+                        signal.throwIfAborted()
+                        delay(20L + floor(window.asDynamic().Math.random() * 120.0).toLong())
+                        signal.throwIfAborted()
+                        index + 1
+                    }
                     signal.throwIfAborted()
                     jsObjectOf(
                         "keys" to jsObjectOf(
