@@ -1,25 +1,23 @@
 package hello
 
+import hello.heartbeatmonitor.core.Theme
+import hello.mirrg.kotlin.event.initialEmit
 import kotlinx.browser.document
-import kotlinx.browser.window
 
 object ThemeTogglePlugin : AbstractPlugin("ThemeTogglePlugin") {
     override suspend fun applyImpl() {
         UiContainers.topbarRightContainer.prepend(
             document.createElement("button").also { button ->
                 button.asDynamic().type = "button"
-                KanbanBro.event.addEventListener("themeChanged", { _ ->
-                    button.textContent = when (val theme = KanbanBro.theme) {
-                        null -> "Theme: Auto"
-                        "light" -> "Theme: Light"
-                        "dark" -> "Theme: Dark"
-                        else -> "Theme: $theme"
-                    }
-                })
+                Theme.onActualThemeChanged.initialEmit.register {
+                    button.textContent = "Theme: ${Theme.currentThemeOverride.value?.title ?: "Auto"}"
+                }
                 button.addEventListener("click", { _ ->
-                    val oldTheme = KanbanBro.theme
-                    val newTheme = if (oldTheme == null) "light" else if (oldTheme == "light") "dark" else null
-                    window.asDynamic().setTheme(newTheme)
+                    Theme.currentThemeOverride.value = when (Theme.currentThemeOverride.value) {
+                        null -> Theme.LIGHT
+                        Theme.LIGHT -> Theme.DARK
+                        Theme.DARK -> null
+                    }
                 })
             },
         )
