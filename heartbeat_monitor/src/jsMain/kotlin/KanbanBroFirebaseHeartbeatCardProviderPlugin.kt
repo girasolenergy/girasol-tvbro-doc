@@ -26,7 +26,6 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
 
             if (user == null) {
                 console.warn("No user logged in for app", app.name)
-                window.asDynamic().scheduleUpdate()
                 return
             }
 
@@ -34,7 +33,6 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                 (listAll(ref(getStorage(app), "users/${user.uid}")) as Promise<dynamic>).await()
             } catch (e: dynamic) {
                 console.error("Failed to list heartbeat roots", e)
-                window.asDynamic().scheduleUpdate()
                 return
             }
 
@@ -109,7 +107,6 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                     }
                 }
             }
-            window.asDynamic().scheduleUpdate()
         }
 
         suspend fun rebuild() {
@@ -118,6 +115,8 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                 rebuildForApp(KanbanBro.firebase.getApp(appName), providers2)
             }
             providers = providers2
+            window.asDynamic().scheduleUpdate()
+            console.log("[KanbanBroFirebaseHeartbeatCardProviderPlugin] Rebuilt: found ${providers.size} providers")
         }
 
         KanbanBro.cardProviders.push { signal: dynamic -> providers.map { p -> p(signal) }.toTypedArray() }
@@ -130,7 +129,7 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
         KanbanBro.appsEvent.addEventListener("removed", { e: dynamic ->
             unsubscribers[e.detail.name]!!()
         })
-        rebuild()
+        KanbanBro.event.addEventListener("pluginLoaded", { MainScope().promise { rebuild() } })
 
     }
 }

@@ -562,13 +562,11 @@
     let currentUpdateAbortController = null;
 
     function scheduleUpdate() {
-        if (currentUpdateAbortController) {
-            try {
-                currentUpdateAbortController.abort();
-                currentUpdateAbortController = null;
-            } catch {
+        console.log("[scheduleUpdate] Scheduling update");
 
-            }
+        if (currentUpdateAbortController) {
+            currentUpdateAbortController.abort();
+            currentUpdateAbortController = null;
         }
         const abortController = new AbortController();
         currentUpdateAbortController = abortController;
