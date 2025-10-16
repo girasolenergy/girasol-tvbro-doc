@@ -7,7 +7,7 @@ import hello.mirrg.kotlin.event.initialEmit
 import kotlinx.browser.document
 
 object ThemeTogglePlugin : AbstractPlugin("ThemeTogglePlugin") {
-    override suspend fun applyImpl() {
+    override suspend fun apply() {
         UiContainers.topbarRightContainer.prepend(
             document.createElement("button").also { button ->
                 button.asDynamic().type = "button"

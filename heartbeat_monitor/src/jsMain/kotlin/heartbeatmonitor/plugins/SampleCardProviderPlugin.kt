@@ -16,7 +16,7 @@ import kotlin.js.Promise
 import kotlin.math.floor
 
 object SampleCardProviderPlugin : AbstractPlugin("SampleCardProviderPlugin") {
-    override suspend fun applyImpl() {
+    override suspend fun apply() {
         KanbanBro.cardProviders.push { signal: dynamic ->
             (0 until 100).map { index ->
                 MainScope().promise {

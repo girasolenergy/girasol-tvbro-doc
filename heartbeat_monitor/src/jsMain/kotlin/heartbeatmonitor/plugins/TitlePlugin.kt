@@ -5,7 +5,7 @@ import hello.UiContainers
 import kotlinx.browser.document
 
 object TitlePlugin : AbstractPlugin("TitlePlugin") {
-    override suspend fun applyImpl() {
+    override suspend fun apply() {
         document.title = "Kanban Bro Heartbeat Monitor"
         UiContainers.topbarRightContainer.prepend(
             document.createElement("div").also { titleDiv ->

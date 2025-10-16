@@ -15,7 +15,7 @@ import kotlin.js.Date
 import kotlin.js.Promise
 
 object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroFirebaseHeartbeatCardProviderPlugin") {
-    override suspend fun applyImpl() {
+    override suspend fun apply() {
         val firebaseStorage = (js("import('https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js')") as Promise<dynamic>).await()
         val getStorage = firebaseStorage.getStorage
         val ref = firebaseStorage.ref

@@ -6,7 +6,7 @@ import kotlinx.browser.document
 import kotlinx.browser.window
 
 object AutoUpdatePlugin : AbstractPlugin("AutoUpdatePlugin") {
-    override suspend fun applyImpl() {
+    override suspend fun apply() {
         UiContainers.topbarRightContainer.prepend(
             document.createElement("div").also { container ->
                 container.className = "topbar-property"

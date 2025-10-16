@@ -450,5 +450,5 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
         }
     }
 
-    override suspend fun applyImpl() = applier()
+    override suspend fun apply() = applier()
 }

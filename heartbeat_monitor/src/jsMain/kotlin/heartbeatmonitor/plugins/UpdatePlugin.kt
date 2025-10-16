@@ -6,7 +6,7 @@ import kotlinx.browser.document
 import kotlinx.browser.window
 
 object UpdatePlugin : AbstractPlugin("UpdatePlugin") {
-    override suspend fun applyImpl() {
+    override suspend fun apply() {
         UiContainers.topbarRightContainer.prepend(
             document.createElement("button").also { button ->
                 button.asDynamic().type = "button"

@@ -11,7 +11,6 @@ import heartbeatmonitor.plugins.TitlePlugin
 import heartbeatmonitor.plugins.UpdatePlugin
 import hello.heartbeatmonitor.core.Theme
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.await
 import kotlinx.coroutines.promise
 import org.w3c.dom.events.Event
 import kotlin.js.Promise
@@ -33,17 +32,17 @@ fun init(): Promise<Unit> = MainScope().promise {
     KanbanBroFirebaseHeartbeatCardProviderPlugin.init()
 
 
-    FaviconPlugin.apply().await()
+    FaviconPlugin.apply()
 
-    TitlePlugin.apply().await()
-    ThemeTogglePlugin.apply().await()
-    AutoUpdatePlugin.apply().await()
-    UpdatePlugin.apply().await()
+    TitlePlugin.apply()
+    ThemeTogglePlugin.apply()
+    AutoUpdatePlugin.apply()
+    UpdatePlugin.apply()
 
-    if (false) SampleCardProviderPlugin.apply().await()
-    FirebaseLoginPlugin.apply().await()
-    SortPlugin.apply().await()
-    KanbanBroFirebaseHeartbeatCardProviderPlugin.apply().await()
+    if (false) SampleCardProviderPlugin.apply()
+    FirebaseLoginPlugin.apply()
+    SortPlugin.apply()
+    KanbanBroFirebaseHeartbeatCardProviderPlugin.apply()
 
     KanbanBro.event.dispatchEvent(Event("pluginLoaded"))
 

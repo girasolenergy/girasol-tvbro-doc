@@ -9,7 +9,7 @@ import kotlinx.browser.window
 import org.w3c.dom.events.Event
 
 object SortPlugin : AbstractPlugin("SortPlugin") {
-    override suspend fun applyImpl() {
+    override suspend fun apply() {
         KanbanBro.cardComparators["empty"] = jsObjectOf(
             "compare" to { _: dynamic, _: dynamic, _: dynamic -> 0 },
             "getTitle" to { _: dynamic -> "Unsorted" },
