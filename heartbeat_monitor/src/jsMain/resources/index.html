@@ -408,7 +408,7 @@
         );
 
         console.log(message);
-    };
+    }
 
     function showDialog(initializer) {
         const dialogEvent = new EventTarget();
@@ -638,7 +638,7 @@
         }
     }
 
-    KanbanBro.event.addEventListener("pluginLoaded", () => scheduleUpdate());
+    window.KanbanBro.event.addEventListener("pluginLoaded", () => scheduleUpdate());
 
 
     // Theme
