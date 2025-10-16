@@ -1,5 +1,7 @@
-package hello
+package heartbeatmonitor.plugins
 
+import hello.AbstractPlugin
+import hello.UiContainers
 import hello.heartbeatmonitor.core.Theme
 import hello.mirrg.kotlin.event.initialEmit
 import kotlinx.browser.document

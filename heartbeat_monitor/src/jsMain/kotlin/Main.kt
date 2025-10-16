@@ -1,5 +1,14 @@
 package hello
 
+import heartbeatmonitor.plugins.AutoUpdatePlugin
+import heartbeatmonitor.plugins.FaviconPlugin
+import heartbeatmonitor.plugins.FirebaseLoginPlugin
+import heartbeatmonitor.plugins.KanbanBroFirebaseHeartbeatCardProviderPlugin
+import heartbeatmonitor.plugins.SampleCardProviderPlugin
+import heartbeatmonitor.plugins.SortPlugin
+import heartbeatmonitor.plugins.ThemeTogglePlugin
+import heartbeatmonitor.plugins.TitlePlugin
+import heartbeatmonitor.plugins.UpdatePlugin
 import hello.heartbeatmonitor.core.Theme
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.await

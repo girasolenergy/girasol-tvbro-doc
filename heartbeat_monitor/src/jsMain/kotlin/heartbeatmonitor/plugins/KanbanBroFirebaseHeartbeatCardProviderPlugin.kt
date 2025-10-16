@@ -1,5 +1,9 @@
-package hello
+package heartbeatmonitor.plugins
 
+import hello.AbstractPlugin
+import hello.KanbanBro
+import hello.jsObjectOf
+import hello.new
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
