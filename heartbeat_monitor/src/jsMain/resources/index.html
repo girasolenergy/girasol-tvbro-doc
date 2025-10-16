@@ -466,67 +466,6 @@
         img.src = url;
     }
 
-
-    // CardProvider
-
-    /**
-     * CardProvider := () => Promise<{
-     *   image: Element,
-     *   alerts: {
-     *     message: Element,
-     *     level: (1|2)
-     *   }[],
-     *   texts: Element
-     * }>[]
-     */
-    window.KanbanBro.cardProviders = [];
-
-
-    // CardComparator
-
-    window.KanbanBro.cardComparators = {};
-
-    function compareCards(a, b) {
-        for (let i = 0; i < window.KanbanBro.cardComparatorSpecifiers.length; i++) {
-            const cardComparatorSpecifier = window.KanbanBro.cardComparatorSpecifiers[i];
-            const cardComparator = window.KanbanBro.cardComparators[cardComparatorSpecifier.type];
-            if (cardComparator != null) {
-                const cmp = cardComparator.compare(cardComparatorSpecifier, a, b);
-                if (cmp !== 0) return cmp;
-            }
-        }
-        return 0;
-    }
-
-
-    // CardComparatorSpecifiers
-
-    {
-        const item = localStorage.getItem('kanbanbro.cardComparatorSpecifiers');
-        window.KanbanBro.cardComparatorSpecifiers = item != null ? JSON.parse(item) : [];
-    }
-
-    window.KanbanBro.event.addEventListener('cardComparatorSpecifiersChanged', () => {
-        const cardContainer = document.getElementById("cards");
-        const cardElements = Array.from(cardContainer.children);
-        cardElements.sort((a, b) => compareCards(a.card, b.card));
-        const fragment = document.createDocumentFragment();
-        for (const cardElement of cardElements) {
-            fragment.appendChild(cardElement);
-        }
-        cardContainer.appendChild(fragment);
-    });
-
-    function setCardComparatorSpecifiers(cardComparatorSpecifiers) {
-        window.KanbanBro.cardComparatorSpecifiers = cardComparatorSpecifiers;
-        localStorage.setItem('kanbanbro.cardComparatorSpecifiers', JSON.stringify(cardComparatorSpecifiers));
-        window.KanbanBro.event.dispatchEvent(new Event('cardComparatorSpecifiersChanged'));
-    }
-
-    window.KanbanBro.event.addEventListener("pluginLoaded", () => {
-        window.KanbanBro.event.dispatchEvent(new Event('cardComparatorSpecifiersChanged'));
-    });
-
 </script>
 <script type="module">
     import { init } from "./heartbeat_monitor.js";

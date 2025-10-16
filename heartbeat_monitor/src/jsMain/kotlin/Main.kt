@@ -1,4 +1,5 @@
 import heartbeatmonitor.core.Card
+import heartbeatmonitor.core.CardComparatorSpecifiers
 import heartbeatmonitor.core.Theme
 import heartbeatmonitor.plugins.AutoUpdatePlugin
 import heartbeatmonitor.plugins.FaviconPlugin
@@ -18,6 +19,7 @@ import kotlin.js.Promise
 fun init(): Promise<Unit> = MainScope().promise {
 
     Card.init()
+    CardComparatorSpecifiers.init()
     Theme.init()
 
 

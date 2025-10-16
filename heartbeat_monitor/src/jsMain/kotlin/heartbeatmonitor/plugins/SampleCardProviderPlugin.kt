@@ -1,37 +1,37 @@
 package heartbeatmonitor.plugins
 
-import KanbanBro
 import heartbeatmonitor.core.AbstractPlugin
+import heartbeatmonitor.core.Card
+import heartbeatmonitor.core.CardProvider
 import heartbeatmonitor.core.Dispatcher
 import heartbeatmonitor.util.isPrime
-import heartbeatmonitor.util.jsObjectOf
 import heartbeatmonitor.util.primeFactors
 import kotlinx.browser.document
 import kotlinx.browser.window
-import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.promise
+import kotlinx.coroutines.yield
 import org.w3c.dom.Image
 import kotlin.math.floor
 
 object SampleCardProviderPlugin : AbstractPlugin("SampleCardProviderPlugin") {
     override suspend fun apply() {
-        KanbanBro.cardProviders.push { signal: dynamic ->
+        CardProvider.currentCardProviders += CardProvider { coroutineScope ->
             (0 until 100).map { index ->
-                MainScope().promise {
-                    signal.throwIfAborted()
+                coroutineScope.async {
+                    yield()
                     val number = Dispatcher.dispatch {
-                        signal.throwIfAborted()
+                        yield()
                         delay(20L + floor(window.asDynamic().Math.random() * 120.0).toLong())
-                        signal.throwIfAborted()
+                        yield()
                         index + 1
                     }
-                    signal.throwIfAborted()
-                    jsObjectOf(
-                        "keys" to jsObjectOf(
+                    yield()
+                    Card(
+                        mapOf(
                             "name" to "$number",
                         ),
-                        "image" to Image().also { img ->
+                        Image().also { img ->
                             img.asDynamic().loading = "lazy"
                             img.asDynamic().decoding = "async"
                             img.src = if (isPrime(number)) {
@@ -41,22 +41,22 @@ object SampleCardProviderPlugin : AbstractPlugin("SampleCardProviderPlugin") {
                             }
                             img.alt = "${number}番目の画像"
                         },
-                        "alerts" to run {
-                            fun createAlert(message: String, level: Int): dynamic {
-                                return jsObjectOf(
-                                    "message" to document.createElement("span").also { span ->
+                        run {
+                            fun createAlert(message: String, level: Int): Card.Alert {
+                                return Card.Alert(
+                                    document.createElement("span").also { span ->
                                         span.textContent = message
                                     },
-                                    "level" to level,
+                                    level,
                                 )
                             }
 
-                            val alerts = mutableListOf<dynamic>()
-                            if (number % 3 === 0) alerts.add(createAlert("3の倍数", 2))
-                            if (number % 5 === 0) alerts.add(createAlert("5の倍数", 1))
-                            alerts.toTypedArray()
+                            val alerts = mutableListOf<Card.Alert>()
+                            if (number % 3 === 0) alerts += createAlert("3の倍数", 2)
+                            if (number % 5 === 0) alerts += createAlert("5の倍数", 1)
+                            alerts
                         },
-                        "texts" to run {
+                        run {
                             val texts = mutableListOf<dynamic>()
                             val factors = if (number == 1) mutableListOf() else primeFactors(number)
                             factors
@@ -67,11 +67,11 @@ object SampleCardProviderPlugin : AbstractPlugin("SampleCardProviderPlugin") {
                                         textDiv.textContent = it
                                     }
                                 }
-                            texts.toTypedArray()
+                            texts
                         },
                     )
                 }
-            }.toTypedArray()
+            }
         }
     }
 }

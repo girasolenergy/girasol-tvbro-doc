@@ -3,14 +3,19 @@ package heartbeatmonitor.plugins
 import KanbanBro
 import heartbeatmonitor.core.AbstractPlugin
 import heartbeatmonitor.core.Card
+import heartbeatmonitor.core.CardProvider
 import heartbeatmonitor.core.Dispatcher
 import heartbeatmonitor.util.jsObjectOf
 import heartbeatmonitor.util.new
 import kotlinx.browser.document
 import kotlinx.browser.window
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.await
 import kotlinx.coroutines.promise
+import kotlinx.coroutines.yield
 import org.w3c.dom.Image
 import org.w3c.files.Blob
 import kotlin.js.Date
@@ -25,9 +30,9 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
         val getBytes = firebaseStorage.getBytes
         val getMetadata = firebaseStorage.getMetadata
 
-        var providers = mutableListOf<(dynamic) -> Promise<dynamic>>()
+        var providers = mutableListOf<(CoroutineScope) -> Deferred<Card>>()
 
-        suspend fun rebuildForApp(app: dynamic, providers: MutableList<(dynamic) -> Promise<dynamic>>) {
+        suspend fun rebuildForApp(app: dynamic, providers: MutableList<(CoroutineScope) -> Deferred<Card>>) {
             val user = KanbanBro.firebase.getAuth(app).currentUser
 
             if (user == null) {
@@ -43,52 +48,52 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
             }
 
             (files.prefixes as Array<dynamic>).forEach { folderRef ->
-                providers.add { signal: dynamic ->
-                    MainScope().promise {
+                providers.add { coroutineScope ->
+                    coroutineScope.async {
                         Dispatcher.dispatch {
-                            signal.throwIfAborted()
+                            yield()
                             val imageBytes = (getBytes(ref(folderRef, "screenshot.png")) as Promise<dynamic>).await()
-                            signal.throwIfAborted()
+                            yield()
                             val settingsBytes = (getBytes(ref(folderRef, "settings.json")) as Promise<dynamic>).await()
-                            signal.throwIfAborted()
+                            yield()
                             val metadata = (getMetadata(ref(folderRef, "settings.json")) as Promise<dynamic>).await()
-                            signal.throwIfAborted()
+                            yield()
 
                             val settings = JSON.parse<dynamic>(new(window.asDynamic().TextDecoder).decode(settingsBytes) as String)
                             val name = settings.settings_code.settings.heartbeat_title ?: folderRef.name
                             console.log("$name", settings, metadata)
 
-                            jsObjectOf(
-                                "keys" to jsObjectOf(
+                            Card(
+                                mapOf(
                                     "name" to name,
                                     "updated" to Date.parse(metadata.updated),
                                 ),
-                                "image" to Image().also { img ->
+                                Image().also { img ->
                                     img.asDynamic().loading = "lazy"
                                     img.asDynamic().decoding = "async"
                                     window.asDynamic().setImageBlob(img, Blob(arrayOf(imageBytes), jsObjectOf("type" to "image/png")))
                                     img.alt = name
                                 },
-                                "alerts" to run {
-                                    fun createAlert(message: String, level: Int): dynamic {
-                                        return jsObjectOf(
-                                            "message" to document.createElement("span").also { span ->
+                                run {
+                                    fun createAlert(message: String, level: Int): Card.Alert {
+                                        return Card.Alert(
+                                            document.createElement("span").also { span ->
                                                 span.textContent = message
                                             },
-                                            "level" to level,
+                                            level,
                                         )
                                     }
 
-                                    val alerts = mutableListOf<dynamic>()
-                                    if (settings.main_activity_has_focus as Boolean? == false) alerts.add(createAlert("Lost Focus", 2))
-                                    if (settings.main_activity_resumed as Boolean? == false) alerts.add(createAlert("Not Resumed", 2))
-                                    if (settings.main_activity_ui_active as Boolean? == true) alerts.add(createAlert("UI Opened", 1))
+                                    val alerts = mutableListOf<Card.Alert>()
+                                    if (settings.main_activity_has_focus as Boolean? == false) alerts += createAlert("Lost Focus", 2)
+                                    if (settings.main_activity_resumed as Boolean? == false) alerts += createAlert("Not Resumed", 2)
+                                    if (settings.main_activity_ui_active as Boolean? == true) alerts += createAlert("UI Opened", 1)
                                     if (Date.now() - Date.parse(metadata.updated as String) >= 1000 * 60 * 60 * 2) {
-                                        alerts.add(createAlert("No updates (2 Hours+)", 2))
+                                        alerts += createAlert("No updates (2 Hours+)", 2)
                                     }
-                                    alerts.toTypedArray()
+                                    alerts
                                 },
-                                "texts" to run {
+                                run {
                                     val texts = mutableListOf<dynamic>()
                                     texts.add(document.createElement("div").also { div ->
                                         div.className = "name"
@@ -99,16 +104,17 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                         div.textContent = Date(metadata.updated as String).asDynamic().toLocaleString(undefined, jsObjectOf("dateStyle" to "medium", "timeStyle" to "medium"))
                                         div.asDynamic().title = "${metadata.updated}"
                                     })
-                                    texts.toTypedArray()
+                                    texts
                                 },
-                                "_debug" to jsObjectOf(
+                            ).also {
+                                it.asDynamic()["_debug"] = jsObjectOf(
                                     "appName" to app.name,
                                     "app" to app,
                                     "user" to user,
                                     "settings" to settings,
                                     "metadata" to metadata,
-                                ),
-                            )
+                                )
+                            }
                         }
                     }
                 }
@@ -116,7 +122,7 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
         }
 
         suspend fun rebuild() {
-            val providers2 = mutableListOf<(dynamic) -> Promise<dynamic>>()
+            val providers2 = mutableListOf<(CoroutineScope) -> Deferred<Card>>()
             (KanbanBro.appNames as Array<dynamic>).forEach { appName ->
                 rebuildForApp(KanbanBro.firebase.getApp(appName), providers2)
             }
@@ -125,7 +131,7 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
             console.log("[KanbanBroFirebaseHeartbeatCardProviderPlugin] Rebuilt: found ${providers.size} providers")
         }
 
-        KanbanBro.cardProviders.push { signal: dynamic -> providers.map { p -> p(signal) }.toTypedArray() }
+        CardProvider.currentCardProviders += CardProvider { coroutineScope -> providers.map { p -> p(coroutineScope) } }
 
         KanbanBro.appsEvent.addEventListener("appNamesChanged", { MainScope().promise { rebuild() } })
         val unsubscribers = jsObjectOf()

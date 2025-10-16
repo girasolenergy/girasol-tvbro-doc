@@ -1,87 +1,103 @@
 package heartbeatmonitor.core
 
 import KanbanBro
-import heartbeatmonitor.util.new
 import kotlinx.browser.document
-import kotlinx.browser.window
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 import org.w3c.dom.asList
+import kotlin.coroutines.EmptyCoroutineContext
 
-object Card {
+class Card(
+    val keys: Map<String, dynamic>,
+    val image: dynamic,
+    val alerts: List<Alert>,
+    val texts: List<dynamic>,
+) {
+    companion object {
 
-    var currentUpdateAbortController: dynamic = null
+        private var currentUpdateCoroutineScope: CoroutineScope? = null
 
-    fun scheduleUpdate() {
-        console.log("[scheduleUpdate] Scheduling update")
+        fun scheduleUpdate() {
+            console.log("[scheduleUpdate] Scheduling update")
 
-        if (currentUpdateAbortController != null) {
-            currentUpdateAbortController.abort()
-            currentUpdateAbortController = null
-        }
-        val abortController = new(window.asDynamic().AbortController)
-        currentUpdateAbortController = abortController
+            if (currentUpdateCoroutineScope != null) {
+                currentUpdateCoroutineScope!!.cancel("Aborted by new update")
+                currentUpdateCoroutineScope = null
+            }
+            val coroutineScope = CoroutineScope(EmptyCoroutineContext)
+            currentUpdateCoroutineScope = coroutineScope
 
-        UiContainers.cards.innerHTML = ""
-        KanbanBro.cardProviders.flatMap { provider -> provider(abortController.signal) }.forEach { cardPromise ->
-            cardPromise.then { card ->
-                abortController.signal.throwIfAborted()
+            UiContainers.cards.innerHTML = ""
+            CardProvider.currentCardProviders.flatMap { provider -> provider.generate(coroutineScope) }.forEach { cardDeferred ->
+                coroutineScope.launch {
+                    val card = cardDeferred.await()
 
-                val cardContainer = UiContainers.cards
+                    yield()
 
-                val refNode = cardContainer.children.asList().firstOrNull { child ->
-                    window.asDynamic().compareCards(child.asDynamic().card, card) > 0
-                }
+                    val cardContainer = UiContainers.cards
 
-                cardContainer.insertBefore(
-                    document.createElement("div").also { cardDiv ->
-                        cardDiv.className = "card"
-                        cardDiv.asDynamic().card = card
+                    val refNode = cardContainer.children.asList().firstOrNull { child ->
+                        CardComparator.currentComparator.compare(child.asDynamic().card, card) > 0
+                    }
 
-                        cardDiv.append(
-                            document.createElement("div").also { screenshotDiv ->
-                                screenshotDiv.className = "screenshot"
-                                screenshotDiv.append(card.image)
+                    cardContainer.insertBefore(
+                        document.createElement("div").also { cardDiv ->
+                            cardDiv.className = "card"
+                            cardDiv.asDynamic().card = card
 
-                                if (card.alerts.length > 0) {
-                                    cardDiv.classList.add("yellow-alert")
-                                    screenshotDiv.classList.add("yellow-alert")
-                                    if (card.alerts.some { a -> a.level === 2 }) {
-                                        cardDiv.classList.add("red-alert")
+                            cardDiv.append(
+                                document.createElement("div").also { screenshotDiv ->
+                                    screenshotDiv.className = "screenshot"
+                                    screenshotDiv.append(card.image)
+
+                                    if (card.alerts.isNotEmpty()) {
+                                        cardDiv.classList.add("yellow-alert")
+                                        screenshotDiv.classList.add("yellow-alert")
+                                        if (card.alerts.any { a -> a.level === 2 }) {
+                                            cardDiv.classList.add("red-alert")
+                                        }
+
+                                        screenshotDiv.append(
+                                            document.createElement("div").also { alertsDiv ->
+                                                alertsDiv.className = "alerts"
+                                                card.alerts.forEach { alert ->
+                                                    alertsDiv.append(
+                                                        document.createElement("div").also { alertDiv ->
+                                                            alertDiv.className = "alert alert-${alert.level}"
+                                                            alertDiv.append(alert.message)
+                                                        },
+                                                    )
+                                                }
+                                            },
+                                        )
                                     }
-
-                                    screenshotDiv.append(
-                                        document.createElement("div").also { alertsDiv ->
-                                            alertsDiv.className = "alerts"
-                                            card.alerts.forEach { alert ->
-                                                alertsDiv.append(
-                                                    document.createElement("div").also { alertDiv ->
-                                                        alertDiv.className = "alert alert-${alert.level}"
-                                                        alertDiv.append(alert.message)
-                                                    },
-                                                )
+                                },
+                                document.createElement("div").also { textsDiv ->
+                                    textsDiv.className = "texts"
+                                    textsDiv.append(
+                                        document.createElement("div").also { textDiv ->
+                                            card.texts.forEach { text ->
+                                                textDiv.append(text)
                                             }
                                         },
                                     )
-                                }
-                            },
-                            document.createElement("div").also { textsDiv ->
-                                textsDiv.className = "texts"
-                                textsDiv.append(
-                                    document.createElement("div").also { textDiv ->
-                                        card.texts.forEach { text ->
-                                            textDiv.append(text)
-                                        }
-                                    },
-                                )
-                            },
-                        )
-                    },
-                    refNode,
-                )
+                                },
+                            )
+                        },
+                        refNode,
+                    )
+                }
             }
         }
+
+        fun init() {
+            KanbanBro.event.addEventListener("pluginLoaded", { scheduleUpdate() })
+        }
+
     }
 
-    fun init() {
-        KanbanBro.event.addEventListener("pluginLoaded", { scheduleUpdate() })
-    }
+    class Alert(val message: dynamic, val level: Int)
+
 }

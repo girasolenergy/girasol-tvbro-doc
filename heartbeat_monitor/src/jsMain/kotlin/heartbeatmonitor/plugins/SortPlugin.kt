@@ -1,38 +1,43 @@
 package heartbeatmonitor.plugins
 
-import KanbanBro
 import heartbeatmonitor.core.AbstractPlugin
+import heartbeatmonitor.core.Card
+import heartbeatmonitor.core.CardComparator
+import heartbeatmonitor.core.CardComparatorSpecifiers
 import heartbeatmonitor.core.UiContainers
 import heartbeatmonitor.util.jsObjectOf
 import kotlinx.browser.document
 import kotlinx.browser.window
 import org.w3c.dom.events.Event
+import kotlin.math.sign
 
 object SortPlugin : AbstractPlugin("SortPlugin") {
     override suspend fun apply() {
-        KanbanBro.cardComparators["empty"] = jsObjectOf(
-            "compare" to { _: dynamic, _: dynamic, _: dynamic -> 0 },
-            "getTitle" to { _: dynamic -> "Unsorted" },
-        )
-        KanbanBro.cardComparators["name"] = jsObjectOf(
-            "compare" to { specifier: dynamic, a: dynamic, b: dynamic ->
-                val cmp = (a.keys?.name as String? ?: "").compareTo(b.keys?.name as String? ?: "")
-                if (specifier.isDescending as Boolean) -cmp else cmp
-            },
-            "getTitle" to { specifier: dynamic -> if (specifier.isDescending as Boolean) "Name (desc)" else "Name" },
-        )
-        KanbanBro.cardComparators["updated"] = jsObjectOf(
-            "compare" to { specifier: dynamic, a: dynamic, b: dynamic ->
-                val cmp = (a.keys?.updated as Number? ?: 0.0).toDouble() - (b.keys?.updated as Number? ?: 0.0).toDouble()
-                if (specifier.isDescending as Boolean) -cmp else cmp
-            },
-            "getTitle" to { specifier: dynamic -> if (specifier.isDescending as Boolean) "Newest Update" else "Oldest Update" },
-        )
+        CardComparator.registry["empty"] = object : CardComparator {
+            override fun compare(specifier: dynamic, a: Card, b: Card) = 0
+            override fun getTitle(specifier: dynamic) = "Unsorted"
+        }
+        CardComparator.registry["name"] = object : CardComparator {
+            override fun compare(specifier: dynamic, a: Card, b: Card): Int {
+                val cmp = (a.keys["name"] as String? ?: "").compareTo(b.keys["name"] as String? ?: "")
+                return if (specifier.isDescending as Boolean) -cmp else cmp
+            }
+
+            override fun getTitle(specifier: dynamic) = if (specifier.isDescending as Boolean) "Name (desc)" else "Name"
+        }
+        CardComparator.registry["updated"] = object : CardComparator {
+            override fun compare(specifier: dynamic, a: Card, b: Card): Int {
+                val cmp = (a.keys["updated"] as Number? ?: 0.0).toDouble() - (b.keys["updated"] as Number? ?: 0.0).toDouble()
+                return if (specifier.isDescending as Boolean) -cmp.sign.toInt() else cmp.sign.toInt()
+            }
+
+            override fun getTitle(specifier: dynamic) = if (specifier.isDescending as Boolean) "Newest Update" else "Oldest Update"
+        }
 
         fun getTitle(cardComparatorSpecifier: dynamic): String {
-            val cardComparator = KanbanBro.cardComparators[cardComparatorSpecifier.type]
+            val cardComparator = CardComparator.registry[cardComparatorSpecifier.type]
             if (cardComparator == null) return "Invalid Comparator"
-            return cardComparator.getTitle(cardComparatorSpecifier) as String
+            return cardComparator.getTitle(cardComparatorSpecifier)
         }
 
         val cyclerCardComparatorSpecifiers = arrayOf(
@@ -66,7 +71,7 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
                         buttonsDiv.className = "dialog-container"
                         fun updateButtons() {
                             buttonsDiv.innerHTML = ""
-                            (KanbanBro.cardComparatorSpecifiers as Array<dynamic>).forEachIndexed { index, cardComparatorSpecifier ->
+                            CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.forEachIndexed { index, cardComparatorSpecifier ->
                                 buttonsDiv.append(
                                     document.createElement("div").also { buttonDiv ->
                                         buttonDiv.asDynamic().style.display = "flex"
@@ -80,9 +85,9 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
                                                         toggleButton.classList.add("dialog-button")
                                                         toggleButton.textContent = getTitle(cardComparatorSpecifier)
                                                         toggleButton.addEventListener("click", {
-                                                            val cardComparatorSpecifiers = (KanbanBro.cardComparatorSpecifiers as Array<dynamic>).toMutableList()
+                                                            val cardComparatorSpecifiers = CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.toMutableList()
                                                             cardComparatorSpecifiers[index] = getNextCardComparatorSpecifier(cardComparatorSpecifiers[index])
-                                                            window.asDynamic().setCardComparatorSpecifiers(cardComparatorSpecifiers.toTypedArray())
+                                                            CardComparatorSpecifiers.currentCardComparatorSpecifiers.value = cardComparatorSpecifiers
                                                         })
                                                     },
                                                 )
@@ -95,9 +100,9 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
                                                         removeButton.classList.add("dialog-button")
                                                         removeButton.textContent = "🗑️"
                                                         removeButton.addEventListener("click", {
-                                                            val cardComparatorSpecifiers = (KanbanBro.cardComparatorSpecifiers as Array<dynamic>).toMutableList()
+                                                            val cardComparatorSpecifiers = CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.toMutableList()
                                                             cardComparatorSpecifiers.removeAt(index)
-                                                            window.asDynamic().setCardComparatorSpecifiers(cardComparatorSpecifiers.toTypedArray())
+                                                            CardComparatorSpecifiers.currentCardComparatorSpecifiers.value = cardComparatorSpecifiers
                                                         })
                                                     },
                                                 )
@@ -107,7 +112,11 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
                                 )
                             }
                         }
-                        KanbanBro.event.addEventListener("cardComparatorSpecifiersChanged", { updateButtons() })
+
+                        val remover = CardComparatorSpecifiers.currentCardComparatorSpecifiers.register { updateButtons() }
+                        dialogEvent.addEventListener("close", {
+                            remover.remove()
+                        }, jsObjectOf("once" to true))
                         updateButtons()
                     },
                     document.createElement("button").also { addButton ->
@@ -115,9 +124,9 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
                         addButton.classList.add("dialog-transparent-button")
                         addButton.textContent = "＋"
                         addButton.addEventListener("click", {
-                            val cardComparatorSpecifiers = (KanbanBro.cardComparatorSpecifiers as Array<dynamic>).toMutableList()
+                            val cardComparatorSpecifiers = CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.toMutableList()
                             cardComparatorSpecifiers.add(jsObjectOf("type" to "empty"))
-                            window.asDynamic().setCardComparatorSpecifiers(cardComparatorSpecifiers.toTypedArray())
+                            CardComparatorSpecifiers.currentCardComparatorSpecifiers.value = cardComparatorSpecifiers
                         })
                     },
                     document.createElement("div").also { actionsDiv ->
@@ -146,13 +155,13 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
                         sortButton.textContent = "Sort"
 
                         fun updateButton() {
-                            sortButton.textContent = when (KanbanBro.cardComparatorSpecifiers.length as Int) {
+                            sortButton.textContent = when (CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.size) {
                                 0 -> "Unsorted"
-                                1 -> getTitle(KanbanBro.cardComparatorSpecifiers[0])
-                                else -> getTitle(KanbanBro.cardComparatorSpecifiers[0]) + "+" + ((KanbanBro.cardComparatorSpecifiers.length as Int) - 1)
+                                1 -> getTitle(CardComparatorSpecifiers.currentCardComparatorSpecifiers.value[0])
+                                else -> getTitle(CardComparatorSpecifiers.currentCardComparatorSpecifiers.value[0]) + "+" + (CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.size - 1)
                             }
                         }
-                        KanbanBro.event.addEventListener("cardComparatorSpecifiersChanged", { updateButton() })
+                        CardComparatorSpecifiers.currentCardComparatorSpecifiers.register { updateButton() }
                         updateButton()
 
                         sortButton.addEventListener("click", { openSortDialog() })
