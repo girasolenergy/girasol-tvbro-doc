@@ -1,4 +1,4 @@
-package hello
+package hello.heartbeatmonitor.core
 
 import kotlinx.browser.document
 

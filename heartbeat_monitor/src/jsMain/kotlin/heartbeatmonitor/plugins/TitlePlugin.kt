@@ -1,7 +1,7 @@
 package heartbeatmonitor.plugins
 
-import hello.UiContainers
 import hello.heartbeatmonitor.core.AbstractPlugin
+import hello.heartbeatmonitor.core.UiContainers
 import kotlinx.browser.document
 
 object TitlePlugin : AbstractPlugin("TitlePlugin") {

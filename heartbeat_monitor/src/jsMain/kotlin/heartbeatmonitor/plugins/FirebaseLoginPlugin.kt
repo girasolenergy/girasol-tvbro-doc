@@ -3,8 +3,8 @@ package heartbeatmonitor.plugins
 import heartbeatmonitor.util.jsObjectOf
 import heartbeatmonitor.util.new
 import hello.KanbanBro
-import hello.UiContainers
 import hello.heartbeatmonitor.core.AbstractPlugin
+import hello.heartbeatmonitor.core.UiContainers
 import kotlinx.browser.document
 import kotlinx.browser.localStorage
 import kotlinx.browser.window
