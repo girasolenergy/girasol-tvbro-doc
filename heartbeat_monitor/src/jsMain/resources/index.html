@@ -381,35 +381,6 @@
         return element;
     }
 
-    function showToast(message) {
-        const toastEvent = new EventTarget();
-
-        const container = document.getElementById("toast-container");
-
-        container.append(
-            also(document.createElement("div"), toastDiv => {
-                toastDiv.className = "toast";
-                toastDiv.textContent = message;
-                requestAnimationFrame(() => toastDiv.classList.add('show'));
-
-                toastEvent.addEventListener("dismiss", () => {
-                    toastDiv.classList.remove('show');
-                    toastDiv.addEventListener('transitionend', () => {
-                        container.removeChild(toastDiv);
-                    }, { once: true });
-                }, { once: true });
-
-                const timer = setTimeout(() => toastEvent.dispatchEvent(new Event("dismiss")), 5000);
-                toastDiv.addEventListener('click', () => {
-                    clearTimeout(timer);
-                    toastEvent.dispatchEvent(new Event("dismiss"));
-                });
-            }),
-        );
-
-        console.log(message);
-    }
-
 </script>
 <script type="module">
     import { init } from "./heartbeat_monitor.js";

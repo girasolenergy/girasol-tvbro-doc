@@ -4,6 +4,7 @@ import KanbanBro
 import heartbeatmonitor.core.AbstractPlugin
 import heartbeatmonitor.core.UiContainers
 import heartbeatmonitor.core.showDialog
+import heartbeatmonitor.core.showToast
 import heartbeatmonitor.util.jsObjectOf
 import heartbeatmonitor.util.new
 import kotlinx.browser.document
@@ -141,7 +142,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                                     "auth/popup-closed-by-user" -> "Popup closed before completing sign in."
                                                     else -> if (e != null && e.message != null) e.message as String else "$e"
                                                 }
-                                                window.asDynamic().showToast("Failed to sign in: $msg")
+                                                showToast("Failed to sign in: $msg")
                                             } finally {
                                                 googleButton.disabled = false
                                             }
@@ -164,7 +165,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                                 val email = window.prompt("Enter email address") ?: return@promise
                                                 val password = window.prompt("Enter password") ?: return@promise
                                                 (signInWithEmailAndPassword(getAuth(app), email, password) as Promise<dynamic>).await()
-                                                window.asDynamic().showToast("Signed in successfully.")
+                                                showToast("Signed in successfully.")
                                                 dialogEvent.dispatchEvent(Event("close"))
                                             } catch (e: dynamic) {
                                                 console.error("Email sign in failed", e)
@@ -177,7 +178,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                                     "auth/network-request-failed" -> "Network error. Please check your connection."
                                                     else -> if (e != null && e.message != null) e.message as String else "$e"
                                                 }
-                                                window.asDynamic().showToast("Failed to sign in: $msg")
+                                                showToast("Failed to sign in: $msg")
                                             } finally {
                                                 emailSignInButton.disabled = false
                                             }
@@ -197,7 +198,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                         MainScope().promise {
                                             val currentUser = getAuth(app).currentUser
                                             if (currentUser == null) {
-                                                window.asDynamic().showToast("Please sign in first.")
+                                                showToast("Please sign in first.")
                                                 return@promise
                                             }
                                             linkEmailButton.disabled = true
@@ -205,12 +206,12 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                                 val email = window.prompt("Enter email address") ?: return@promise
                                                 val password = window.prompt("Enter password (min 6 chars)") ?: return@promise
                                                 if (password.length < 6) {
-                                                    window.asDynamic().showToast("Password must be at least 6 characters.")
+                                                    showToast("Password must be at least 6 characters.")
                                                     return@promise
                                                 }
                                                 val credential = EmailAuthProvider.credential(email, password)
                                                 (linkWithCredential(currentUser, credential) as Promise<dynamic>).await()
-                                                window.asDynamic().showToast("Linked email/password to your account.")
+                                                showToast("Linked email/password to your account.")
                                                 dialogEvent.dispatchEvent(Event("close"))
                                             } catch (e: dynamic) {
                                                 console.error("Link email failed", e)
@@ -220,7 +221,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                                     "auth/requires-recent-login" -> "Please reauthenticate and try again."
                                                     else -> if (e != null && e.message != null) e.message as String else "$e"
                                                 }
-                                                window.asDynamic().showToast("Failed to link: $msg")
+                                                showToast("Failed to link: $msg")
                                             } finally {
                                                 linkEmailButton.disabled = false
                                             }
@@ -246,7 +247,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                                 dialogEvent.dispatchEvent(Event("close"))
                                             } catch (e: dynamic) {
                                                 console.error("Sign out failed", e)
-                                                window.asDynamic().showToast("Failed to sign out: ${if (e != null && e.message != null) e.message as String else "$e"}")
+                                                showToast("Failed to sign out: ${if (e != null && e.message != null) e.message as String else "$e"}")
                                             } finally {
                                                 logoutButton.disabled = false
                                             }
