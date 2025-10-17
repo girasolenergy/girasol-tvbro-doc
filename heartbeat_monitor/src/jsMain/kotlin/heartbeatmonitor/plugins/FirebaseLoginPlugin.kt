@@ -3,6 +3,7 @@ package heartbeatmonitor.plugins
 import KanbanBro
 import heartbeatmonitor.core.AbstractPlugin
 import heartbeatmonitor.core.UiContainers
+import heartbeatmonitor.core.showDialog
 import heartbeatmonitor.util.jsObjectOf
 import heartbeatmonitor.util.new
 import kotlinx.browser.document
@@ -107,7 +108,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
             }
 
             fun openLoginDialog(app: dynamic) {
-                window.asDynamic().showDialog { container: dynamic, dialogEvent: dynamic ->
+                showDialog { container, dialogEvent ->
                     container.append(
 
                         // タイトル
@@ -279,7 +280,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
             }
 
             fun openAccountsDialog() {
-                window.asDynamic().showDialog { container: dynamic, dialogEvent: dynamic ->
+                showDialog { container, dialogEvent ->
                     container.append(
 
                         // タイトル

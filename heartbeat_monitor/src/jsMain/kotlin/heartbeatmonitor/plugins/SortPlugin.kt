@@ -5,9 +5,9 @@ import heartbeatmonitor.core.Card
 import heartbeatmonitor.core.CardComparator
 import heartbeatmonitor.core.CardComparatorSpecifiers
 import heartbeatmonitor.core.UiContainers
+import heartbeatmonitor.core.showDialog
 import heartbeatmonitor.util.jsObjectOf
 import kotlinx.browser.document
-import kotlinx.browser.window
 import org.w3c.dom.events.Event
 import kotlin.math.sign
 
@@ -61,7 +61,7 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
         }
 
         fun openSortDialog() {
-            window.asDynamic().showDialog { container: dynamic, dialogEvent: dynamic ->
+            showDialog { container, dialogEvent ->
                 container.append(
                     document.createElement("div").also { titleDiv ->
                         titleDiv.textContent = "Sort"

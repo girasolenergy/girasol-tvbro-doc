@@ -410,35 +410,6 @@
         console.log(message);
     }
 
-    function showDialog(initializer) {
-        const dialogEvent = new EventTarget();
-
-        document.body.append(
-            also(document.createElement("div"), overlayDiv => {
-                overlayDiv.className = "dialog-overlay";
-
-                overlayDiv.addEventListener("click", e => {
-                    if (e.target === overlayDiv) dialogEvent.dispatchEvent(new Event("close"));
-                });
-                dialogEvent.addEventListener("close", () => {
-                    document.body.removeChild(overlayDiv);
-                }, { once: true });
-
-                overlayDiv.append(
-                    also(document.createElement("div"), frameDiv => {
-                        frameDiv.className = "dialog-frame";
-                        frameDiv.append(
-                            also(document.createElement("div"), containerDiv => {
-                                containerDiv.className = "dialog-container";
-                                initializer(containerDiv, dialogEvent)
-                            }),
-                        );
-                    }),
-                );
-            }),
-        );
-    }
-
 </script>
 <script type="module">
     import { init } from "./heartbeat_monitor.js";
