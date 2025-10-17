@@ -125,7 +125,7 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
 
         suspend fun rebuild() {
             val providers2 = mutableListOf<(CoroutineScope) -> Deferred<Card>>()
-            (KanbanBro.appNames as Array<dynamic>).forEach { appName ->
+            FirebaseLoginPlugin.appNames.value.forEach { appName ->
                 rebuildForApp(KanbanBro.firebase.getApp(appName), providers2)
             }
             providers = providers2
@@ -135,7 +135,7 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
 
         CardProvider.currentCardProviders += CardProvider { coroutineScope -> providers.map { p -> p(coroutineScope) } }
 
-        KanbanBro.appsEvent.addEventListener("appNamesChanged", { MainScope().promise { rebuild() } })
+        FirebaseLoginPlugin.appNames.register { MainScope().promise { rebuild() } }
         val unsubscribers = jsObjectOf()
         KanbanBro.appsEvent.addEventListener("added", { e: dynamic ->
             unsubscribers[e.detail.name] = KanbanBro.firebase.onAuthStateChanged(KanbanBro.firebase.getAuth(e.detail), { _ -> MainScope().promise { rebuild() } })

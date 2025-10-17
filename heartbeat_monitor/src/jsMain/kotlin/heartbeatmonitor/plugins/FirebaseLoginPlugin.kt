@@ -5,14 +5,19 @@ import heartbeatmonitor.core.AbstractPlugin
 import heartbeatmonitor.core.UiContainers
 import heartbeatmonitor.core.showDialog
 import heartbeatmonitor.core.showToast
+import heartbeatmonitor.util.getValue
 import heartbeatmonitor.util.jsObjectOf
 import heartbeatmonitor.util.new
+import heartbeatmonitor.util.property
+import heartbeatmonitor.util.setValue
+import heartbeatmonitor.util.xmap
 import kotlinx.browser.document
 import kotlinx.browser.localStorage
 import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.await
 import kotlinx.coroutines.promise
+import mirrg.kotlin.event.ObservableValue
 import onPluginLoaded
 import org.w3c.dom.CustomEvent
 import org.w3c.dom.Element
@@ -32,6 +37,14 @@ val firebaseConfig = jsObjectOf(
 )
 
 object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
+
+    val appNames = ObservableValue<List<String>>(listOf())
+    var appNamesStorage by localStorage.property("kanbanbro.appNames")
+        .xmap(
+            { if (it != null) (JSON.parse(it) as Array<String>).toList() else listOf("[DEFAULT]") },
+            { JSON.stringify(it.toTypedArray()) }
+        )
+
     lateinit var applier: suspend () -> Unit
 
     override suspend fun init() {
@@ -59,13 +72,6 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
         )
 
         KanbanBro.appsEvent = new(window.asDynamic().EventTarget)
-        KanbanBro.appNames = arrayOf<dynamic>()
-
-        fun setAppNames(appNames: Array<dynamic>) {
-            KanbanBro.appNames = appNames
-            localStorage.setItem("kanbanbro.appNames", JSON.stringify(appNames))
-            KanbanBro.appsEvent.dispatchEvent(Event("appNamesChanged"))
-        }
 
         applier = {
 
@@ -296,7 +302,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                             buttonsDiv.className = "dialog-container"
                             fun updateButtons() {
                                 buttonsDiv.innerHTML = ""
-                                (KanbanBro.appNames as Array<dynamic>).forEach { appName ->
+                                appNames.value.forEach { appName ->
                                     val app = getApp(appName)
                                     buttonsDiv.append(
                                         document.createElement("div").also { buttonDiv ->
@@ -336,7 +342,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                                                 MainScope().promise {
                                                                     (signOut(getAuth(app)) as Promise<dynamic>).await()
                                                                     deleteApp(app)
-                                                                    setAppNames((KanbanBro.appNames as Array<dynamic>).filter { appName -> appName != app.name }.toTypedArray())
+                                                                    appNames.value = appNames.value - (app.name as String)
                                                                     KanbanBro.appsEvent.dispatchEvent(CustomEvent("removed", jsObjectOf("detail" to app)))
                                                                 }
                                                             })
@@ -349,7 +355,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                     )
                                 }
                             }
-                            KanbanBro.appsEvent.addEventListener("appNamesChanged", { updateButtons() })
+                            appNames.register { updateButtons() }
                             updateButtons()
                         },
 
@@ -359,9 +365,9 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                             addButton.classList.add("dialog-transparent-button")
                             addButton.textContent = "＋"
                             addButton.addEventListener("click", {
-                                val appName = if ("[DEFAULT]" in (KanbanBro.appNames as Array<dynamic>)) window.asDynamic().crypto.randomUUID() as String else "[DEFAULT]"
+                                val appName = if ("[DEFAULT]" in appNames.value) window.asDynamic().crypto.randomUUID() as String else "[DEFAULT]"
                                 val app = initializeApp(firebaseConfig, appName)
-                                setAppNames(((KanbanBro.appNames as Array<dynamic>).toList() + appName).toTypedArray())
+                                appNames.value = appNames.value + appName
                                 KanbanBro.appsEvent.dispatchEvent(CustomEvent("added", jsObjectOf("detail" to app)))
                             })
                         },
@@ -411,7 +417,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                         closeEvent = new(window.asDynamic().EventTarget)
 
                         container.innerHTML = ""
-                        (KanbanBro.appNames as Array<dynamic>).forEach { appName ->
+                        appNames.value.forEach { appName ->
                             val app = getApp(appName)
                             container.append(
                                 document.createElement("div").also { avatarDiv ->
@@ -434,20 +440,24 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                             )
                         }
                     }
-                    KanbanBro.appsEvent.addEventListener("appNamesChanged", { updateAvatar() })
+                    appNames.register { updateAvatar() }
                     updateAvatar()
                 },
             )
 
+            // appNames
+            appNames.register {
+                appNamesStorage = appNames.value
+            }
             onPluginLoaded.register {
-                KanbanBro.appNames = JSON.parse(localStorage.getItem("kanbanbro.appNames") ?: "null") ?: arrayOf("[DEFAULT]")
-                (KanbanBro.appNames as Array<dynamic>).forEach { appName ->
-                    initializeApp(firebaseConfig, appName)
+                appNames.value = appNamesStorage.also {
+                    it.forEach { appName ->
+                        initializeApp(firebaseConfig, appName)
+                    }
                 }
-                (KanbanBro.appNames as Array<dynamic>).forEach { appName ->
+                appNames.value.forEach { appName ->
                     KanbanBro.appsEvent.dispatchEvent(CustomEvent("added", jsObjectOf("detail" to getApp(appName))))
                 }
-                KanbanBro.appsEvent.dispatchEvent(Event("appNamesChanged"))
             }
 
         }
