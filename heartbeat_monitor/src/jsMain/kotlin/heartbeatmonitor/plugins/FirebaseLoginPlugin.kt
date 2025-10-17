@@ -17,9 +17,9 @@ import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.await
 import kotlinx.coroutines.promise
+import mirrg.kotlin.event.EventRegistry
 import mirrg.kotlin.event.ObservableValue
 import onPluginLoaded
-import org.w3c.dom.CustomEvent
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.Image
@@ -44,6 +44,9 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
             { if (it != null) (JSON.parse(it) as Array<String>).toList() else listOf("[DEFAULT]") },
             { JSON.stringify(it.toTypedArray()) }
         )
+
+    val onAppAdded = EventRegistry<dynamic, Unit>()
+    val onAppRemoved = EventRegistry<dynamic, Unit>()
 
     lateinit var applier: suspend () -> Unit
 
@@ -70,8 +73,6 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
             "getAuth" to getAuth,
             "onAuthStateChanged" to onAuthStateChanged,
         )
-
-        KanbanBro.appsEvent = new(window.asDynamic().EventTarget)
 
         applier = {
 
@@ -343,7 +344,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                                                     (signOut(getAuth(app)) as Promise<dynamic>).await()
                                                                     deleteApp(app)
                                                                     appNames.value = appNames.value - (app.name as String)
-                                                                    KanbanBro.appsEvent.dispatchEvent(CustomEvent("removed", jsObjectOf("detail" to app)))
+                                                                    onAppRemoved.emit(app)
                                                                 }
                                                             })
                                                         },
@@ -368,7 +369,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                 val appName = if ("[DEFAULT]" in appNames.value) window.asDynamic().crypto.randomUUID() as String else "[DEFAULT]"
                                 val app = initializeApp(firebaseConfig, appName)
                                 appNames.value = appNames.value + appName
-                                KanbanBro.appsEvent.dispatchEvent(CustomEvent("added", jsObjectOf("detail" to app)))
+                                onAppAdded.emit(app)
                             })
                         },
 
@@ -456,7 +457,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                     }
                 }
                 appNames.value.forEach { appName ->
-                    KanbanBro.appsEvent.dispatchEvent(CustomEvent("added", jsObjectOf("detail" to getApp(appName))))
+                    onAppAdded.emit(getApp(appName))
                 }
             }
 

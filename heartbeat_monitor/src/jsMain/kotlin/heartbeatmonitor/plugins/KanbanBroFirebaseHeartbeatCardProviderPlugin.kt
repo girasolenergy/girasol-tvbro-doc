@@ -137,12 +137,12 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
 
         FirebaseLoginPlugin.appNames.register { MainScope().promise { rebuild() } }
         val unsubscribers = jsObjectOf()
-        KanbanBro.appsEvent.addEventListener("added", { e: dynamic ->
-            unsubscribers[e.detail.name] = KanbanBro.firebase.onAuthStateChanged(KanbanBro.firebase.getAuth(e.detail), { _ -> MainScope().promise { rebuild() } })
-        })
-        KanbanBro.appsEvent.addEventListener("removed", { e: dynamic ->
-            unsubscribers[e.detail.name]!!()
-        })
+        FirebaseLoginPlugin.onAppAdded.register { app ->
+            unsubscribers[app.name] = KanbanBro.firebase.onAuthStateChanged(KanbanBro.firebase.getAuth(app), { _ -> MainScope().promise { rebuild() } })
+        }
+        FirebaseLoginPlugin.onAppRemoved.register { app ->
+            unsubscribers[app.name]!!()
+        }
         onPluginLoaded.register { MainScope().promise { rebuild() } }
 
     }
