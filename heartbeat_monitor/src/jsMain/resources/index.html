@@ -439,33 +439,6 @@
         );
     }
 
-    function getPageParameter(key) {
-        const params = new URLSearchParams(window.location.search);
-        return params.get(key);
-    }
-
-    function setPageParameter(key, value) {
-        const url = new URL(window.location.href);
-        if (value == null || value === "") {
-            url.searchParams.delete(key);
-        } else {
-            url.searchParams.set(key, value);
-        }
-        history.replaceState(null, "", url);
-    }
-
-    function setImageBlob(img, blob) {
-        const url = URL.createObjectURL(blob);
-        const cleanup = () => {
-            URL.revokeObjectURL(url);
-            img.removeEventListener('load', cleanup);
-            img.removeEventListener('error', cleanup);
-        };
-        img.addEventListener('load', cleanup, { once: true });
-        img.addEventListener('error', cleanup, { once: true });
-        img.src = url;
-    }
-
 </script>
 <script type="module">
     import { init } from "./heartbeat_monitor.js";

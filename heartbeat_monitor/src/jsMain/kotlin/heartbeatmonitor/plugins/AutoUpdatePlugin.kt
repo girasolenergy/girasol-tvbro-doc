@@ -3,6 +3,8 @@ package heartbeatmonitor.plugins
 import heartbeatmonitor.core.AbstractPlugin
 import heartbeatmonitor.core.Card
 import heartbeatmonitor.core.UiContainers
+import heartbeatmonitor.util.getPageParameter
+import heartbeatmonitor.util.setPageParameter
 import kotlinx.browser.document
 import kotlinx.browser.window
 
@@ -63,12 +65,12 @@ object AutoUpdatePlugin : AbstractPlugin("AutoUpdatePlugin") {
 
                         select.addEventListener("change", {
                             val option = optionOf(select.asDynamic().value as String)
-                            window.asDynamic().setPageParameter("r", option?.value)
+                            setPageParameter("r", option?.value)
                             applyOption(option)
                         })
 
                         fun syncFromLocation() {
-                            val option = optionOf((window.asDynamic().getPageParameter("r") as String?) ?: "")
+                            val option = optionOf((getPageParameter("r") as String?) ?: "")
                             if (option != null && defaultOptions.none { it.value == option.value }) {
                                 registerOption(option.value, option.title)
                             }

@@ -7,6 +7,7 @@ import heartbeatmonitor.core.CardProvider
 import heartbeatmonitor.core.Dispatcher
 import heartbeatmonitor.util.jsObjectOf
 import heartbeatmonitor.util.new
+import heartbeatmonitor.util.setImageBlob
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.CoroutineScope
@@ -71,7 +72,7 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                 Image().also { img ->
                                     img.asDynamic().loading = "lazy"
                                     img.asDynamic().decoding = "async"
-                                    window.asDynamic().setImageBlob(img, Blob(arrayOf(imageBytes), jsObjectOf("type" to "image/png")))
+                                    setImageBlob(img, Blob(arrayOf(imageBytes), jsObjectOf("type" to "image/png")))
                                     img.alt = name
                                 },
                                 run {
