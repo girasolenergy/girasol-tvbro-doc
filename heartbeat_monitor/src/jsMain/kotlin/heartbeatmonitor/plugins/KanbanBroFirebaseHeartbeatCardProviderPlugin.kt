@@ -17,6 +17,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.await
 import kotlinx.coroutines.promise
 import kotlinx.coroutines.yield
+import onPluginLoaded
 import org.w3c.dom.Image
 import org.w3c.files.Blob
 import kotlin.js.Date
@@ -142,7 +143,7 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
         KanbanBro.appsEvent.addEventListener("removed", { e: dynamic ->
             unsubscribers[e.detail.name]!!()
         })
-        KanbanBro.event.addEventListener("pluginLoaded", { MainScope().promise { rebuild() } })
+        onPluginLoaded.register { MainScope().promise { rebuild() } }
 
     }
 }

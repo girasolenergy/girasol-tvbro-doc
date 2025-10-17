@@ -1,6 +1,5 @@
 package heartbeatmonitor.core
 
-import KanbanBro
 import heartbeatmonitor.util.getValue
 import heartbeatmonitor.util.property
 import heartbeatmonitor.util.setValue
@@ -8,6 +7,7 @@ import heartbeatmonitor.util.xmap
 import kotlinx.browser.document
 import kotlinx.browser.localStorage
 import mirrg.kotlin.event.ObservableValue
+import onPluginLoaded
 import org.w3c.dom.asList
 
 object CardComparatorSpecifiers {
@@ -36,9 +36,9 @@ object CardComparatorSpecifiers {
         }
 
         // Storage
-        KanbanBro.event.addEventListener("pluginLoaded", {
+        onPluginLoaded.register {
             currentCardComparatorSpecifiers.value = storage
-        })
+        }
         currentCardComparatorSpecifiers.register {
             storage = currentCardComparatorSpecifiers.value
         }

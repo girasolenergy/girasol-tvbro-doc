@@ -1,11 +1,11 @@
 package heartbeatmonitor.core
 
-import KanbanBro
 import kotlinx.browser.document
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
+import onPluginLoaded
 import org.w3c.dom.asList
 import kotlin.coroutines.EmptyCoroutineContext
 
@@ -93,7 +93,7 @@ class Card(
         }
 
         fun init() {
-            KanbanBro.event.addEventListener("pluginLoaded", { scheduleUpdate() })
+            onPluginLoaded.register { scheduleUpdate() }
         }
 
     }

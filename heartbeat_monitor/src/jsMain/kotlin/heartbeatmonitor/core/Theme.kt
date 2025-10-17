@@ -1,6 +1,5 @@
 package heartbeatmonitor.core
 
-import KanbanBro
 import heartbeatmonitor.util.getValue
 import heartbeatmonitor.util.property
 import heartbeatmonitor.util.setValue
@@ -11,6 +10,7 @@ import kotlinx.browser.window
 import mirrg.kotlin.event.EventRegistry
 import mirrg.kotlin.event.ObservableValue
 import mirrg.kotlin.event.emit
+import onPluginLoaded
 
 enum class Theme(val slug: String, val title: String) {
     LIGHT("light", "Light"),
@@ -31,9 +31,9 @@ enum class Theme(val slug: String, val title: String) {
         fun init() {
 
             // Theme Override
-            KanbanBro.event.addEventListener("pluginLoaded", {
+            onPluginLoaded.register {
                 currentThemeOverride.value = storage
-            })
+            }
             currentThemeOverride.register {
                 storage = currentThemeOverride.value
             }

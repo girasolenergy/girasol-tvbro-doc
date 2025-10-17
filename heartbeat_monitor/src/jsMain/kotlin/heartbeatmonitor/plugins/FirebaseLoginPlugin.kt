@@ -13,6 +13,7 @@ import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.await
 import kotlinx.coroutines.promise
+import onPluginLoaded
 import org.w3c.dom.CustomEvent
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLButtonElement
@@ -438,7 +439,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                 },
             )
 
-            KanbanBro.event.addEventListener("pluginLoaded", {
+            onPluginLoaded.register {
                 KanbanBro.appNames = JSON.parse(localStorage.getItem("kanbanbro.appNames") ?: "null") ?: arrayOf("[DEFAULT]")
                 (KanbanBro.appNames as Array<dynamic>).forEach { appName ->
                     initializeApp(firebaseConfig, appName)
@@ -447,7 +448,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                     KanbanBro.appsEvent.dispatchEvent(CustomEvent("added", jsObjectOf("detail" to getApp(appName))))
                 }
                 KanbanBro.appsEvent.dispatchEvent(Event("appNamesChanged"))
-            })
+            }
 
         }
     }

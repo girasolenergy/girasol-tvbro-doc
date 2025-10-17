@@ -11,18 +11,19 @@ import heartbeatmonitor.plugins.ThemeTogglePlugin
 import heartbeatmonitor.plugins.TitlePlugin
 import heartbeatmonitor.plugins.UpdatePlugin
 import heartbeatmonitor.util.jsObjectOf
-import heartbeatmonitor.util.new
 import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.promise
-import org.w3c.dom.events.Event
+import mirrg.kotlin.event.EventRegistry
+import mirrg.kotlin.event.emit
 import kotlin.js.Promise
+
+val onPluginLoaded = EventRegistry<Unit, Unit>()
 
 @JsExport
 fun init(): Promise<Unit> = MainScope().promise {
 
     window.asDynamic().KanbanBro = jsObjectOf()
-    KanbanBro.event = new(window.asDynamic().EventTarget)
 
     Card.init()
     CardComparatorSpecifiers.init()
@@ -52,6 +53,6 @@ fun init(): Promise<Unit> = MainScope().promise {
     SortPlugin.apply()
     KanbanBroFirebaseHeartbeatCardProviderPlugin.apply()
 
-    KanbanBro.event.dispatchEvent(Event("pluginLoaded"))
+    onPluginLoaded.emit()
 
 }
