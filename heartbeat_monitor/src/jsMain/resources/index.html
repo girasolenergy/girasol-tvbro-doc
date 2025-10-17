@@ -367,21 +367,6 @@
 </div>
 <div id="cards"></div>
 <div id="toast-container"></div>
-<script>
-
-    window.KanbanBro = {};
-
-    window.KanbanBro.event = new EventTarget();
-
-
-    // Utils
-
-    function also(element, block) {
-        block(element);
-        return element;
-    }
-
-</script>
 <script type="module">
     import { init } from "./heartbeat_monitor.js";
     await init();

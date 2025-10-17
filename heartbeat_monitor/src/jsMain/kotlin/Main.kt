@@ -10,6 +10,9 @@ import heartbeatmonitor.plugins.SortPlugin
 import heartbeatmonitor.plugins.ThemeTogglePlugin
 import heartbeatmonitor.plugins.TitlePlugin
 import heartbeatmonitor.plugins.UpdatePlugin
+import heartbeatmonitor.util.jsObjectOf
+import heartbeatmonitor.util.new
+import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.promise
 import org.w3c.dom.events.Event
@@ -17,6 +20,9 @@ import kotlin.js.Promise
 
 @JsExport
 fun init(): Promise<Unit> = MainScope().promise {
+
+    window.asDynamic().KanbanBro = jsObjectOf()
+    KanbanBro.event = new(window.asDynamic().EventTarget)
 
     Card.init()
     CardComparatorSpecifiers.init()
