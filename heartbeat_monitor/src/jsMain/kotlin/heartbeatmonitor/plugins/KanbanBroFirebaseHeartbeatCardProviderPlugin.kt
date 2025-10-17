@@ -61,7 +61,7 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                             yield()
 
                             val settings = JSON.parse<dynamic>(new(window.asDynamic().TextDecoder).decode(settingsBytes) as String)
-                            val name = settings.settings_code.settings.heartbeat_title ?: folderRef.name
+                            val name = (settings.settings_code.settings.heartbeat_title as String?).takeUnless { it.isNullOrBlank() } ?: folderRef.name
                             console.log("$name", settings, metadata)
 
                             Card(
