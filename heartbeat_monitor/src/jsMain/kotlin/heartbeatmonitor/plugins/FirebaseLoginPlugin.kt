@@ -112,7 +112,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                             // Googleログインボタン
                             document.createElement("button").also { googleButton ->
                                 (googleButton as HTMLButtonElement).type = "button"
-                                googleButton.textContent = "Sign in with Google"
+                                googleButton.textContent = "Log in with Google"
                                 googleButton.classList.add("auth-button")
                                 googleButton.addEventListener("click", {
                                     MainScope().promise {
@@ -122,13 +122,13 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                             FirebaseAuthModule.signInWithPopup(FirebaseAuthModule.getAuth(app), provider).await()
                                             dialogEvent.dispatchEvent(Event("close"))
                                         } catch (e: dynamic) {
-                                            console.error("Sign in failed", e)
+                                            console.error("Log in failed", e)
                                             val msg = when (e?.code as String?) {
                                                 "auth/popup-blocked" -> "Popup was blocked by the browser."
                                                 "auth/popup-closed-by-user" -> "Popup closed before completing sign in."
                                                 else -> if (e != null && e.message != null) e.message as String else "$e"
                                             }
-                                            showToast("Failed to sign in: $msg")
+                                            showToast("Failed to log in: $msg")
                                         } finally {
                                             googleButton.disabled = false
                                         }
@@ -142,7 +142,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                             // メールアドレスでログインボタン
                             document.createElement("button").also { emailSignInButton ->
                                 (emailSignInButton as HTMLButtonElement).type = "button"
-                                emailSignInButton.textContent = "Sign in with Email / Password"
+                                emailSignInButton.textContent = "Log in with Email / Password"
                                 emailSignInButton.classList.add("auth-button")
                                 emailSignInButton.addEventListener("click", {
                                     MainScope().promise {
@@ -151,10 +151,10 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                             val email = window.prompt("Enter email address") ?: return@promise
                                             val password = window.prompt("Enter password") ?: return@promise
                                             FirebaseAuthModule.signInWithEmailAndPassword(FirebaseAuthModule.getAuth(app), email, password).await()
-                                            showToast("Signed in successfully.")
+                                            showToast("Logged in successfully.")
                                             dialogEvent.dispatchEvent(Event("close"))
                                         } catch (e: dynamic) {
-                                            console.error("Email sign in failed", e)
+                                            console.error("Email log in failed", e)
                                             val msg = when (e?.code as String?) {
                                                 "auth/invalid-email" -> "Invalid email address."
                                                 "auth/user-disabled" -> "This user account has been disabled."
@@ -164,7 +164,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                                 "auth/network-request-failed" -> "Network error. Please check your connection."
                                                 else -> if (e != null && e.message != null) e.message as String else "$e"
                                             }
-                                            showToast("Failed to sign in: $msg")
+                                            showToast("Failed to log in: $msg")
                                         } finally {
                                             emailSignInButton.disabled = false
                                         }
@@ -184,7 +184,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                     MainScope().promise {
                                         val currentUser = FirebaseAuthModule.getAuth(app).currentUser
                                         if (currentUser == null) {
-                                            showToast("Please sign in first.")
+                                            showToast("Please log in first.")
                                             return@promise
                                         }
                                         linkEmailButton.disabled = true
@@ -223,7 +223,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                             // ログアウトボタン
                             document.createElement("button").also { logoutButton ->
                                 (logoutButton as HTMLButtonElement).type = "button"
-                                logoutButton.textContent = "Logout"
+                                logoutButton.textContent = "Log out"
                                 logoutButton.classList.add("auth-button")
                                 logoutButton.addEventListener("click", {
                                     MainScope().promise {
@@ -232,8 +232,8 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                             FirebaseAuthModule.signOut(FirebaseAuthModule.getAuth(app)).await()
                                             dialogEvent.dispatchEvent(Event("close"))
                                         } catch (e: dynamic) {
-                                            console.error("Sign out failed", e)
-                                            showToast("Failed to sign out: ${if (e != null && e.message != null) e.message as String else "$e"}")
+                                            console.error("Log out failed", e)
+                                            showToast("Failed to log out: ${if (e != null && e.message != null) e.message as String else "$e"}")
                                         } finally {
                                             logoutButton.disabled = false
                                         }
@@ -299,7 +299,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                                     document.createElement("button").also { loginButton ->
                                                         (loginButton as HTMLButtonElement).type = "button"
                                                         loginButton.classList.add("dialog-button")
-                                                        loginButton.textContent = "Login"
+                                                        loginButton.textContent = "Log in"
                                                         loginButton.addEventListener("click", { openLoginDialog(app) })
                                                     },
 
