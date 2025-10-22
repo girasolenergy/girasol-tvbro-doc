@@ -68,4 +68,6 @@
 
 ## 個別機能説明
 
+- [Heartbeat Guide](en/heartbeat.md)
+
 - [リモート監視（Heartbeat）機能ガイド](ja/heartbeat.md)
