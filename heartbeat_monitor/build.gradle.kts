@@ -29,6 +29,9 @@ kotlin {
         val jsMain by getting {
             resources.srcDir("src/main/resources")
             resources.exclude("**/*.pdn")
+            dependencies {
+                implementation(npm("firebase", "12.0.0"))
+            }
         }
     }
 }

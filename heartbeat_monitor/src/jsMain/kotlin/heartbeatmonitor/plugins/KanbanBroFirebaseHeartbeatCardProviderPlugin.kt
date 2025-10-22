@@ -1,10 +1,12 @@
 package heartbeatmonitor.plugins
 
-import KanbanBro
 import heartbeatmonitor.core.AbstractPlugin
 import heartbeatmonitor.core.Card
 import heartbeatmonitor.core.CardProvider
 import heartbeatmonitor.core.Dispatcher
+import heartbeatmonitor.util.firebase.FirebaseAppModule
+import heartbeatmonitor.util.firebase.FirebaseAuthModule
+import heartbeatmonitor.util.firebase.FirebaseStorageModule
 import heartbeatmonitor.util.jsObjectOf
 import heartbeatmonitor.util.new
 import heartbeatmonitor.util.setImageBlob
@@ -21,21 +23,14 @@ import onPluginLoaded
 import org.w3c.dom.Image
 import org.w3c.files.Blob
 import kotlin.js.Date
-import kotlin.js.Promise
 
 object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroFirebaseHeartbeatCardProviderPlugin") {
     override suspend fun apply() {
-        val firebaseStorage = (js("import('https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js')") as Promise<dynamic>).await()
-        val getStorage = firebaseStorage.getStorage
-        val ref = firebaseStorage.ref
-        val listAll = firebaseStorage.listAll
-        val getBytes = firebaseStorage.getBytes
-        val getMetadata = firebaseStorage.getMetadata
 
         var providers = mutableListOf<(CoroutineScope) -> Deferred<Card>>()
 
         suspend fun rebuildForApp(app: dynamic, providers: MutableList<(CoroutineScope) -> Deferred<Card>>) {
-            val user = KanbanBro.firebase.getAuth(app).currentUser
+            val user = FirebaseAuthModule.getAuth(app).currentUser
 
             if (user == null) {
                 console.warn("No user logged in for app", app.name)
@@ -43,27 +38,27 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
             }
 
             val files = try {
-                (listAll(ref(getStorage(app), "users/${user.uid}")) as Promise<dynamic>).await()
+                FirebaseStorageModule.listAll(FirebaseStorageModule.ref(FirebaseStorageModule.getStorage(app), "users/${user.uid}")).await()
             } catch (e: dynamic) {
                 console.error("Failed to list heartbeat roots", e)
                 return
             }
 
-            (files.prefixes as Array<dynamic>).forEach { folderRef ->
+            files.prefixes.forEach { folderRef ->
                 providers.add { coroutineScope ->
                     coroutineScope.async {
                         Dispatcher.dispatch {
                             yield()
-                            val imageBytes = (getBytes(ref(folderRef, "screenshot.png")) as Promise<dynamic>).await()
+                            val imageBytes = FirebaseStorageModule.getBytes(FirebaseStorageModule.ref(folderRef, "screenshot.png")).await()
                             yield()
-                            val settingsBytes = (getBytes(ref(folderRef, "settings.json")) as Promise<dynamic>).await()
+                            val settingsBytes = FirebaseStorageModule.getBytes(FirebaseStorageModule.ref(folderRef, "settings.json")).await()
                             yield()
-                            val metadata = (getMetadata(ref(folderRef, "settings.json")) as Promise<dynamic>).await()
+                            val metadata = FirebaseStorageModule.getMetadata(FirebaseStorageModule.ref(folderRef, "settings.json")).await()
                             yield()
 
                             val settings = JSON.parse<dynamic>(new(window.asDynamic().TextDecoder).decode(settingsBytes) as String)
                             val name = (settings.settings_code.settings.heartbeat_title as String?).takeUnless { it.isNullOrBlank() } ?: folderRef.name
-                            console.log("$name", settings, metadata)
+                            console.log(name, settings, metadata)
 
                             Card(
                                 mapOf(
@@ -90,7 +85,7 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                     if (settings.main_activity_has_focus as Boolean? == false) alerts += createAlert("Lost Focus", 2)
                                     if (settings.main_activity_resumed as Boolean? == false) alerts += createAlert("Not Resumed", 2)
                                     if (settings.main_activity_ui_active as Boolean? == true) alerts += createAlert("UI Opened", 1)
-                                    if (Date.now() - Date.parse(metadata.updated as String) >= 1000 * 60 * 60 * 2) {
+                                    if (Date.now() - Date.parse(metadata.updated) >= 1000 * 60 * 60 * 2) {
                                         alerts += createAlert("No updates (2 Hours+)", 2)
                                     }
                                     alerts
@@ -103,8 +98,8 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                     })
                                     texts.add(document.createElement("div").also { div ->
                                         div.className = "datetime"
-                                        div.textContent = Date(metadata.updated as String).asDynamic().toLocaleString(undefined, jsObjectOf("dateStyle" to "medium", "timeStyle" to "medium"))
-                                        div.asDynamic().title = "${metadata.updated}"
+                                        div.textContent = Date(metadata.updated).asDynamic().toLocaleString(undefined, jsObjectOf("dateStyle" to "medium", "timeStyle" to "medium"))
+                                        div.asDynamic().title = metadata.updated
                                     })
                                     texts
                                 },
@@ -126,7 +121,7 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
         suspend fun rebuild() {
             val providers2 = mutableListOf<(CoroutineScope) -> Deferred<Card>>()
             FirebaseLoginPlugin.appNames.value.forEach { appName ->
-                rebuildForApp(KanbanBro.firebase.getApp(appName), providers2)
+                rebuildForApp(FirebaseAppModule.getApp(appName), providers2)
             }
             providers = providers2
             Card.scheduleUpdate()
@@ -138,7 +133,7 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
         FirebaseLoginPlugin.appNames.register { MainScope().promise { rebuild() } }
         val unsubscribers = jsObjectOf()
         FirebaseLoginPlugin.onAppAdded.register { app ->
-            unsubscribers[app.name] = KanbanBro.firebase.onAuthStateChanged(KanbanBro.firebase.getAuth(app), { _ -> MainScope().promise { rebuild() } })
+            unsubscribers[app.name] = FirebaseAuthModule.onAuthStateChanged(FirebaseAuthModule.getAuth(app), { _ -> MainScope().promise { rebuild() } })
         }
         FirebaseLoginPlugin.onAppRemoved.register { app ->
             unsubscribers[app.name]!!()
