@@ -1,5 +1,8 @@
 # Kanban Broドキュメント
 
+* 目次
+{:toc}
+
 ## メイン画面
 
 ![main.png](main.png)
@@ -62,3 +65,7 @@
 ## 設定画面
 
 ■■TODO ここを埋めるには先にKanbanBroの日本語化をした方がよい■■
+
+## 個別機能説明
+
+- [リモート監視（Heartbeat）機能ガイド](ja/heartbeat.md)
