@@ -43,10 +43,16 @@ jobs:
           chmod +x ./gradlew
           ./gradlew :buildPages
 
+      - name: Markdown を HTML に変換
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: build/pages
+          destination: build/pages_converted
+
       - name: 成果物のアップロード
         uses: actions/upload-pages-artifact@v4
         with:
-          path: build/pages
+          path: build/pages_converted
           retention-days: 7
 
   deploy:
