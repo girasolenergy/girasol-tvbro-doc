@@ -18,6 +18,7 @@ import kotlin.js.Promise
 
 val onPluginLoaded = EventRegistry<Unit, Unit>()
 
+@OptIn(ExperimentalJsExport::class)
 @JsExport
 fun init(): Promise<Unit> = MainScope().promise {
 
