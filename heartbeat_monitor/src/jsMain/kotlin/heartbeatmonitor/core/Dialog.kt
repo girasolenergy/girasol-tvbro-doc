@@ -1,25 +1,25 @@
 package heartbeatmonitor.core
 
-import heartbeatmonitor.util.jsObjectOf
-import heartbeatmonitor.util.new
 import kotlinx.browser.document
-import kotlinx.browser.window
+import mirrg.kotlin.event.EmittableEventRegistry
+import mirrg.kotlin.event.EventRegistry
+import mirrg.kotlin.event.emit
+import mirrg.kotlin.event.once
 import org.w3c.dom.Element
-import org.w3c.dom.events.Event
 
-fun showDialog(initializer: (Element, dynamic) -> Unit) {
-    val dialogEvent = new(window.asDynamic().EventTarget)
+fun showDialog(initializer: (Element, EmittableEventRegistry<Unit, Unit, Unit>) -> Unit) {
+    val onClosed = EventRegistry<Unit, Unit>()
 
     document.body!!.append(
         document.createElement("div").also { overlayDiv ->
             overlayDiv.className = "dialog-overlay"
 
             overlayDiv.addEventListener("click", { e ->
-                if (e.target === overlayDiv) dialogEvent.dispatchEvent(Event("close"))
+                if (e.target === overlayDiv) onClosed.emit()
             })
-            dialogEvent.addEventListener("close", {
+            onClosed.once.register {
                 document.body!!.removeChild(overlayDiv)
-            }, jsObjectOf("once" to true))
+            }
 
             overlayDiv.append(
                 document.createElement("div").also { frameDiv ->
@@ -27,7 +27,7 @@ fun showDialog(initializer: (Element, dynamic) -> Unit) {
                     frameDiv.append(
                         document.createElement("div").also { containerDiv ->
                             containerDiv.className = "dialog-container"
-                            initializer(containerDiv, dialogEvent)
+                            initializer(containerDiv, onClosed)
                         },
                     )
                 },

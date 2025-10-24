@@ -8,7 +8,9 @@ import heartbeatmonitor.core.UiContainers
 import heartbeatmonitor.core.showDialog
 import heartbeatmonitor.util.jsObjectOf
 import kotlinx.browser.document
-import org.w3c.dom.events.Event
+import mirrg.kotlin.event.emit
+import mirrg.kotlin.event.subscribe
+import mirrg.kotlin.event.toSubscriber
 import kotlin.math.sign
 
 object SortPlugin : AbstractPlugin("SortPlugin") {
@@ -61,7 +63,7 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
         }
 
         fun openSortDialog() {
-            showDialog { container, dialogEvent ->
+            showDialog { container, onClosed ->
                 container.append(
                     document.createElement("div").also { titleDiv ->
                         titleDiv.textContent = "Sort"
@@ -113,10 +115,9 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
                             }
                         }
 
-                        val remover = CardComparatorSpecifiers.currentCardComparatorSpecifiers.register { updateButtons() }
-                        dialogEvent.addEventListener("close", {
-                            remover.remove()
-                        }, jsObjectOf("once" to true))
+                        CardComparatorSpecifiers.currentCardComparatorSpecifiers.subscribe(onClosed.toSubscriber()) {
+                            updateButtons()
+                        }
                         updateButtons()
                     },
                     document.createElement("button").also { addButton ->
@@ -138,7 +139,7 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
                                 closeButton.asDynamic().type = "button"
                                 closeButton.textContent = "Close"
                                 closeButton.classList.add("dialog-button")
-                                closeButton.addEventListener("click", { dialogEvent.dispatchEvent(Event("close")) })
+                                closeButton.addEventListener("click", { onClosed.emit() })
                             },
                         )
                     },
