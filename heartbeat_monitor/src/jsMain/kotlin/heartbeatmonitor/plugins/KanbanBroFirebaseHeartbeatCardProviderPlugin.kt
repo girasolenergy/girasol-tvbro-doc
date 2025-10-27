@@ -4,6 +4,7 @@ import heartbeatmonitor.core.AbstractPlugin
 import heartbeatmonitor.core.Card
 import heartbeatmonitor.core.CardProvider
 import heartbeatmonitor.core.Dispatcher
+import heartbeatmonitor.util.firebase.FirebaseApp
 import heartbeatmonitor.util.firebase.FirebaseAppModule
 import heartbeatmonitor.util.firebase.FirebaseAuthModule
 import heartbeatmonitor.util.firebase.FirebaseStorageModule
@@ -29,7 +30,7 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
 
         var providers = mutableListOf<(CoroutineScope) -> Deferred<Card>>()
 
-        suspend fun rebuildForApp(app: dynamic, providers: MutableList<(CoroutineScope) -> Deferred<Card>>) {
+        suspend fun rebuildForApp(app: FirebaseApp, providers: MutableList<(CoroutineScope) -> Deferred<Card>>) {
             val user = FirebaseAuthModule.getAuth(app).currentUser
 
             if (user == null) {

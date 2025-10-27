@@ -4,6 +4,7 @@ import heartbeatmonitor.core.AbstractPlugin
 import heartbeatmonitor.core.UiContainers
 import heartbeatmonitor.core.showDialog
 import heartbeatmonitor.core.showToast
+import heartbeatmonitor.util.firebase.FirebaseApp
 import heartbeatmonitor.util.firebase.FirebaseAppModule
 import heartbeatmonitor.util.firebase.FirebaseAuthModule
 import heartbeatmonitor.util.getValue
@@ -46,12 +47,12 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
             { JSON.stringify(it.toTypedArray()) }
         )
 
-    val onAppAdded = EventRegistry<dynamic, Unit>()
-    val onAppRemoved = EventRegistry<dynamic, Unit>()
+    val onAppAdded = EventRegistry<FirebaseApp, Unit>()
+    val onAppRemoved = EventRegistry<FirebaseApp, Unit>()
 
     override suspend fun apply() {
 
-        fun registerUserListener(app: dynamic, onClosed: EmittableEventRegistry<Unit, Unit, Unit>, fn: () -> Unit) {
+        fun registerUserListener(app: FirebaseApp, onClosed: EmittableEventRegistry<Unit, Unit, Unit>, fn: () -> Unit) {
             val unsubscriber = FirebaseAuthModule.onAuthStateChanged(FirebaseAuthModule.getAuth(app), { fn() })
             onClosed.once.register {
                 unsubscriber()
@@ -59,7 +60,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
             fn()
         }
 
-        fun createUserBadge(app: dynamic, onClosed: EmittableEventRegistry<Unit, Unit, Unit>): Element {
+        fun createUserBadge(app: FirebaseApp, onClosed: EmittableEventRegistry<Unit, Unit, Unit>): Element {
             return document.createElement("div").also { userBadgeDiv ->
                 userBadgeDiv.className = "user-badge"
                 registerUserListener(app, onClosed) {
@@ -97,7 +98,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
             }
         }
 
-        fun openLoginDialog(app: dynamic) {
+        fun openLoginDialog(app: FirebaseApp) {
             showDialog { container, onClosed ->
                 container.append(
 
