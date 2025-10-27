@@ -7,7 +7,7 @@ interface CardComparator {
         val currentComparator: Comparator<Card>
             get() = Comparator { a, b ->
                 CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.forEach { cardComparatorSpecifier ->
-                    val cardComparator = registry[cardComparatorSpecifier.type as String] ?: return@forEach
+                    val cardComparator = registry[cardComparatorSpecifier.type] ?: return@forEach
                     val cmp = cardComparator.compare(cardComparatorSpecifier, a, b)
                     if (cmp != 0) return@Comparator cmp
                 }
@@ -16,8 +16,8 @@ interface CardComparator {
 
     }
 
-    fun compare(specifier: dynamic, a: Card, b: Card): Int
+    fun compare(specifier: CardComparatorSpecifier, a: Card, b: Card): Int
 
-    fun getTitle(specifier: dynamic): String
+    fun getTitle(specifier: CardComparatorSpecifier): String
 
 }

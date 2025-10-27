@@ -3,9 +3,12 @@ package heartbeatmonitor.plugins
 import heartbeatmonitor.core.AbstractPlugin
 import heartbeatmonitor.core.Card
 import heartbeatmonitor.core.CardComparator
+import heartbeatmonitor.core.CardComparatorSpecifier
 import heartbeatmonitor.core.CardComparatorSpecifiers
 import heartbeatmonitor.core.UiContainers
+import heartbeatmonitor.core.get
 import heartbeatmonitor.core.showDialog
+import heartbeatmonitor.core.type
 import heartbeatmonitor.util.createButtonElement
 import heartbeatmonitor.util.createDivElement
 import heartbeatmonitor.util.jsObjectOf
@@ -18,27 +21,27 @@ import kotlin.math.sign
 object SortPlugin : AbstractPlugin("SortPlugin") {
     override suspend fun apply() {
         CardComparator.registry["empty"] = object : CardComparator {
-            override fun compare(specifier: dynamic, a: Card, b: Card) = 0
-            override fun getTitle(specifier: dynamic) = "Unsorted"
+            override fun compare(specifier: CardComparatorSpecifier, a: Card, b: Card) = 0
+            override fun getTitle(specifier: CardComparatorSpecifier) = "Unsorted"
         }
         CardComparator.registry["name"] = object : CardComparator {
-            override fun compare(specifier: dynamic, a: Card, b: Card): Int {
+            override fun compare(specifier: CardComparatorSpecifier, a: Card, b: Card): Int {
                 val cmp = (a.keys["name"] as String? ?: "").compareTo(b.keys["name"] as String? ?: "")
-                return if (specifier.isDescending as Boolean) -cmp else cmp
+                return if (specifier["isDescending"] as Boolean) -cmp else cmp
             }
 
-            override fun getTitle(specifier: dynamic) = if (specifier.isDescending as Boolean) "Name (desc)" else "Name"
+            override fun getTitle(specifier: CardComparatorSpecifier) = if (specifier["isDescending"] as Boolean) "Name (desc)" else "Name"
         }
         CardComparator.registry["updated"] = object : CardComparator {
-            override fun compare(specifier: dynamic, a: Card, b: Card): Int {
+            override fun compare(specifier: CardComparatorSpecifier, a: Card, b: Card): Int {
                 val cmp = (a.keys["updated"] as Number? ?: 0.0).toDouble() - (b.keys["updated"] as Number? ?: 0.0).toDouble()
-                return if (specifier.isDescending as Boolean) -cmp.sign.toInt() else cmp.sign.toInt()
+                return if (specifier["isDescending"] as Boolean) -cmp.sign.toInt() else cmp.sign.toInt()
             }
 
-            override fun getTitle(specifier: dynamic) = if (specifier.isDescending as Boolean) "Newest Update" else "Oldest Update"
+            override fun getTitle(specifier: CardComparatorSpecifier) = if (specifier["isDescending"] as Boolean) "Newest Update" else "Oldest Update"
         }
 
-        fun getTitle(cardComparatorSpecifier: dynamic): String {
+        fun getTitle(cardComparatorSpecifier: CardComparatorSpecifier): String {
             val cardComparator = CardComparator.registry[cardComparatorSpecifier.type]
             if (cardComparator == null) return "Invalid Comparator"
             return cardComparator.getTitle(cardComparatorSpecifier)
@@ -52,11 +55,11 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
             jsObjectOf("type" to "empty"),
         )
 
-        fun getNextCardComparatorSpecifier(cardComparatorSpecifier: dynamic): dynamic {
+        fun getNextCardComparatorSpecifier(cardComparatorSpecifier: CardComparatorSpecifier): CardComparatorSpecifier {
             val oldIndex = cyclerCardComparatorSpecifiers.indexOfFirst { cyclerCardComparatorSpecifier ->
                 if (cyclerCardComparatorSpecifier.type != cardComparatorSpecifier.type) return@indexOfFirst false
                 if (cyclerCardComparatorSpecifier.isDescending != undefined) {
-                    if (cyclerCardComparatorSpecifier.isDescending != cardComparatorSpecifier.isDescending) return@indexOfFirst false
+                    if (cyclerCardComparatorSpecifier.isDescending != cardComparatorSpecifier["isDescending"] as Boolean) return@indexOfFirst false
                 }
                 true
             }

@@ -10,15 +10,31 @@ import mirrg.kotlin.event.ObservableValue
 import onPluginLoaded
 import org.w3c.dom.asList
 
+external interface CardComparatorSpecifier
+
+operator fun CardComparatorSpecifier.get(key: String): Any? {
+    return asDynamic()[key]
+}
+
+operator fun CardComparatorSpecifier.set(key: String, value: Any?) {
+    asDynamic()[key] = value
+}
+
+var CardComparatorSpecifier.type: String
+    get() = this["type"] as String
+    set(value) {
+        this["type"] = value
+    }
+
 object CardComparatorSpecifiers {
     private const val LOCAL_STORAGE_KEY = "kanbanbro.cardComparatorSpecifiers"
     private var storage by localStorage.property(LOCAL_STORAGE_KEY)
         .xmap(
-            { if (it != null) (JSON.parse(it) as Array<dynamic>).toList() else listOf() },
+            { if (it != null) (JSON.parse(it) as Array<CardComparatorSpecifier>).toList() else listOf() },
             { JSON.stringify(it.toTypedArray()) },
         )
 
-    val currentCardComparatorSpecifiers = ObservableValue(listOf<dynamic>())
+    val currentCardComparatorSpecifiers = ObservableValue(listOf<CardComparatorSpecifier>())
 
     fun init() {
 
