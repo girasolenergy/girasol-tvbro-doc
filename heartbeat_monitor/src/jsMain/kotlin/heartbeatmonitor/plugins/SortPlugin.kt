@@ -11,6 +11,7 @@ import heartbeatmonitor.core.showDialog
 import heartbeatmonitor.core.type
 import heartbeatmonitor.util.createButtonElement
 import heartbeatmonitor.util.createDivElement
+import heartbeatmonitor.util.gap
 import heartbeatmonitor.util.jsObjectOf
 import kotlinx.browser.document
 import mirrg.kotlin.event.emit
@@ -82,7 +83,7 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
                                 buttonsDiv.append(
                                     document.createDivElement().also { buttonDiv ->
                                         buttonDiv.style.display = "flex"
-                                        buttonDiv.style.asDynamic().gap = "12px"
+                                        buttonDiv.style.gap = "12px"
                                         buttonDiv.style.alignItems = "center"
                                         buttonDiv.append(
                                             document.createDivElement().also { leftDiv ->
@@ -138,7 +139,7 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
                     document.createDivElement().also { actionsDiv ->
                         actionsDiv.style.display = "flex"
                         actionsDiv.style.justifyContent = "end"
-                        actionsDiv.style.asDynamic().gap = "8px"
+                        actionsDiv.style.gap = "8px"
                         actionsDiv.append(
                             document.createButtonElement().also { closeButton ->
                                 closeButton.type = "button"

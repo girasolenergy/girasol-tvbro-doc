@@ -10,6 +10,7 @@ import heartbeatmonitor.util.createSpanElement
 import heartbeatmonitor.util.firebase.FirebaseApp
 import heartbeatmonitor.util.firebase.FirebaseAppModule
 import heartbeatmonitor.util.firebase.FirebaseAuthModule
+import heartbeatmonitor.util.gap
 import heartbeatmonitor.util.getValue
 import heartbeatmonitor.util.jsObjectOf
 import heartbeatmonitor.util.property
@@ -258,7 +259,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                     document.createDivElement().also { actionsDiv ->
                         actionsDiv.style.display = "flex"
                         actionsDiv.style.justifyContent = "end"
-                        actionsDiv.style.asDynamic().gap = "8px"
+                        actionsDiv.style.gap = "8px"
                         actionsDiv.append(
                             document.createButtonElement().also { cancelButton ->
                                 (cancelButton as HTMLButtonElement).type = "button"
@@ -293,12 +294,12 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                 buttonsDiv.append(
                                     document.createDivElement().also { buttonDiv ->
                                         buttonDiv.style.display = "flex"
-                                        buttonDiv.style.asDynamic().gap = "12px"
+                                        buttonDiv.style.gap = "12px"
                                         buttonDiv.style.alignItems = "center"
                                         buttonDiv.append(
                                             document.createDivElement().also { leftDiv ->
                                                 leftDiv.style.display = "flex"
-                                                leftDiv.style.asDynamic().gap = "12px"
+                                                leftDiv.style.gap = "12px"
                                                 leftDiv.style.alignItems = "center"
                                                 leftDiv.append(
 
@@ -362,7 +363,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                     document.createDivElement().also { actionsDiv ->
                         actionsDiv.style.display = "flex"
                         actionsDiv.style.justifyContent = "end"
-                        actionsDiv.style.asDynamic().gap = "8px"
+                        actionsDiv.style.gap = "8px"
                         actionsDiv.append(
                             document.createButtonElement().also { closeButton ->
                                 (closeButton as HTMLButtonElement).type = "button"
