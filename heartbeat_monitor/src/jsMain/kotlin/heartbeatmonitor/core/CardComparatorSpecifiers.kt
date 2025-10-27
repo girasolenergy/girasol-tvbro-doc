@@ -8,7 +8,6 @@ import kotlinx.browser.document
 import kotlinx.browser.localStorage
 import mirrg.kotlin.event.ObservableValue
 import onPluginLoaded
-import org.w3c.dom.asList
 
 external interface CardComparatorSpecifier
 
@@ -40,9 +39,9 @@ object CardComparatorSpecifiers {
 
         // Sort when changed
         currentCardComparatorSpecifiers.register {
-            val cardElements = UiContainers.cards.children.asList().toMutableList()
+            val cardElements = UiContainers.cards.cardElements.toMutableList()
             cardElements.sortWith { a, b ->
-                CardComparator.currentComparator.compare(a.asDynamic().card, b.asDynamic().card)
+                CardComparator.currentComparator.compare(a.card, b.card)
             }
             val fragment = document.createDocumentFragment()
             cardElements.forEach { cardElement ->

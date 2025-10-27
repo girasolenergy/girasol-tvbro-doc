@@ -7,7 +7,8 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import onPluginLoaded
-import org.w3c.dom.asList
+import org.w3c.dom.Document
+import org.w3c.dom.HTMLDivElement
 import kotlin.coroutines.EmptyCoroutineContext
 
 class Card(
@@ -37,16 +38,14 @@ class Card(
 
                     yield()
 
-                    val cardContainer = UiContainers.cards
-
-                    val refNode = cardContainer.children.asList().firstOrNull { child ->
-                        CardComparator.currentComparator.compare(child.asDynamic().card, card) > 0
+                    val refNode = UiContainers.cards.cardElements.firstOrNull { child ->
+                        CardComparator.currentComparator.compare(child.card, card) > 0
                     }
 
-                    cardContainer.insertBefore(
-                        document.createDivElement().also { cardDiv ->
+                    UiContainers.cards.insertBefore(
+                        document.createCardElement().also { cardDiv ->
                             cardDiv.className = "card"
-                            cardDiv.asDynamic().card = card
+                            cardDiv.card = card
 
                             cardDiv.append(
                                 document.createDivElement().also { screenshotDiv ->
@@ -102,3 +101,9 @@ class Card(
     class Alert(val message: dynamic, val level: Int)
 
 }
+
+abstract external class CardElement : HTMLDivElement {
+    var card: Card
+}
+
+fun Document.createCardElement() = this.createDivElement().unsafeCast<CardElement>()
