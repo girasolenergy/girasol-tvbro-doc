@@ -9,12 +9,12 @@ import org.w3c.dom.HTMLSelectElement
 import org.w3c.dom.HTMLSpanElement
 import org.w3c.dom.css.CSSStyleDeclaration
 
-fun Document.createDivElement() = this.createElement("div") as HTMLDivElement
-fun Document.createButtonElement() = this.createElement("button") as HTMLButtonElement
-fun Document.createSpanElement() = this.createElement("span") as HTMLSpanElement
-fun Document.createSelectElement() = this.createElement("select") as HTMLSelectElement
-fun Document.createOptionElement() = this.createElement("option") as HTMLOptionElement
-fun Document.createLinkElement() = this.createElement("link") as HTMLLinkElement
+fun Document.createDivElement() = this.createElement("div").unsafeCast<HTMLDivElement>()
+fun Document.createButtonElement() = this.createElement("button").unsafeCast<HTMLButtonElement>()
+fun Document.createSpanElement() = this.createElement("span").unsafeCast<HTMLSpanElement>()
+fun Document.createSelectElement() = this.createElement("select").unsafeCast<HTMLSelectElement>()
+fun Document.createOptionElement() = this.createElement("option").unsafeCast<HTMLOptionElement>()
+fun Document.createLinkElement() = this.createElement("link").unsafeCast<HTMLLinkElement>()
 
 var CSSStyleDeclaration.gap: String
     get() = this.getPropertyValue("gap")
