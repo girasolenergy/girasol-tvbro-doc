@@ -12,11 +12,11 @@ import heartbeatmonitor.core.type
 import heartbeatmonitor.util.createButtonElement
 import heartbeatmonitor.util.createDivElement
 import heartbeatmonitor.util.gap
-import heartbeatmonitor.util.jsObjectOf
 import kotlinx.browser.document
 import mirrg.kotlin.event.emit
 import mirrg.kotlin.event.subscribe
 import mirrg.kotlin.event.toSubscriber
+import kotlin.js.json
 import kotlin.math.sign
 
 object SortPlugin : AbstractPlugin("SortPlugin") {
@@ -49,18 +49,18 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
         }
 
         val cyclerCardComparatorSpecifiers = arrayOf(
-            jsObjectOf("type" to "name", "isDescending" to false),
-            jsObjectOf("type" to "name", "isDescending" to true),
-            jsObjectOf("type" to "updated", "isDescending" to true),
-            jsObjectOf("type" to "updated", "isDescending" to false),
-            jsObjectOf("type" to "empty"),
+            json("type" to "name", "isDescending" to false).unsafeCast<CardComparatorSpecifier>(),
+            json("type" to "name", "isDescending" to true).unsafeCast<CardComparatorSpecifier>(),
+            json("type" to "updated", "isDescending" to true).unsafeCast<CardComparatorSpecifier>(),
+            json("type" to "updated", "isDescending" to false).unsafeCast<CardComparatorSpecifier>(),
+            json("type" to "empty").unsafeCast<CardComparatorSpecifier>(),
         )
 
         fun getNextCardComparatorSpecifier(cardComparatorSpecifier: CardComparatorSpecifier): CardComparatorSpecifier {
             val oldIndex = cyclerCardComparatorSpecifiers.indexOfFirst { cyclerCardComparatorSpecifier ->
                 if (cyclerCardComparatorSpecifier.type != cardComparatorSpecifier.type) return@indexOfFirst false
-                if (cyclerCardComparatorSpecifier.isDescending != undefined) {
-                    if (cyclerCardComparatorSpecifier.isDescending != cardComparatorSpecifier["isDescending"] as Boolean) return@indexOfFirst false
+                if (cyclerCardComparatorSpecifier["isDescending"] != undefined) {
+                    if (cyclerCardComparatorSpecifier["isDescending"] != cardComparatorSpecifier["isDescending"] as Boolean) return@indexOfFirst false
                 }
                 true
             }
@@ -132,7 +132,7 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
                         addButton.textContent = "＋"
                         addButton.addEventListener("click", {
                             val cardComparatorSpecifiers = CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.toMutableList()
-                            cardComparatorSpecifiers.add(jsObjectOf("type" to "empty"))
+                            cardComparatorSpecifiers.add(json("type" to "empty").unsafeCast<CardComparatorSpecifier>())
                             CardComparatorSpecifiers.currentCardComparatorSpecifiers.value = cardComparatorSpecifiers
                         })
                     },

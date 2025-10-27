@@ -10,7 +10,7 @@ import heartbeatmonitor.util.firebase.FirebaseApp
 import heartbeatmonitor.util.firebase.FirebaseAppModule
 import heartbeatmonitor.util.firebase.FirebaseAuthModule
 import heartbeatmonitor.util.firebase.FirebaseStorageModule
-import heartbeatmonitor.util.jsObjectOf
+import heartbeatmonitor.util.firebase.Unsubscribe
 import heartbeatmonitor.util.new
 import heartbeatmonitor.util.setImageBlob
 import kotlinx.browser.document
@@ -25,7 +25,10 @@ import kotlinx.coroutines.yield
 import onPluginLoaded
 import org.w3c.dom.Image
 import org.w3c.files.Blob
+import org.w3c.files.BlobPropertyBag
 import kotlin.js.Date
+import kotlin.js.Json
+import kotlin.js.json
 
 object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroFirebaseHeartbeatCardProviderPlugin") {
     override suspend fun apply() {
@@ -59,8 +62,8 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                             val metadata = FirebaseStorageModule.getMetadata(FirebaseStorageModule.ref(folderRef, "settings.json")).await()
                             yield()
 
-                            val settings = JSON.parse<dynamic>(new(window.asDynamic().TextDecoder).decode(settingsBytes) as String)
-                            val name = (settings.settings_code.settings.heartbeat_title as String?).takeUnless { it.isNullOrBlank() } ?: folderRef.name
+                            val settings = JSON.parse<Json>(new(window.asDynamic().TextDecoder).decode(settingsBytes) as String)
+                            val name = (settings["settings_code"].unsafeCast<Json>()["settings"].unsafeCast<Json>()["heartbeat_title"] as String?).takeUnless { it.isNullOrBlank() } ?: folderRef.name
                             console.log(name, settings, metadata)
 
                             Card(
@@ -71,7 +74,7 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                 Image().also { img ->
                                     img.asDynamic().loading = "lazy"
                                     img.asDynamic().decoding = "async"
-                                    setImageBlob(img, Blob(arrayOf(imageBytes), jsObjectOf("type" to "image/png")))
+                                    setImageBlob(img, Blob(arrayOf(imageBytes), BlobPropertyBag("image/png")))
                                     img.alt = name
                                 },
                                 run {
@@ -85,9 +88,9 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                     }
 
                                     val alerts = mutableListOf<Card.Alert>()
-                                    if (settings.main_activity_has_focus as Boolean? == false) alerts += createAlert("Lost Focus", 2)
-                                    if (settings.main_activity_resumed as Boolean? == false) alerts += createAlert("Not Resumed", 2)
-                                    if (settings.main_activity_ui_active as Boolean? == true) alerts += createAlert("UI Opened", 1)
+                                    if (settings["main_activity_has_focus"] as Boolean? == false) alerts += createAlert("Lost Focus", 2)
+                                    if (settings["main_activity_resumed"] as Boolean? == false) alerts += createAlert("Not Resumed", 2)
+                                    if (settings["main_activity_ui_active"] as Boolean? == true) alerts += createAlert("UI Opened", 1)
                                     if (Date.now() - Date.parse(metadata.updated) >= 1000 * 60 * 60 * 2) {
                                         alerts += createAlert("No updates (2 Hours+)", 2)
                                     }
@@ -101,13 +104,13 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                     })
                                     texts.add(document.createDivElement().also { div ->
                                         div.className = "datetime"
-                                        div.textContent = Date(metadata.updated).asDynamic().toLocaleString(undefined, jsObjectOf("dateStyle" to "medium", "timeStyle" to "medium"))
+                                        div.textContent = Date(metadata.updated).asDynamic().toLocaleString(undefined, json("dateStyle" to "medium", "timeStyle" to "medium"))
                                         div.title = metadata.updated
                                     })
                                     texts
                                 },
                             ).also {
-                                it.asDynamic()["_debug"] = jsObjectOf(
+                                it.asDynamic()["_debug"] = json(
                                     "appName" to app.name,
                                     "app" to app,
                                     "user" to user,
@@ -134,7 +137,7 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
         CardProvider.currentCardProviders += CardProvider { coroutineScope -> providers.map { p -> p(coroutineScope) } }
 
         FirebaseLoginPlugin.appNames.register { MainScope().promise { rebuild() } }
-        val unsubscribers = jsObjectOf()
+        val unsubscribers = mutableMapOf<String, Unsubscribe>()
         FirebaseLoginPlugin.onAppAdded.register { app ->
             unsubscribers[app.name] = FirebaseAuthModule.onAuthStateChanged(FirebaseAuthModule.getAuth(app), { _ -> MainScope().promise { rebuild() } })
         }

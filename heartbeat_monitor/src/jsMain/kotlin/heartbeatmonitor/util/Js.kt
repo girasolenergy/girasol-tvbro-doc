@@ -9,6 +9,7 @@ import org.w3c.dom.url.URL
 import org.w3c.dom.url.URLSearchParams
 import org.w3c.files.Blob
 import kotlin.js.Promise
+import kotlin.js.json
 
 fun <T> suspendingPromise(block: suspend ((T) -> Unit, (dynamic) -> Unit) -> Unit): Promise<T> {
     return Promise { resolve, reject ->
@@ -23,22 +24,6 @@ fun <T> suspendingPromise(block: suspend ((T) -> Unit, (dynamic) -> Unit) -> Uni
 }
 
 fun new(constructor: dynamic, vararg args: dynamic): dynamic = js("Reflect.construct")(constructor, args)
-
-fun jsObjectOf(vararg pairs: Pair<String, dynamic>): dynamic {
-    val obj = js("({})")
-    pairs.forEach { (key, value) ->
-        obj[key] = value
-    }
-    return obj
-}
-
-fun Map<String, dynamic>.toJsObject(): dynamic {
-    val obj = js("({})")
-    this.forEach { (key, value) ->
-        obj[key] = value
-    }
-    return obj
-}
 
 fun getPageParameter(key: String): String? {
     val params = URLSearchParams(window.location.search)
@@ -63,7 +48,7 @@ fun setImageBlob(img: Image, blob: Blob) {
         img.removeEventListener("load", cleanup)
         img.removeEventListener("error", cleanup)
     }
-    img.addEventListener("load", cleanup, jsObjectOf("once" to true))
-    img.addEventListener("error", cleanup, jsObjectOf("once" to true))
+    img.addEventListener("load", cleanup, json("once" to true))
+    img.addEventListener("error", cleanup, json("once" to true))
     img.src = url
 }

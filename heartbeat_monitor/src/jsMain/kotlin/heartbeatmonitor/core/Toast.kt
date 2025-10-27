@@ -1,12 +1,12 @@
 package heartbeatmonitor.core
 
 import heartbeatmonitor.util.createDivElement
-import heartbeatmonitor.util.jsObjectOf
 import kotlinx.browser.document
 import kotlinx.browser.window
 import mirrg.kotlin.event.EventRegistry
 import mirrg.kotlin.event.emit
 import mirrg.kotlin.event.once
+import kotlin.js.json
 
 fun showToast(message: String) {
     val onClosed = EventRegistry<Unit, Unit>()
@@ -23,7 +23,7 @@ fun showToast(message: String) {
                 toastDiv.classList.remove("show")
                 toastDiv.addEventListener("transitionend", {
                     container.removeChild(toastDiv)
-                }, jsObjectOf("once" to true))
+                }, json("once" to true))
             }
 
             val timer = window.setTimeout({ onClosed.emit() }, 5000)

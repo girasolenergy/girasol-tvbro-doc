@@ -10,9 +10,9 @@ import heartbeatmonitor.util.createSpanElement
 import heartbeatmonitor.util.firebase.FirebaseApp
 import heartbeatmonitor.util.firebase.FirebaseAppModule
 import heartbeatmonitor.util.firebase.FirebaseAuthModule
+import heartbeatmonitor.util.firebase.FirebaseOptions
 import heartbeatmonitor.util.gap
 import heartbeatmonitor.util.getValue
-import heartbeatmonitor.util.jsObjectOf
 import heartbeatmonitor.util.property
 import heartbeatmonitor.util.setValue
 import heartbeatmonitor.util.xmap
@@ -30,8 +30,9 @@ import mirrg.kotlin.event.once
 import onPluginLoaded
 import org.w3c.dom.Element
 import org.w3c.dom.Image
+import kotlin.js.json
 
-val firebaseConfig = jsObjectOf(
+val firebaseConfig = json(
     "apiKey" to "AIzaSyDZrghHsrdUM6WN0ArOcIchEqn5y4bBZGk",
     "authDomain" to "kanbanbro.firebaseapp.com",
     "projectId" to "kanbanbro",
@@ -39,7 +40,7 @@ val firebaseConfig = jsObjectOf(
     "messagingSenderId" to "716803851987",
     "appId" to "1:716803851987:web:0bcd6f8b2e8d7d0151f626",
     "measurementId" to "G-N3C4HWN670",
-)
+).unsafeCast<FirebaseOptions>()
 
 object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
 
