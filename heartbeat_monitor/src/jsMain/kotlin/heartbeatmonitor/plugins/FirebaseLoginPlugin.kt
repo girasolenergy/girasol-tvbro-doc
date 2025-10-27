@@ -29,7 +29,6 @@ import mirrg.kotlin.event.emit
 import mirrg.kotlin.event.once
 import onPluginLoaded
 import org.w3c.dom.Element
-import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.Image
 
 val firebaseConfig = jsObjectOf(
@@ -119,7 +118,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
 
                             // Googleログインボタン
                             document.createButtonElement().also { googleButton ->
-                                (googleButton as HTMLButtonElement).type = "button"
+                                googleButton.type = "button"
                                 googleButton.textContent = "Log in with Google"
                                 googleButton.classList.add("auth-button")
                                 googleButton.addEventListener("click", {
@@ -149,7 +148,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
 
                             // メールアドレスでログインボタン
                             document.createButtonElement().also { emailSignInButton ->
-                                (emailSignInButton as HTMLButtonElement).type = "button"
+                                emailSignInButton.type = "button"
                                 emailSignInButton.textContent = "Log in with Email / Password"
                                 emailSignInButton.classList.add("auth-button")
                                 emailSignInButton.addEventListener("click", {
@@ -185,7 +184,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
 
                             // メールアドレスをリンクボタン
                             document.createButtonElement().also { linkEmailButton ->
-                                (linkEmailButton as HTMLButtonElement).type = "button"
+                                linkEmailButton.type = "button"
                                 linkEmailButton.textContent = "Link Email / Password"
                                 linkEmailButton.classList.add("auth-button")
                                 linkEmailButton.addEventListener("click", {
@@ -230,7 +229,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
 
                             // ログアウトボタン
                             document.createButtonElement().also { logoutButton ->
-                                (logoutButton as HTMLButtonElement).type = "button"
+                                logoutButton.type = "button"
                                 logoutButton.textContent = "Log out"
                                 logoutButton.classList.add("auth-button")
                                 logoutButton.addEventListener("click", {
@@ -262,7 +261,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                         actionsDiv.style.gap = "8px"
                         actionsDiv.append(
                             document.createButtonElement().also { cancelButton ->
-                                (cancelButton as HTMLButtonElement).type = "button"
+                                cancelButton.type = "button"
                                 cancelButton.textContent = "Cancel"
                                 cancelButton.classList.add("dialog-button")
                                 cancelButton.addEventListener("click", { onClosed.emit() })
@@ -305,7 +304,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
 
                                                     // ログインボタン
                                                     document.createButtonElement().also { loginButton ->
-                                                        (loginButton as HTMLButtonElement).type = "button"
+                                                        loginButton.type = "button"
                                                         loginButton.classList.add("dialog-button")
                                                         loginButton.textContent = "Log in"
                                                         loginButton.addEventListener("click", { openLoginDialog(app) })
@@ -322,7 +321,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
 
                                                     // ログアウトボタン
                                                     document.createButtonElement().also { removeButton ->
-                                                        (removeButton as HTMLButtonElement).type = "button"
+                                                        removeButton.type = "button"
                                                         removeButton.classList.add("dialog-button")
                                                         removeButton.textContent = "🗑️"
                                                         removeButton.addEventListener("click", {
@@ -348,7 +347,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
 
                     // 追加ボタン
                     document.createButtonElement().also { addButton ->
-                        (addButton as HTMLButtonElement).type = "button"
+                        addButton.type = "button"
                         addButton.classList.add("dialog-transparent-button")
                         addButton.textContent = "＋"
                         addButton.addEventListener("click", {
@@ -366,7 +365,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                         actionsDiv.style.gap = "8px"
                         actionsDiv.append(
                             document.createButtonElement().also { closeButton ->
-                                (closeButton as HTMLButtonElement).type = "button"
+                                closeButton.type = "button"
                                 closeButton.textContent = "Close"
                                 closeButton.classList.add("dialog-button")
                                 closeButton.addEventListener("click", { onClosed.emit() })
@@ -384,7 +383,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                 container.className = "topbar-property"
                 container.append(
                     document.createButtonElement().also { accountsButton ->
-                        (accountsButton as HTMLButtonElement).type = "button"
+                        accountsButton.type = "button"
                         accountsButton.textContent = "Accounts"
                         accountsButton.addEventListener("click", { openAccountsDialog() })
                     },
