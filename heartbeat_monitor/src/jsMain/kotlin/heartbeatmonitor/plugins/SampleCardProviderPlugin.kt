@@ -4,6 +4,8 @@ import heartbeatmonitor.core.AbstractPlugin
 import heartbeatmonitor.core.Card
 import heartbeatmonitor.core.CardProvider
 import heartbeatmonitor.core.Dispatcher
+import heartbeatmonitor.util.createDivElement
+import heartbeatmonitor.util.createSpanElement
 import heartbeatmonitor.util.isPrime
 import heartbeatmonitor.util.primeFactors
 import kotlinx.browser.document
@@ -44,7 +46,7 @@ object SampleCardProviderPlugin : AbstractPlugin("SampleCardProviderPlugin") {
                         run {
                             fun createAlert(message: String, level: Int): Card.Alert {
                                 return Card.Alert(
-                                    document.createElement("span").also { span ->
+                                    document.createSpanElement().also { span ->
                                         span.textContent = message
                                     },
                                     level,
@@ -63,7 +65,7 @@ object SampleCardProviderPlugin : AbstractPlugin("SampleCardProviderPlugin") {
                                 .groupBy { it }
                                 .map { it.value.joinToString("-") { n -> "$n" } }
                                 .forEach {
-                                    texts += document.createElement("div").also { textDiv ->
+                                    texts += document.createDivElement().also { textDiv ->
                                         textDiv.textContent = it
                                     }
                                 }

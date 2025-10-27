@@ -4,6 +4,8 @@ import heartbeatmonitor.core.AbstractPlugin
 import heartbeatmonitor.core.Card
 import heartbeatmonitor.core.CardProvider
 import heartbeatmonitor.core.Dispatcher
+import heartbeatmonitor.util.createDivElement
+import heartbeatmonitor.util.createSpanElement
 import heartbeatmonitor.util.firebase.FirebaseApp
 import heartbeatmonitor.util.firebase.FirebaseAppModule
 import heartbeatmonitor.util.firebase.FirebaseAuthModule
@@ -75,7 +77,7 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                 run {
                                     fun createAlert(message: String, level: Int): Card.Alert {
                                         return Card.Alert(
-                                            document.createElement("span").also { span ->
+                                            document.createSpanElement().also { span ->
                                                 span.textContent = message
                                             },
                                             level,
@@ -93,11 +95,11 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                 },
                                 run {
                                     val texts = mutableListOf<dynamic>()
-                                    texts.add(document.createElement("div").also { div ->
+                                    texts.add(document.createDivElement().also { div ->
                                         div.className = "name"
                                         div.textContent = name
                                     })
-                                    texts.add(document.createElement("div").also { div ->
+                                    texts.add(document.createDivElement().also { div ->
                                         div.className = "datetime"
                                         div.textContent = Date(metadata.updated).asDynamic().toLocaleString(undefined, jsObjectOf("dateStyle" to "medium", "timeStyle" to "medium"))
                                         div.asDynamic().title = metadata.updated

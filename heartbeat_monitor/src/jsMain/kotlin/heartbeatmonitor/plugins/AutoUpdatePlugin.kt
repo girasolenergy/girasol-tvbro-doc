@@ -3,6 +3,10 @@ package heartbeatmonitor.plugins
 import heartbeatmonitor.core.AbstractPlugin
 import heartbeatmonitor.core.Card
 import heartbeatmonitor.core.UiContainers
+import heartbeatmonitor.util.createDivElement
+import heartbeatmonitor.util.createOptionElement
+import heartbeatmonitor.util.createSelectElement
+import heartbeatmonitor.util.createSpanElement
 import heartbeatmonitor.util.getPageParameter
 import heartbeatmonitor.util.setPageParameter
 import kotlinx.browser.document
@@ -11,13 +15,13 @@ import kotlinx.browser.window
 object AutoUpdatePlugin : AbstractPlugin("AutoUpdatePlugin") {
     override suspend fun apply() {
         UiContainers.topbarRightContainer.prepend(
-            document.createElement("div").also { container ->
+            document.createDivElement().also { container ->
                 container.className = "topbar-property"
                 container.append(
-                    document.createElement("span").also { span ->
+                    document.createSpanElement().also { span ->
                         span.textContent = "Auto Update:"
                     },
-                    document.createElement("select").also { select ->
+                    document.createSelectElement().also { select ->
                         var timerId: Int? = null
 
                         data class Option(val value: String, val intervalMilliseconds: Int, val title: String)
@@ -51,7 +55,7 @@ object AutoUpdatePlugin : AbstractPlugin("AutoUpdatePlugin") {
 
                         fun registerOption(value: String, title: String) {
                             select.append(
-                                document.createElement("option").also { optionElement ->
+                                document.createOptionElement().also { optionElement ->
                                     optionElement.asDynamic().value = value
                                     optionElement.textContent = title
                                 },

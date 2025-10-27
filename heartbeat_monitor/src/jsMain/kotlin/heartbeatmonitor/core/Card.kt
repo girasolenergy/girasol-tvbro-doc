@@ -1,5 +1,6 @@
 package heartbeatmonitor.core
 
+import heartbeatmonitor.util.createDivElement
 import kotlinx.browser.document
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
@@ -43,12 +44,12 @@ class Card(
                     }
 
                     cardContainer.insertBefore(
-                        document.createElement("div").also { cardDiv ->
+                        document.createDivElement().also { cardDiv ->
                             cardDiv.className = "card"
                             cardDiv.asDynamic().card = card
 
                             cardDiv.append(
-                                document.createElement("div").also { screenshotDiv ->
+                                document.createDivElement().also { screenshotDiv ->
                                     screenshotDiv.className = "screenshot"
                                     screenshotDiv.append(card.image)
 
@@ -60,11 +61,11 @@ class Card(
                                         }
 
                                         screenshotDiv.append(
-                                            document.createElement("div").also { alertsDiv ->
+                                            document.createDivElement().also { alertsDiv ->
                                                 alertsDiv.className = "alerts"
                                                 card.alerts.forEach { alert ->
                                                     alertsDiv.append(
-                                                        document.createElement("div").also { alertDiv ->
+                                                        document.createDivElement().also { alertDiv ->
                                                             alertDiv.className = "alert alert-${alert.level}"
                                                             alertDiv.append(alert.message)
                                                         },
@@ -74,10 +75,10 @@ class Card(
                                         )
                                     }
                                 },
-                                document.createElement("div").also { textsDiv ->
+                                document.createDivElement().also { textsDiv ->
                                     textsDiv.className = "texts"
                                     textsDiv.append(
-                                        document.createElement("div").also { textDiv ->
+                                        document.createDivElement().also { textDiv ->
                                             card.texts.forEach { text ->
                                                 textDiv.append(text)
                                             }

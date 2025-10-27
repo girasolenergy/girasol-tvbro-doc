@@ -1,5 +1,6 @@
 package heartbeatmonitor.core
 
+import heartbeatmonitor.util.createDivElement
 import heartbeatmonitor.util.jsObjectOf
 import kotlinx.browser.document
 import kotlinx.browser.window
@@ -13,7 +14,7 @@ fun showToast(message: String) {
     val container = UiContainers.toastContainer
 
     container.append(
-        document.createElement("div").also { toastDiv ->
+        document.createDivElement().also { toastDiv ->
             toastDiv.className = "toast"
             toastDiv.textContent = message
             window.requestAnimationFrame { toastDiv.classList.add("show") }

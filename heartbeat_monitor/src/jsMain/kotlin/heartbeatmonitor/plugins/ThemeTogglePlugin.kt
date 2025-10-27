@@ -3,13 +3,14 @@ package heartbeatmonitor.plugins
 import heartbeatmonitor.core.AbstractPlugin
 import heartbeatmonitor.core.Theme
 import heartbeatmonitor.core.UiContainers
+import heartbeatmonitor.util.createButtonElement
 import kotlinx.browser.document
 import mirrg.kotlin.event.initialEmit
 
 object ThemeTogglePlugin : AbstractPlugin("ThemeTogglePlugin") {
     override suspend fun apply() {
         UiContainers.topbarRightContainer.prepend(
-            document.createElement("button").also { button ->
+            document.createButtonElement().also { button ->
                 button.asDynamic().type = "button"
                 Theme.onActualThemeChanged.initialEmit.register {
                     button.textContent = "Theme: ${Theme.currentThemeOverride.value?.title ?: "Auto"}"

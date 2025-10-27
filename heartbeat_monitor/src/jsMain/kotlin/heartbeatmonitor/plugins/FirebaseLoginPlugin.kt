@@ -4,6 +4,9 @@ import heartbeatmonitor.core.AbstractPlugin
 import heartbeatmonitor.core.UiContainers
 import heartbeatmonitor.core.showDialog
 import heartbeatmonitor.core.showToast
+import heartbeatmonitor.util.createButtonElement
+import heartbeatmonitor.util.createDivElement
+import heartbeatmonitor.util.createSpanElement
 import heartbeatmonitor.util.firebase.FirebaseApp
 import heartbeatmonitor.util.firebase.FirebaseAppModule
 import heartbeatmonitor.util.firebase.FirebaseAuthModule
@@ -61,13 +64,13 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
         }
 
         fun createUserBadge(app: FirebaseApp, onClosed: EmittableEventRegistry<Unit, Unit, Unit>): Element {
-            return document.createElement("div").also { userBadgeDiv ->
+            return document.createDivElement().also { userBadgeDiv ->
                 userBadgeDiv.className = "user-badge"
                 registerUserListener(app, onClosed) {
                     userBadgeDiv.asDynamic().style.display = if (FirebaseAuthModule.getAuth(app).currentUser != null) null else "none"
                 }
                 userBadgeDiv.append(
-                    document.createElement("div").also { avatarDiv ->
+                    document.createDivElement().also { avatarDiv ->
                         avatarDiv.className = "user-avatar"
                         registerUserListener(app, onClosed) {
                             val user = FirebaseAuthModule.getAuth(app).currentUser
@@ -87,7 +90,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                             }
                         }
                     },
-                    document.createElement("span").also { nameSpan ->
+                    document.createSpanElement().also { nameSpan ->
                         nameSpan.className = "user-name"
                         registerUserListener(app, onClosed) {
                             val user = FirebaseAuthModule.getAuth(app).currentUser
@@ -103,18 +106,18 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                 container.append(
 
                     // タイトル
-                    document.createElement("div").also { titleDiv ->
+                    document.createDivElement().also { titleDiv ->
                         titleDiv.textContent = "Account"
                         titleDiv.asDynamic().style.fontWeight = "700"
                     },
 
                     // ボタングループ
-                    document.createElement("div").also { buttonsDiv ->
+                    document.createDivElement().also { buttonsDiv ->
                         buttonsDiv.className = "dialog-container"
                         buttonsDiv.append(
 
                             // Googleログインボタン
-                            document.createElement("button").also { googleButton ->
+                            document.createButtonElement().also { googleButton ->
                                 (googleButton as HTMLButtonElement).type = "button"
                                 googleButton.textContent = "Log in with Google"
                                 googleButton.classList.add("auth-button")
@@ -144,7 +147,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                             },
 
                             // メールアドレスでログインボタン
-                            document.createElement("button").also { emailSignInButton ->
+                            document.createButtonElement().also { emailSignInButton ->
                                 (emailSignInButton as HTMLButtonElement).type = "button"
                                 emailSignInButton.textContent = "Log in with Email / Password"
                                 emailSignInButton.classList.add("auth-button")
@@ -180,7 +183,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                             },
 
                             // メールアドレスをリンクボタン
-                            document.createElement("button").also { linkEmailButton ->
+                            document.createButtonElement().also { linkEmailButton ->
                                 (linkEmailButton as HTMLButtonElement).type = "button"
                                 linkEmailButton.textContent = "Link Email / Password"
                                 linkEmailButton.classList.add("auth-button")
@@ -225,7 +228,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                             },
 
                             // ログアウトボタン
-                            document.createElement("button").also { logoutButton ->
+                            document.createButtonElement().also { logoutButton ->
                                 (logoutButton as HTMLButtonElement).type = "button"
                                 logoutButton.textContent = "Log out"
                                 logoutButton.classList.add("auth-button")
@@ -252,12 +255,12 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                     },
 
                     // Closeボタン
-                    document.createElement("div").also { actionsDiv ->
+                    document.createDivElement().also { actionsDiv ->
                         actionsDiv.asDynamic().style.display = "flex"
                         actionsDiv.asDynamic().style.justifyContent = "end"
                         actionsDiv.asDynamic().style.gap = "8px"
                         actionsDiv.append(
-                            document.createElement("button").also { cancelButton ->
+                            document.createButtonElement().also { cancelButton ->
                                 (cancelButton as HTMLButtonElement).type = "button"
                                 cancelButton.textContent = "Cancel"
                                 cancelButton.classList.add("dialog-button")
@@ -275,32 +278,32 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                 container.append(
 
                     // タイトル
-                    document.createElement("div").also { titleDiv ->
+                    document.createDivElement().also { titleDiv ->
                         titleDiv.textContent = "Accounts"
                         titleDiv.asDynamic().style.fontWeight = "700"
                     },
 
                     // ユーザーリスト
-                    document.createElement("div").also { buttonsDiv ->
+                    document.createDivElement().also { buttonsDiv ->
                         buttonsDiv.className = "dialog-container"
                         fun updateButtons() {
                             buttonsDiv.innerHTML = ""
                             appNames.value.forEach { appName ->
                                 val app = FirebaseAppModule.getApp(appName)
                                 buttonsDiv.append(
-                                    document.createElement("div").also { buttonDiv ->
+                                    document.createDivElement().also { buttonDiv ->
                                         buttonDiv.asDynamic().style.display = "flex"
                                         buttonDiv.asDynamic().style.gap = "12px"
                                         buttonDiv.asDynamic().style.alignItems = "center"
                                         buttonDiv.append(
-                                            document.createElement("div").also { leftDiv ->
+                                            document.createDivElement().also { leftDiv ->
                                                 leftDiv.asDynamic().style.display = "flex"
                                                 leftDiv.asDynamic().style.gap = "12px"
                                                 leftDiv.asDynamic().style.alignItems = "center"
                                                 leftDiv.append(
 
                                                     // ログインボタン
-                                                    document.createElement("button").also { loginButton ->
+                                                    document.createButtonElement().also { loginButton ->
                                                         (loginButton as HTMLButtonElement).type = "button"
                                                         loginButton.classList.add("dialog-button")
                                                         loginButton.textContent = "Log in"
@@ -312,12 +315,12 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
 
                                                     )
                                             },
-                                            document.createElement("div").also { rightDiv ->
+                                            document.createDivElement().also { rightDiv ->
                                                 rightDiv.asDynamic().style.marginLeft = "auto"
                                                 rightDiv.append(
 
                                                     // ログアウトボタン
-                                                    document.createElement("button").also { removeButton ->
+                                                    document.createButtonElement().also { removeButton ->
                                                         (removeButton as HTMLButtonElement).type = "button"
                                                         removeButton.classList.add("dialog-button")
                                                         removeButton.textContent = "🗑️"
@@ -343,7 +346,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                     },
 
                     // 追加ボタン
-                    document.createElement("button").also { addButton ->
+                    document.createButtonElement().also { addButton ->
                         (addButton as HTMLButtonElement).type = "button"
                         addButton.classList.add("dialog-transparent-button")
                         addButton.textContent = "＋"
@@ -356,12 +359,12 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                     },
 
                     // Closeボタン
-                    document.createElement("div").also { actionsDiv ->
+                    document.createDivElement().also { actionsDiv ->
                         actionsDiv.asDynamic().style.display = "flex"
                         actionsDiv.asDynamic().style.justifyContent = "end"
                         actionsDiv.asDynamic().style.gap = "8px"
                         actionsDiv.append(
-                            document.createElement("button").also { closeButton ->
+                            document.createButtonElement().also { closeButton ->
                                 (closeButton as HTMLButtonElement).type = "button"
                                 closeButton.textContent = "Close"
                                 closeButton.classList.add("dialog-button")
@@ -376,10 +379,10 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
 
         // トップバー左のAccountsボタン
         UiContainers.topbarLeftContainer.append(
-            document.createElement("div").also { container ->
+            document.createDivElement().also { container ->
                 container.className = "topbar-property"
                 container.append(
-                    document.createElement("button").also { accountsButton ->
+                    document.createButtonElement().also { accountsButton ->
                         (accountsButton as HTMLButtonElement).type = "button"
                         accountsButton.textContent = "Accounts"
                         accountsButton.addEventListener("click", { openAccountsDialog() })
@@ -390,7 +393,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
 
         // トップバー左のアバター
         UiContainers.topbarLeftContainer.append(
-            document.createElement("div").also { container ->
+            document.createDivElement().also { container ->
                 container.className = "topbar-property"
 
                 var onClosed = EventRegistry<Unit, Unit>()
@@ -403,7 +406,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                     appNames.value.forEach { appName ->
                         val app = FirebaseAppModule.getApp(appName)
                         container.append(
-                            document.createElement("div").also { avatarDiv ->
+                            document.createDivElement().also { avatarDiv ->
                                 avatarDiv.className = "user-avatar"
                                 registerUserListener(app, onClosed) {
                                     val user = FirebaseAuthModule.getAuth(app).currentUser

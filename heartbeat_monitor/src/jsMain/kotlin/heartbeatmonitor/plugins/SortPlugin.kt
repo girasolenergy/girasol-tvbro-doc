@@ -6,6 +6,8 @@ import heartbeatmonitor.core.CardComparator
 import heartbeatmonitor.core.CardComparatorSpecifiers
 import heartbeatmonitor.core.UiContainers
 import heartbeatmonitor.core.showDialog
+import heartbeatmonitor.util.createButtonElement
+import heartbeatmonitor.util.createDivElement
 import heartbeatmonitor.util.jsObjectOf
 import kotlinx.browser.document
 import mirrg.kotlin.event.emit
@@ -65,24 +67,24 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
         fun openSortDialog() {
             showDialog { container, onClosed ->
                 container.append(
-                    document.createElement("div").also { titleDiv ->
+                    document.createDivElement().also { titleDiv ->
                         titleDiv.textContent = "Sort"
                         titleDiv.asDynamic().style.fontWeight = "700"
                     },
-                    document.createElement("div").also { buttonsDiv ->
+                    document.createDivElement().also { buttonsDiv ->
                         buttonsDiv.className = "dialog-container"
                         fun updateButtons() {
                             buttonsDiv.innerHTML = ""
                             CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.forEachIndexed { index, cardComparatorSpecifier ->
                                 buttonsDiv.append(
-                                    document.createElement("div").also { buttonDiv ->
+                                    document.createDivElement().also { buttonDiv ->
                                         buttonDiv.asDynamic().style.display = "flex"
                                         buttonDiv.asDynamic().style.gap = "12px"
                                         buttonDiv.asDynamic().style.alignItems = "center"
                                         buttonDiv.append(
-                                            document.createElement("div").also { leftDiv ->
+                                            document.createDivElement().also { leftDiv ->
                                                 leftDiv.append(
-                                                    document.createElement("button").also { toggleButton ->
+                                                    document.createButtonElement().also { toggleButton ->
                                                         toggleButton.asDynamic().type = "button"
                                                         toggleButton.classList.add("dialog-button")
                                                         toggleButton.textContent = getTitle(cardComparatorSpecifier)
@@ -94,10 +96,10 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
                                                     },
                                                 )
                                             },
-                                            document.createElement("div").also { rightDiv ->
+                                            document.createDivElement().also { rightDiv ->
                                                 rightDiv.asDynamic().style.marginLeft = "auto"
                                                 rightDiv.append(
-                                                    document.createElement("button").also { removeButton ->
+                                                    document.createButtonElement().also { removeButton ->
                                                         removeButton.asDynamic().type = "button"
                                                         removeButton.classList.add("dialog-button")
                                                         removeButton.textContent = "🗑️"
@@ -120,7 +122,7 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
                         }
                         updateButtons()
                     },
-                    document.createElement("button").also { addButton ->
+                    document.createButtonElement().also { addButton ->
                         addButton.asDynamic().type = "button"
                         addButton.classList.add("dialog-transparent-button")
                         addButton.textContent = "＋"
@@ -130,12 +132,12 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
                             CardComparatorSpecifiers.currentCardComparatorSpecifiers.value = cardComparatorSpecifiers
                         })
                     },
-                    document.createElement("div").also { actionsDiv ->
+                    document.createDivElement().also { actionsDiv ->
                         actionsDiv.asDynamic().style.display = "flex"
                         actionsDiv.asDynamic().style.justifyContent = "end"
                         actionsDiv.asDynamic().style.gap = "8px"
                         actionsDiv.append(
-                            document.createElement("button").also { closeButton ->
+                            document.createButtonElement().also { closeButton ->
                                 closeButton.asDynamic().type = "button"
                                 closeButton.textContent = "Close"
                                 closeButton.classList.add("dialog-button")
@@ -148,10 +150,10 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
         }
 
         UiContainers.topbarLeftContainer.append(
-            document.createElement("div").also { container ->
+            document.createDivElement().also { container ->
                 container.className = "topbar-property"
                 container.append(
-                    document.createElement("button").also { sortButton ->
+                    document.createButtonElement().also { sortButton ->
                         sortButton.asDynamic().type = "button"
                         sortButton.textContent = "Sort"
 

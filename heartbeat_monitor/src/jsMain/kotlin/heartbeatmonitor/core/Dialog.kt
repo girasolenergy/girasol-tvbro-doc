@@ -1,5 +1,6 @@
 package heartbeatmonitor.core
 
+import heartbeatmonitor.util.createDivElement
 import kotlinx.browser.document
 import mirrg.kotlin.event.EmittableEventRegistry
 import mirrg.kotlin.event.EventRegistry
@@ -11,7 +12,7 @@ fun showDialog(initializer: (Element, EmittableEventRegistry<Unit, Unit, Unit>) 
     val onClosed = EventRegistry<Unit, Unit>()
 
     document.body!!.append(
-        document.createElement("div").also { overlayDiv ->
+        document.createDivElement().also { overlayDiv ->
             overlayDiv.className = "dialog-overlay"
 
             overlayDiv.addEventListener("click", { e ->
@@ -22,10 +23,10 @@ fun showDialog(initializer: (Element, EmittableEventRegistry<Unit, Unit, Unit>) 
             }
 
             overlayDiv.append(
-                document.createElement("div").also { frameDiv ->
+                document.createDivElement().also { frameDiv ->
                     frameDiv.className = "dialog-frame"
                     frameDiv.append(
-                        document.createElement("div").also { containerDiv ->
+                        document.createDivElement().also { containerDiv ->
                             containerDiv.className = "dialog-container"
                             initializer(containerDiv, onClosed)
                         },
