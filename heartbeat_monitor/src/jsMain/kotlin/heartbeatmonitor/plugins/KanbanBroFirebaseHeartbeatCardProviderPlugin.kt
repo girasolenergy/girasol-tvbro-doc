@@ -102,7 +102,7 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                     texts.add(document.createDivElement().also { div ->
                                         div.className = "datetime"
                                         div.textContent = Date(metadata.updated).asDynamic().toLocaleString(undefined, jsObjectOf("dateStyle" to "medium", "timeStyle" to "medium"))
-                                        div.asDynamic().title = metadata.updated
+                                        div.title = metadata.updated
                                     })
                                     texts
                                 },

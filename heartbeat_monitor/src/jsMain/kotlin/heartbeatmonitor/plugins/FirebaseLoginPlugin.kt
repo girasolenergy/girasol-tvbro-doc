@@ -67,7 +67,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
             return document.createDivElement().also { userBadgeDiv ->
                 userBadgeDiv.className = "user-badge"
                 registerUserListener(app, onClosed) {
-                    userBadgeDiv.asDynamic().style.display = if (FirebaseAuthModule.getAuth(app).currentUser != null) null else "none"
+                    userBadgeDiv.style.display = if (FirebaseAuthModule.getAuth(app).currentUser != null) "" else "none"
                 }
                 userBadgeDiv.append(
                     document.createDivElement().also { avatarDiv ->
@@ -108,7 +108,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                     // タイトル
                     document.createDivElement().also { titleDiv ->
                         titleDiv.textContent = "Account"
-                        titleDiv.asDynamic().style.fontWeight = "700"
+                        titleDiv.style.fontWeight = "700"
                     },
 
                     // ボタングループ
@@ -142,7 +142,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                     }
                                 })
                                 registerUserListener(app, onClosed) {
-                                    googleButton.asDynamic().style.display = if (FirebaseAuthModule.getAuth(app).currentUser != null) "none" else null
+                                    googleButton.style.display = if (FirebaseAuthModule.getAuth(app).currentUser != null) "none" else ""
                                 }
                             },
 
@@ -178,7 +178,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                     }
                                 })
                                 registerUserListener(app, onClosed) {
-                                    emailSignInButton.asDynamic().style.display = if (FirebaseAuthModule.getAuth(app).currentUser != null) "none" else null
+                                    emailSignInButton.style.display = if (FirebaseAuthModule.getAuth(app).currentUser != null) "none" else ""
                                 }
                             },
 
@@ -223,7 +223,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                 registerUserListener(app, onClosed) {
                                     val user = FirebaseAuthModule.getAuth(app).currentUser
                                     val hasPassword = user != null && user.providerData.any { p -> p.providerId == "password" }
-                                    linkEmailButton.asDynamic().style.display = if (user != null && !hasPassword) null else "none"
+                                    linkEmailButton.style.display = if (user != null && !hasPassword) "" else "none"
                                 }
                             },
 
@@ -247,7 +247,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                     }
                                 })
                                 registerUserListener(app, onClosed) {
-                                    logoutButton.asDynamic().style.display = if (FirebaseAuthModule.getAuth(app).currentUser != null) null else "none"
+                                    logoutButton.style.display = if (FirebaseAuthModule.getAuth(app).currentUser != null) "" else "none"
                                 }
                             },
 
@@ -256,9 +256,9 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
 
                     // Closeボタン
                     document.createDivElement().also { actionsDiv ->
-                        actionsDiv.asDynamic().style.display = "flex"
-                        actionsDiv.asDynamic().style.justifyContent = "end"
-                        actionsDiv.asDynamic().style.gap = "8px"
+                        actionsDiv.style.display = "flex"
+                        actionsDiv.style.justifyContent = "end"
+                        actionsDiv.style.asDynamic().gap = "8px"
                         actionsDiv.append(
                             document.createButtonElement().also { cancelButton ->
                                 (cancelButton as HTMLButtonElement).type = "button"
@@ -280,7 +280,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                     // タイトル
                     document.createDivElement().also { titleDiv ->
                         titleDiv.textContent = "Accounts"
-                        titleDiv.asDynamic().style.fontWeight = "700"
+                        titleDiv.style.fontWeight = "700"
                     },
 
                     // ユーザーリスト
@@ -292,14 +292,14 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                 val app = FirebaseAppModule.getApp(appName)
                                 buttonsDiv.append(
                                     document.createDivElement().also { buttonDiv ->
-                                        buttonDiv.asDynamic().style.display = "flex"
-                                        buttonDiv.asDynamic().style.gap = "12px"
-                                        buttonDiv.asDynamic().style.alignItems = "center"
+                                        buttonDiv.style.display = "flex"
+                                        buttonDiv.style.asDynamic().gap = "12px"
+                                        buttonDiv.style.alignItems = "center"
                                         buttonDiv.append(
                                             document.createDivElement().also { leftDiv ->
-                                                leftDiv.asDynamic().style.display = "flex"
-                                                leftDiv.asDynamic().style.gap = "12px"
-                                                leftDiv.asDynamic().style.alignItems = "center"
+                                                leftDiv.style.display = "flex"
+                                                leftDiv.style.asDynamic().gap = "12px"
+                                                leftDiv.style.alignItems = "center"
                                                 leftDiv.append(
 
                                                     // ログインボタン
@@ -316,7 +316,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                                     )
                                             },
                                             document.createDivElement().also { rightDiv ->
-                                                rightDiv.asDynamic().style.marginLeft = "auto"
+                                                rightDiv.style.marginLeft = "auto"
                                                 rightDiv.append(
 
                                                     // ログアウトボタン
@@ -360,9 +360,9 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
 
                     // Closeボタン
                     document.createDivElement().also { actionsDiv ->
-                        actionsDiv.asDynamic().style.display = "flex"
-                        actionsDiv.asDynamic().style.justifyContent = "end"
-                        actionsDiv.asDynamic().style.gap = "8px"
+                        actionsDiv.style.display = "flex"
+                        actionsDiv.style.justifyContent = "end"
+                        actionsDiv.style.asDynamic().gap = "8px"
                         actionsDiv.append(
                             document.createButtonElement().also { closeButton ->
                                 (closeButton as HTMLButtonElement).type = "button"
@@ -411,7 +411,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                 registerUserListener(app, onClosed) {
                                     val user = FirebaseAuthModule.getAuth(app).currentUser
                                     avatarDiv.innerHTML = ""
-                                    avatarDiv.asDynamic().style.display = if (user != null) null else "none"
+                                    avatarDiv.style.display = if (user != null) "" else "none"
                                     if (user != null) {
                                         avatarDiv.append(
                                             Image().also { img ->

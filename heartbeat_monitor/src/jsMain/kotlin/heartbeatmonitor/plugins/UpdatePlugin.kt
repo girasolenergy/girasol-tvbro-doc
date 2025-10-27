@@ -10,7 +10,7 @@ object UpdatePlugin : AbstractPlugin("UpdatePlugin") {
     override suspend fun apply() {
         UiContainers.topbarRightContainer.prepend(
             document.createButtonElement().also { button ->
-                button.asDynamic().type = "button"
+                button.type = "button"
                 button.textContent = "Update"
                 button.addEventListener("click", { Card.scheduleUpdate() })
             },

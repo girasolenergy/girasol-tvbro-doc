@@ -8,8 +8,8 @@ object FaviconPlugin : AbstractPlugin("FaviconPlugin") {
     override suspend fun apply() {
         document.head!!.append(
             document.createLinkElement().also { link ->
-                link.asDynamic().rel = "icon"
-                link.asDynamic().href = "../icon.png"
+                link.rel = "icon"
+                link.href = "../icon.png"
             },
         )
     }

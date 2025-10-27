@@ -11,7 +11,7 @@ object ThemeTogglePlugin : AbstractPlugin("ThemeTogglePlugin") {
     override suspend fun apply() {
         UiContainers.topbarRightContainer.prepend(
             document.createButtonElement().also { button ->
-                button.asDynamic().type = "button"
+                button.type = "button"
                 Theme.onActualThemeChanged.initialEmit.register {
                     button.textContent = "Theme: ${Theme.currentThemeOverride.value?.title ?: "Auto"}"
                 }

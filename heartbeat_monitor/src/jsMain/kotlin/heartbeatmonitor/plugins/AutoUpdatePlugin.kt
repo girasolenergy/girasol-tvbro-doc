@@ -56,7 +56,7 @@ object AutoUpdatePlugin : AbstractPlugin("AutoUpdatePlugin") {
                         fun registerOption(value: String, title: String) {
                             select.append(
                                 document.createOptionElement().also { optionElement ->
-                                    optionElement.asDynamic().value = value
+                                    optionElement.value = value
                                     optionElement.textContent = title
                                 },
                             )
@@ -68,7 +68,7 @@ object AutoUpdatePlugin : AbstractPlugin("AutoUpdatePlugin") {
                         }
 
                         select.addEventListener("change", {
-                            val option = optionOf(select.asDynamic().value as String)
+                            val option = optionOf(select.value as String)
                             setPageParameter("r", option?.value)
                             applyOption(option)
                         })
@@ -78,7 +78,7 @@ object AutoUpdatePlugin : AbstractPlugin("AutoUpdatePlugin") {
                             if (option != null && defaultOptions.none { it.value == option.value }) {
                                 registerOption(option.value, option.title)
                             }
-                            select.asDynamic().value = option?.value ?: ""
+                            select.value = option?.value ?: ""
                             applyOption(option)
                         }
                         window.addEventListener("popstate", {

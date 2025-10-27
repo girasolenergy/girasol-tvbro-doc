@@ -69,7 +69,7 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
                 container.append(
                     document.createDivElement().also { titleDiv ->
                         titleDiv.textContent = "Sort"
-                        titleDiv.asDynamic().style.fontWeight = "700"
+                        titleDiv.style.fontWeight = "700"
                     },
                     document.createDivElement().also { buttonsDiv ->
                         buttonsDiv.className = "dialog-container"
@@ -78,14 +78,14 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
                             CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.forEachIndexed { index, cardComparatorSpecifier ->
                                 buttonsDiv.append(
                                     document.createDivElement().also { buttonDiv ->
-                                        buttonDiv.asDynamic().style.display = "flex"
-                                        buttonDiv.asDynamic().style.gap = "12px"
-                                        buttonDiv.asDynamic().style.alignItems = "center"
+                                        buttonDiv.style.display = "flex"
+                                        buttonDiv.style.asDynamic().gap = "12px"
+                                        buttonDiv.style.alignItems = "center"
                                         buttonDiv.append(
                                             document.createDivElement().also { leftDiv ->
                                                 leftDiv.append(
                                                     document.createButtonElement().also { toggleButton ->
-                                                        toggleButton.asDynamic().type = "button"
+                                                        toggleButton.type = "button"
                                                         toggleButton.classList.add("dialog-button")
                                                         toggleButton.textContent = getTitle(cardComparatorSpecifier)
                                                         toggleButton.addEventListener("click", {
@@ -97,10 +97,10 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
                                                 )
                                             },
                                             document.createDivElement().also { rightDiv ->
-                                                rightDiv.asDynamic().style.marginLeft = "auto"
+                                                rightDiv.style.marginLeft = "auto"
                                                 rightDiv.append(
                                                     document.createButtonElement().also { removeButton ->
-                                                        removeButton.asDynamic().type = "button"
+                                                        removeButton.type = "button"
                                                         removeButton.classList.add("dialog-button")
                                                         removeButton.textContent = "🗑️"
                                                         removeButton.addEventListener("click", {
@@ -123,7 +123,7 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
                         updateButtons()
                     },
                     document.createButtonElement().also { addButton ->
-                        addButton.asDynamic().type = "button"
+                        addButton.type = "button"
                         addButton.classList.add("dialog-transparent-button")
                         addButton.textContent = "＋"
                         addButton.addEventListener("click", {
@@ -133,12 +133,12 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
                         })
                     },
                     document.createDivElement().also { actionsDiv ->
-                        actionsDiv.asDynamic().style.display = "flex"
-                        actionsDiv.asDynamic().style.justifyContent = "end"
-                        actionsDiv.asDynamic().style.gap = "8px"
+                        actionsDiv.style.display = "flex"
+                        actionsDiv.style.justifyContent = "end"
+                        actionsDiv.style.asDynamic().gap = "8px"
                         actionsDiv.append(
                             document.createButtonElement().also { closeButton ->
-                                closeButton.asDynamic().type = "button"
+                                closeButton.type = "button"
                                 closeButton.textContent = "Close"
                                 closeButton.classList.add("dialog-button")
                                 closeButton.addEventListener("click", { onClosed.emit() })
@@ -154,7 +154,7 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
                 container.className = "topbar-property"
                 container.append(
                     document.createButtonElement().also { sortButton ->
-                        sortButton.asDynamic().type = "button"
+                        sortButton.type = "button"
                         sortButton.textContent = "Sort"
 
                         fun updateButton() {
