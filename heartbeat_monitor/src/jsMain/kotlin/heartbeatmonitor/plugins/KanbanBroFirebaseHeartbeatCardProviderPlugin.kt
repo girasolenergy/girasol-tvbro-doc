@@ -23,6 +23,7 @@ import kotlinx.coroutines.await
 import kotlinx.coroutines.promise
 import kotlinx.coroutines.yield
 import onPluginLoaded
+import org.w3c.dom.Element
 import org.w3c.dom.Image
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
@@ -97,7 +98,7 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                     alerts
                                 },
                                 run {
-                                    val texts = mutableListOf<dynamic>()
+                                    val texts = mutableListOf<Element>()
                                     texts.add(document.createDivElement().also { div ->
                                         div.className = "name"
                                         div.textContent = name

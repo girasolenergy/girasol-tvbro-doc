@@ -13,6 +13,7 @@ import kotlinx.browser.window
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.yield
+import org.w3c.dom.Element
 import org.w3c.dom.Image
 import kotlin.math.floor
 
@@ -59,7 +60,7 @@ object SampleCardProviderPlugin : AbstractPlugin("SampleCardProviderPlugin") {
                             alerts
                         },
                         run {
-                            val texts = mutableListOf<dynamic>()
+                            val texts = mutableListOf<Element>()
                             val factors = if (number == 1) mutableListOf() else primeFactors(number)
                             factors
                                 .groupBy { it }

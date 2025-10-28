@@ -8,14 +8,15 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import onPluginLoaded
 import org.w3c.dom.Document
+import org.w3c.dom.Element
 import org.w3c.dom.HTMLDivElement
 import kotlin.coroutines.EmptyCoroutineContext
 
 class Card(
-    val keys: Map<String, dynamic>,
-    val image: dynamic,
+    val keys: Map<String, Any?>,
+    val image: Element,
     val alerts: List<Alert>,
-    val texts: List<dynamic>,
+    val texts: List<Element>,
 ) {
     companion object {
 
@@ -98,7 +99,7 @@ class Card(
 
     }
 
-    class Alert(val message: dynamic, val level: Int)
+    class Alert(val message: Element, val level: Int)
 
 }
 
