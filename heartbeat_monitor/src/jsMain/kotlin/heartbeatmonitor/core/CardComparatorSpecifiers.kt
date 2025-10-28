@@ -1,39 +1,45 @@
 package heartbeatmonitor.core
 
+import heartbeatmonitor.util.Codec
 import heartbeatmonitor.util.getValue
+import heartbeatmonitor.util.list
 import heartbeatmonitor.util.property
 import heartbeatmonitor.util.setValue
+import heartbeatmonitor.util.toJson
+import heartbeatmonitor.util.toMap
 import heartbeatmonitor.util.xmap
 import kotlinx.browser.document
 import kotlinx.browser.localStorage
 import mirrg.kotlin.event.ObservableValue
 import onPluginLoaded
+import kotlin.js.Json
 
-external interface CardComparatorSpecifier
-
-operator fun CardComparatorSpecifier.get(key: String): Any? {
-    return this.asDynamic()[key]
-}
-
-operator fun CardComparatorSpecifier.set(key: String, value: Any?) {
-    this.asDynamic()[key] = value
-}
-
-var CardComparatorSpecifier.type: String
-    get() = this["type"] as String
-    set(value) {
-        this["type"] = value
+data class CardComparatorSpecifier(val map: Map<String, Any?>) {
+    companion object {
+        val JSON_CODEC = Codec<Any?, CardComparatorSpecifier>(
+            { input -> CardComparatorSpecifier(input.unsafeCast<Json>().toMap()) },
+            { output -> output.map.toJson() },
+        )
     }
+}
+
+fun CardComparatorSpecifier(vararg pairs: Pair<String, Any?>) = CardComparatorSpecifier(mapOf(*pairs))
+
+operator fun CardComparatorSpecifier.get(key: String) = this.map[key]
+fun CardComparatorSpecifier.with(key: String, value: Any?) = CardComparatorSpecifier(this.map + (key to value))
+
+val CardComparatorSpecifier.type get() = this["type"] as String
 
 object CardComparatorSpecifiers {
     private const val LOCAL_STORAGE_KEY = "kanbanbro.cardComparatorSpecifiers"
     private var storage by localStorage.property(LOCAL_STORAGE_KEY)
         .xmap(
-            { if (it != null) (JSON.parse(it) as Array<CardComparatorSpecifier>).toList() else listOf() },
+            { if (it != null) (JSON.parse(it) as Array<Any?>).toList() else emptyList() },
             { JSON.stringify(it.toTypedArray()) },
         )
+        .xmap(CardComparatorSpecifier.JSON_CODEC.list())
 
-    val currentCardComparatorSpecifiers = ObservableValue(listOf<CardComparatorSpecifier>())
+    val currentCardComparatorSpecifiers = ObservableValue(emptyList<CardComparatorSpecifier>())
 
     fun init() {
 

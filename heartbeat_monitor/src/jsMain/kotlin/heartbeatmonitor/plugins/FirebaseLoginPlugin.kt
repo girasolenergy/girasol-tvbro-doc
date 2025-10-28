@@ -44,7 +44,7 @@ val firebaseConfig = json(
 
 object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
 
-    val appNames = ObservableValue<List<String>>(listOf())
+    val appNames = ObservableValue<List<String>>(emptyList())
     var appNamesStorage by localStorage.property("kanbanbro.appNames")
         .xmap(
             { if (it != null) (JSON.parse(it) as Array<String>).toList() else listOf("[DEFAULT]") },

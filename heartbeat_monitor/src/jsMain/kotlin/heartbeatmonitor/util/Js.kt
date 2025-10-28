@@ -8,6 +8,7 @@ import org.w3c.dom.events.Event
 import org.w3c.dom.url.URL
 import org.w3c.dom.url.URLSearchParams
 import org.w3c.files.Blob
+import kotlin.js.Json
 import kotlin.js.Promise
 import kotlin.js.json
 
@@ -24,6 +25,18 @@ fun <T> suspendingPromise(block: suspend ((T) -> Unit, (dynamic) -> Unit) -> Uni
 }
 
 fun new(constructor: dynamic, vararg args: dynamic): dynamic = js("Reflect.construct")(constructor, args)
+
+fun Json.toMap(): Map<String, Any?> {
+    val dynamicThis = this.asDynamic()
+    val map = mutableMapOf<String, Any?>()
+    val keys = window.asDynamic().Object.keys(dynamicThis).unsafeCast<Array<String>>()
+    for (key in keys) {
+        map[key] = dynamicThis[key]
+    }
+    return map
+}
+
+fun Map<String, Any?>.toJson() = json(*this.map { it.toPair() }.toTypedArray())
 
 fun getPageParameter(key: String): String? {
     val params = URLSearchParams(window.location.search)
