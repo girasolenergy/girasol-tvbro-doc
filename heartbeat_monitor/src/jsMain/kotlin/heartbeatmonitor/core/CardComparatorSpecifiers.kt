@@ -12,11 +12,11 @@ import onPluginLoaded
 external interface CardComparatorSpecifier
 
 operator fun CardComparatorSpecifier.get(key: String): Any? {
-    return asDynamic()[key]
+    return this.asDynamic()[key]
 }
 
 operator fun CardComparatorSpecifier.set(key: String, value: Any?) {
-    asDynamic()[key] = value
+    this.asDynamic()[key] = value
 }
 
 var CardComparatorSpecifier.type: String
