@@ -19,3 +19,7 @@ fun Document.createLinkElement() = this.createElement("link").unsafeCast<HTMLLin
 var CSSStyleDeclaration.gap: String
     get() = this.getPropertyValue("gap")
     set(value) = this.setProperty("gap", value)
+
+var CSSStyleDeclaration.colorScheme: String
+    get() = this.getPropertyValue("colorScheme")
+    set(value) = this.setProperty("colorScheme", value)

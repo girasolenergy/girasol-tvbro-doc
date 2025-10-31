@@ -1,5 +1,6 @@
 package heartbeatmonitor.core
 
+import heartbeatmonitor.util.colorScheme
 import heartbeatmonitor.util.getValue
 import heartbeatmonitor.util.property
 import heartbeatmonitor.util.setValue
@@ -11,6 +12,7 @@ import mirrg.kotlin.event.EventRegistry
 import mirrg.kotlin.event.ObservableValue
 import mirrg.kotlin.event.emit
 import onPluginLoaded
+import org.w3c.dom.HTMLElement
 
 enum class Theme(val slug: String, val title: String) {
     LIGHT("light", "Light"),
@@ -42,7 +44,7 @@ enum class Theme(val slug: String, val title: String) {
             onActualThemeChanged.register {
                 val actualTheme = getActualTheme()
                 document.documentElement!!.setAttribute("data-theme", actualTheme.slug)
-                document.documentElement.asDynamic().style.colorScheme = actualTheme.slug
+                document.documentElement.unsafeCast<HTMLElement>().style.colorScheme = actualTheme.slug
             }
             isWindowDarkMode.addEventListener("change", {
                 onActualThemeChanged.emit()

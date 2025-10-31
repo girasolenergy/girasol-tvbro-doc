@@ -6,15 +6,14 @@ import heartbeatmonitor.core.CardProvider
 import heartbeatmonitor.core.Dispatcher
 import heartbeatmonitor.util.createDivElement
 import heartbeatmonitor.util.createSpanElement
+import heartbeatmonitor.util.decode
 import heartbeatmonitor.util.firebase.FirebaseApp
 import heartbeatmonitor.util.firebase.FirebaseAppModule
 import heartbeatmonitor.util.firebase.FirebaseAuthModule
 import heartbeatmonitor.util.firebase.FirebaseStorageModule
 import heartbeatmonitor.util.firebase.Unsubscribe
-import heartbeatmonitor.util.new
 import heartbeatmonitor.util.setImageBlob
 import kotlinx.browser.document
-import kotlinx.browser.window
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.MainScope
@@ -63,7 +62,7 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                             val metadata = FirebaseStorageModule.getMetadata(FirebaseStorageModule.ref(folderRef, "settings.json")).await()
                             yield()
 
-                            val settings = JSON.parse<Json>(new(window.asDynamic().TextDecoder).decode(settingsBytes) as String)
+                            val settings = JSON.parse<Json>(settingsBytes.decode())
                             val name = (settings["settings_code"].unsafeCast<Json>()["settings"].unsafeCast<Json>()["heartbeat_title"] as String?).takeUnless { it.isNullOrBlank() } ?: folderRef.name
                             console.log(name, settings, metadata)
 

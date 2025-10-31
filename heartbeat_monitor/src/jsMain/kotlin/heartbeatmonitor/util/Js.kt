@@ -3,6 +3,7 @@ package heartbeatmonitor.util
 import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import org.khronos.webgl.ArrayBuffer
 import org.w3c.dom.Image
 import org.w3c.dom.events.Event
 import org.w3c.dom.url.URL
@@ -12,7 +13,7 @@ import kotlin.js.Json
 import kotlin.js.Promise
 import kotlin.js.json
 
-fun <T> suspendingPromise(block: suspend ((T) -> Unit, (dynamic) -> Unit) -> Unit): Promise<T> {
+fun <T> suspendingPromise(block: suspend ((T) -> Unit, (Throwable) -> Unit) -> Unit): Promise<T> {
     return Promise { resolve, reject ->
         MainScope().launch {
             try {
@@ -24,7 +25,7 @@ fun <T> suspendingPromise(block: suspend ((T) -> Unit, (dynamic) -> Unit) -> Uni
     }
 }
 
-fun new(constructor: dynamic, vararg args: dynamic): dynamic = js("Reflect.construct")(constructor, args)
+fun new(constructor: dynamic, vararg args: dynamic): dynamic = window.asDynamic().Reflect.construct(constructor, args)
 
 fun Json.toMap(): Map<String, Any?> {
     val dynamicThis = this.asDynamic()
@@ -37,6 +38,8 @@ fun Json.toMap(): Map<String, Any?> {
 }
 
 fun Map<String, Any?>.toJson() = json(*this.map { it.toPair() }.toTypedArray())
+
+fun ArrayBuffer.decode() = new(window.asDynamic().TextDecoder).decode(this) as String
 
 fun getPageParameter(key: String): String? {
     val params = URLSearchParams(window.location.search)
