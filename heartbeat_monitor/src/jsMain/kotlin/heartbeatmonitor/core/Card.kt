@@ -5,7 +5,6 @@ import kotlinx.browser.document
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.yield
 import onPluginLoaded
 import org.w3c.dom.Document
 import org.w3c.dom.Element
@@ -14,9 +13,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 
 class Card(
     val keys: Map<String, Any?>,
-    val image: Element,
-    val alerts: List<Alert>,
-    val texts: List<Element>,
+    val configurator: suspend (CardElement) -> Unit,
 ) {
     companion object {
 
@@ -37,8 +34,6 @@ class Card(
                 coroutineScope.launch {
                     val card = cardDeferred.await()
 
-                    yield()
-
                     val refNode = UiContainers.cards.cardElements.firstOrNull { child ->
                         CardComparator.currentComparator.compare(child.card, card) > 0
                     }
@@ -47,45 +42,9 @@ class Card(
                         document.createCardElement().also { cardDiv ->
                             cardDiv.className = "card"
                             cardDiv.card = card
-
-                            cardDiv.append(
-                                document.createDivElement().also { screenshotDiv ->
-                                    screenshotDiv.className = "screenshot"
-                                    screenshotDiv.append(card.image)
-
-                                    if (card.alerts.isNotEmpty()) {
-                                        cardDiv.classList.add("yellow-alert")
-                                        screenshotDiv.classList.add("yellow-alert")
-                                        if (card.alerts.any { a -> a.level === 2 }) {
-                                            cardDiv.classList.add("red-alert")
-                                        }
-
-                                        screenshotDiv.append(
-                                            document.createDivElement().also { alertsDiv ->
-                                                alertsDiv.className = "alerts"
-                                                card.alerts.forEach { alert ->
-                                                    alertsDiv.append(
-                                                        document.createDivElement().also { alertDiv ->
-                                                            alertDiv.className = "alert alert-${alert.level}"
-                                                            alertDiv.append(alert.message)
-                                                        },
-                                                    )
-                                                }
-                                            },
-                                        )
-                                    }
-                                },
-                                document.createDivElement().also { textsDiv ->
-                                    textsDiv.className = "texts"
-                                    textsDiv.append(
-                                        document.createDivElement().also { textDiv ->
-                                            card.texts.forEach { text ->
-                                                textDiv.append(text)
-                                            }
-                                        },
-                                    )
-                                },
-                            )
+                            launch {
+                                card.configurator(cardDiv)
+                            }
                         },
                         refNode,
                     )

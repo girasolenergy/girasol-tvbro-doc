@@ -12,8 +12,6 @@ import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.yield
-import org.w3c.dom.Element
 import org.w3c.dom.Image
 import kotlin.math.floor
 
@@ -22,57 +20,88 @@ object SampleCardProviderPlugin : AbstractPlugin("SampleCardProviderPlugin") {
         CardProvider.currentCardProviders += CardProvider { coroutineScope ->
             (0 until 100).map { index ->
                 coroutineScope.async {
-                    yield()
                     val number = Dispatcher.dispatch {
-                        yield()
                         delay(20L + floor(window.asDynamic().Math.random() * 120.0).toLong())
-                        yield()
                         index + 1
                     }
-                    yield()
                     Card(
                         mapOf(
                             "name" to "$number",
                         ),
-                        Image().also { img ->
-                            img.asDynamic().loading = "lazy"
-                            img.asDynamic().decoding = "async"
-                            img.src = if (isPrime(number)) {
-                                "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Leonardo_da_Vinci_%281452-1519%29_-_The_Last_Supper_%281495-1498%29.jpg/1920px-Leonardo_da_Vinci_%281452-1519%29_-_The_Last_Supper_%281495-1498%29.jpg"
-                            } else {
-                                "https://upload.wikimedia.org/wikipedia/commons/2/20/Zeus_Otricoli_Pio-Clementino_Inv257.jpg"
-                            }
-                            img.alt = "${number}番目の画像"
-                        },
-                        run {
-                            fun createAlert(message: String, level: Int): Card.Alert {
-                                return Card.Alert(
-                                    document.createSpanElement().also { span ->
-                                        span.textContent = message
-                                    },
-                                    level,
-                                )
-                            }
+                    ) { cardDiv ->
+                        cardDiv.append(
+                            document.createDivElement().also { screenshotDiv ->
+                                screenshotDiv.className = "screenshot"
 
-                            val alerts = mutableListOf<Card.Alert>()
-                            if (number % 3 === 0) alerts += createAlert("3の倍数", 2)
-                            if (number % 5 === 0) alerts += createAlert("5の倍数", 1)
-                            alerts
-                        },
-                        run {
-                            val texts = mutableListOf<Element>()
-                            val factors = if (number == 1) mutableListOf() else primeFactors(number)
-                            factors
-                                .groupBy { it }
-                                .map { it.value.joinToString("-") { n -> "$n" } }
-                                .forEach {
-                                    texts += document.createDivElement().also { textDiv ->
-                                        textDiv.textContent = it
-                                    }
+                                screenshotDiv.append(
+                                    Image().also { img ->
+                                        img.asDynamic().loading = "lazy"
+                                        img.asDynamic().decoding = "async"
+                                        img.src = if (isPrime(number)) {
+                                            "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Leonardo_da_Vinci_%281452-1519%29_-_The_Last_Supper_%281495-1498%29.jpg/1920px-Leonardo_da_Vinci_%281452-1519%29_-_The_Last_Supper_%281495-1498%29.jpg"
+                                        } else {
+                                            "https://upload.wikimedia.org/wikipedia/commons/2/20/Zeus_Otricoli_Pio-Clementino_Inv257.jpg"
+                                        }
+                                        img.alt = "${number}番目の画像"
+                                    },
+                                )
+
+                                fun createAlert(message: String, level: Int): Card.Alert {
+                                    return Card.Alert(
+                                        document.createSpanElement().also { span ->
+                                            span.textContent = message
+                                        },
+                                        level,
+                                    )
                                 }
-                            texts
-                        },
-                    )
+
+                                val alerts = mutableListOf<Card.Alert>()
+                                if (number % 3 === 0) alerts += createAlert("3の倍数", 2)
+                                if (number % 5 === 0) alerts += createAlert("5の倍数", 1)
+
+                                if (alerts.isNotEmpty()) {
+                                    cardDiv.classList.add("yellow-alert")
+                                    screenshotDiv.classList.add("yellow-alert")
+                                    if (alerts.any { a -> a.level === 2 }) {
+                                        cardDiv.classList.add("red-alert")
+                                    }
+
+                                    screenshotDiv.append(
+                                        document.createDivElement().also { alertsDiv ->
+                                            alertsDiv.className = "alerts"
+                                            alerts.forEach { alert ->
+                                                alertsDiv.append(
+                                                    document.createDivElement().also { alertDiv ->
+                                                        alertDiv.className = "alert alert-${alert.level}"
+                                                        alertDiv.append(alert.message)
+                                                    },
+                                                )
+                                            }
+                                        },
+                                    )
+                                }
+
+                            },
+                            document.createDivElement().also { textsDiv ->
+                                textsDiv.className = "texts"
+                                textsDiv.append(
+                                    document.createDivElement().also { textDiv ->
+                                        val factors = if (number == 1) mutableListOf() else primeFactors(number)
+                                        factors
+                                            .groupBy { it }
+                                            .map { it.value.joinToString("-") { n -> "$n" } }
+                                            .forEach {
+                                                textDiv.append(
+                                                    document.createDivElement().also { textDiv ->
+                                                        textDiv.textContent = it
+                                                    },
+                                                )
+                                            }
+                                    },
+                                )
+                            },
+                        )
+                    }
                 }
             }
         }

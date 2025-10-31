@@ -17,12 +17,11 @@ import kotlinx.browser.document
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.asDeferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.await
 import kotlinx.coroutines.promise
-import kotlinx.coroutines.yield
 import onPluginLoaded
-import org.w3c.dom.Element
 import org.w3c.dom.Image
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
@@ -54,68 +53,99 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                 providers.add { coroutineScope ->
                     coroutineScope.async {
                         Dispatcher.dispatch {
-                            yield()
-                            val imageBytes = FirebaseStorageModule.getBytes(FirebaseStorageModule.ref(folderRef, "screenshot.png")).await()
-                            yield()
-                            val settingsBytes = FirebaseStorageModule.getBytes(FirebaseStorageModule.ref(folderRef, "settings.json")).await()
-                            yield()
-                            val metadata = FirebaseStorageModule.getMetadata(FirebaseStorageModule.ref(folderRef, "settings.json")).await()
-                            yield()
+                            val imageBytes = FirebaseStorageModule.getBytes(FirebaseStorageModule.ref(folderRef, "screenshot.png")).asDeferred()
+                            val settingsBytes = FirebaseStorageModule.getBytes(FirebaseStorageModule.ref(folderRef, "settings.json")).asDeferred()
+                            val metadata = FirebaseStorageModule.getMetadata(FirebaseStorageModule.ref(folderRef, "settings.json")).asDeferred() // なぜかPromiseだと初手でundefinedが返る
 
-                            val settings = JSON.parse<Json>(settingsBytes.decode())
+                            val settings = JSON.parse<Json>(settingsBytes.await().decode())
                             val name = (settings["settings_code"].unsafeCast<Json>()["settings"].unsafeCast<Json>()["heartbeat_title"] as String?).takeUnless { it.isNullOrBlank() } ?: folderRef.name
-                            console.log(name, settings, metadata)
+                            console.log(name, settings, metadata.await())
 
                             Card(
                                 mapOf(
                                     "name" to name,
-                                    "updated" to Date.parse(metadata.updated),
+                                    "updated" to Date.parse(metadata.await().updated),
                                 ),
-                                Image().also { img ->
-                                    img.asDynamic().loading = "lazy"
-                                    img.asDynamic().decoding = "async"
-                                    setImageBlob(img, Blob(arrayOf(imageBytes), BlobPropertyBag("image/png")))
-                                    img.alt = name
-                                },
-                                run {
-                                    fun createAlert(message: String, level: Int): Card.Alert {
-                                        return Card.Alert(
-                                            document.createSpanElement().also { span ->
-                                                span.textContent = message
-                                            },
-                                            level,
-                                        )
-                                    }
+                            ) { cardDiv ->
+                                cardDiv.append(
+                                    document.createDivElement().also { screenshotDiv ->
+                                        screenshotDiv.className = "screenshot"
 
-                                    val alerts = mutableListOf<Card.Alert>()
-                                    if (settings["main_activity_has_focus"] as Boolean? == false) alerts += createAlert("Lost Focus", 2)
-                                    if (settings["main_activity_resumed"] as Boolean? == false) alerts += createAlert("Not Resumed", 2)
-                                    if (settings["main_activity_ui_active"] as Boolean? == true) alerts += createAlert("UI Opened", 1)
-                                    if (Date.now() - Date.parse(metadata.updated) >= 1000 * 60 * 60 * 2) {
-                                        alerts += createAlert("No updates (2 Hours+)", 2)
-                                    }
-                                    alerts
-                                },
-                                run {
-                                    val texts = mutableListOf<Element>()
-                                    texts.add(document.createDivElement().also { div ->
-                                        div.className = "name"
-                                        div.textContent = name
-                                    })
-                                    texts.add(document.createDivElement().also { div ->
-                                        div.className = "datetime"
-                                        div.textContent = Date(metadata.updated).asDynamic().toLocaleString(undefined, json("dateStyle" to "medium", "timeStyle" to "medium"))
-                                        div.title = metadata.updated
-                                    })
-                                    texts
-                                },
-                            ).also {
+                                        screenshotDiv.append(
+                                            Image().also { img ->
+                                                img.asDynamic().loading = "lazy"
+                                                img.asDynamic().decoding = "async"
+                                                setImageBlob(img, Blob(arrayOf(imageBytes.await()), BlobPropertyBag("image/png")))
+                                                img.alt = name
+                                            },
+                                        )
+
+                                        fun createAlert(message: String, level: Int): Card.Alert {
+                                            return Card.Alert(
+                                                document.createSpanElement().also { span ->
+                                                    span.textContent = message
+                                                },
+                                                level,
+                                            )
+                                        }
+
+                                        val alerts = mutableListOf<Card.Alert>()
+                                        if (settings["main_activity_has_focus"] as Boolean? == false) alerts += createAlert("Lost Focus", 2)
+                                        if (settings["main_activity_resumed"] as Boolean? == false) alerts += createAlert("Not Resumed", 2)
+                                        if (settings["main_activity_ui_active"] as Boolean? == true) alerts += createAlert("UI Opened", 1)
+                                        if (Date.now() - Date.parse(metadata.await().updated) >= 1000 * 60 * 60 * 2) {
+                                            alerts += createAlert("No updates (2 Hours+)", 2)
+                                        }
+
+                                        if (alerts.isNotEmpty()) {
+                                            cardDiv.classList.add("yellow-alert")
+                                            screenshotDiv.classList.add("yellow-alert")
+                                            if (alerts.any { a -> a.level === 2 }) {
+                                                cardDiv.classList.add("red-alert")
+                                            }
+
+                                            screenshotDiv.append(
+                                                document.createDivElement().also { alertsDiv ->
+                                                    alertsDiv.className = "alerts"
+                                                    alerts.forEach { alert ->
+                                                        alertsDiv.append(
+                                                            document.createDivElement().also { alertDiv ->
+                                                                alertDiv.className = "alert alert-${alert.level}"
+                                                                alertDiv.append(alert.message)
+                                                            },
+                                                        )
+                                                    }
+                                                },
+                                            )
+                                        }
+
+                                    },
+                                    document.createDivElement().also { textsDiv ->
+                                        textsDiv.className = "texts"
+                                        textsDiv.append(
+                                            document.createDivElement().also { textDiv ->
+                                                textDiv.append(
+                                                    document.createDivElement().also { div ->
+                                                        div.className = "name"
+                                                        div.textContent = name
+                                                    },
+                                                    document.createDivElement().also { div ->
+                                                        div.className = "datetime"
+                                                        div.textContent = Date(metadata.await().updated).asDynamic().toLocaleString(undefined, json("dateStyle" to "medium", "timeStyle" to "medium"))
+                                                        div.title = metadata.await().updated
+                                                    },
+                                                )
+                                            },
+                                        )
+                                    },
+                                )
+                            }.also {
                                 it.asDynamic()["_debug"] = json(
                                     "appName" to app.name,
                                     "app" to app,
                                     "user" to user,
                                     "settings" to settings,
-                                    "metadata" to metadata,
+                                    "metadata" to metadata.await(),
                                 )
                             }
                         }
