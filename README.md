@@ -1,47 +1,5 @@
 # KanbanBro Documentation
 
-## Repository Structure
-
-### Git-related files
-
-- `.gitattributes`
-- `.gitignore`
-
-### GitHub-related files
-
-- `.github`
-
-### Gradle-related files
-
-- `gradle`
-- `gradlew`
-- `gradlew.bat`
-
-### Root project build definition files
-
-A project to build all public pages included in the girasol-tvbro-doc repository.
-
-- `build.gradle.kts`
-- `settings.gradle.kts`
-
-### Root project source files
-
-Static assets for the public pages included in the girasol-tvbro-doc repository.
-
-- `src`
-
-### Heartbeat Monitor subproject
-
-Subproject for the Heartbeat Monitor UI.
-
-- `heartbeat_monitor`
-
-### Working files
-
-- `main.pdn`
-- `set_cors.bash`
-- `cors-config.json`
-
 ## Public Site
 
 ### Google Play
@@ -99,3 +57,45 @@ KanbanBro Trial https://play.google.com/store/apps/details?id=co.pplc.kanbanbro.
 
 - [Debug Pages](https://girasolenergy.github.io/girasol-tvbro-doc/debug/)
 - [Sample KanbanBro Plugin Repository](https://girasolenergy.github.io/girasol-tvbro-doc/plugins)
+
+## Repository Structure
+
+### Git-related files
+
+- `.gitattributes`
+- `.gitignore`
+
+### GitHub-related files
+
+- `.github`
+
+### Gradle-related files
+
+- `gradle`
+- `gradlew`
+- `gradlew.bat`
+
+### Root project build definition files
+
+A project to build all public pages included in the girasol-tvbro-doc repository.
+
+- `build.gradle.kts`
+- `settings.gradle.kts`
+
+### Root project source files
+
+Static assets for the public pages included in the girasol-tvbro-doc repository.
+
+- `src`
+
+### Heartbeat Monitor subproject
+
+Subproject for the Heartbeat Monitor UI.
+
+- `heartbeat_monitor`
+
+### Working files
+
+- `main.pdn`
+- `set_cors.bash`
+- `cors-config.json`
