@@ -46,7 +46,7 @@ Subproject for the Heartbeat Monitor UI.
 
 ### Repository README
 
-- [README (English)](https://girasolenergy.github.io/girasol-tvbro-doc/README.html)
+- [README (English)](https://girasolenergy.github.io/girasol-tvbro-doc/README)
 
 ### Documentation
 
@@ -57,21 +57,21 @@ Product overview:
 
 Guides:
 
-- [Kanban Broドキュメント (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/help.html)
-- [プラグイン (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/PLUGIN.html)
+- [Kanban Broドキュメント (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/help)
+- [プラグイン (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/PLUGIN)
 
 ### Heartbeat
 
 Guides:
 
-- [リモート監視（Heartbeat）機能ガイド (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/ja/heartbeat.html)
-- [Heartbeat Guide (English)](https://girasolenergy.github.io/girasol-tvbro-doc/en/heartbeat.html)
+- [リモート監視（Heartbeat）機能ガイド (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/ja/heartbeat)
+- [Heartbeat Guide (English)](https://girasolenergy.github.io/girasol-tvbro-doc/en/heartbeat)
 
 Web app:
 
-- [Kanban Bro Heartbeat Monitor (English)](https://girasolenergy.github.io/girasol-tvbro-doc/heartbeat_monitor/index.html)
+- [Kanban Bro Heartbeat Monitor (English)](https://girasolenergy.github.io/girasol-tvbro-doc/heartbeat_monitor/)
 
 ### Other Public Pages
 
 - [Debug Pages (English)](https://girasolenergy.github.io/girasol-tvbro-doc/debug/)
-- [Sample Kanban Bro Plugin Repository (English)](https://girasolenergy.github.io/girasol-tvbro-doc/plugins.html)
+- [Sample Kanban Bro Plugin Repository (English)](https://girasolenergy.github.io/girasol-tvbro-doc/plugins)
