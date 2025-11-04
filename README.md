@@ -42,7 +42,13 @@ Subproject for the Heartbeat Monitor UI.
 - `set_cors.bash`
 - `cors-config.json`
 
-## Public Site Structure
+## Public Site
+
+### Google Play
+
+KanbanBro https://play.google.com/store/apps/details?id=co.pplc.kanbanbro
+
+KanbanBro Trial https://play.google.com/store/apps/details?id=co.pplc.kanbanbro.trial
 
 ### Documentation
 
@@ -54,14 +60,9 @@ Guides:
 
 - [KanbanBroドキュメント (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/help)
 - [プラグイン (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/PLUGIN)
-
-### Heartbeat
-
-Guides:
-
 - [Heartbeat Guide](https://girasolenergy.github.io/girasol-tvbro-doc/en/heartbeat)
 
-Web app:
+### Web app
 
 - [KanbanBro Heartbeat Monitor](https://girasolenergy.github.io/girasol-tvbro-doc/heartbeat_monitor/)
 
@@ -70,7 +71,13 @@ Web app:
 - [Debug Pages](https://girasolenergy.github.io/girasol-tvbro-doc/debug/)
 - [Sample KanbanBro Plugin Repository](https://girasolenergy.github.io/girasol-tvbro-doc/plugins)
 
-## 公開ページ構造
+## 公開ページ
+
+### Google Play
+
+KanbanBro https://play.google.com/store/apps/details?id=co.pplc.kanbanbro
+
+KanbanBro Trial https://play.google.com/store/apps/details?id=co.pplc.kanbanbro.trial
 
 ### 文書
 
@@ -82,14 +89,9 @@ Web app:
 
 - [KanbanBroドキュメント (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/help)
 - [プラグイン (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/PLUGIN)
-
-### リモート監視機能
-
-ヘルプ:
-
 - [リモート監視（Heartbeat）機能ガイド](https://girasolenergy.github.io/girasol-tvbro-doc/ja/heartbeat)
 
-Webアプリ:
+### Webアプリ
 
 - [KanbanBro Heartbeat Monitor](https://girasolenergy.github.io/girasol-tvbro-doc/heartbeat_monitor/)
 
