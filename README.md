@@ -44,10 +44,6 @@ Subproject for the Heartbeat Monitor UI.
 
 ## Public Site Structure
 
-### Repository README
-
-- [README (English)](https://girasolenergy.github.io/girasol-tvbro-doc/README)
-
 ### Documentation
 
 Product overview:
