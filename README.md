@@ -4,9 +4,8 @@
 
 ### Google Play
 
-KanbanBro https://play.google.com/store/apps/details?id=co.pplc.kanbanbro
-
-KanbanBro Trial https://play.google.com/store/apps/details?id=co.pplc.kanbanbro.trial
+- [KanbanBro](https://play.google.com/store/apps/details?id=co.pplc.kanbanbro)
+- [KanbanBro Trial](https://play.google.com/store/apps/details?id=co.pplc.kanbanbro.trial)
 
 ### Documentation
 
@@ -33,9 +32,8 @@ Guides:
 
 ### Google Play
 
-KanbanBro https://play.google.com/store/apps/details?id=co.pplc.kanbanbro
-
-KanbanBro Trial https://play.google.com/store/apps/details?id=co.pplc.kanbanbro.trial
+- [KanbanBro](https://play.google.com/store/apps/details?id=co.pplc.kanbanbro)
+- [KanbanBro Trial](https://play.google.com/store/apps/details?id=co.pplc.kanbanbro.trial)
 
 ### 文書
 
