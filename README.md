@@ -1,4 +1,4 @@
-# girasol-tvbro-doc
+# KanbanBro Documentation
 
 ## Repository Structure
 
