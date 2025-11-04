@@ -1,4 +1,4 @@
-# Kanban Broドキュメント
+# KanbanBroドキュメント
 
 * 目次
 {:toc}

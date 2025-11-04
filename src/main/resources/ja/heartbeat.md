@@ -2,7 +2,7 @@
 
 ## 概要
 
-リモート監視（Heartbeat）機能は、端末の状態データをKanban Broのサーバーに一定間隔で送信し、専用の[リモート監視モニター](https://girasolenergy.github.io/girasol-tvbro-doc/heartbeat_monitor/)で起動状態を確認できる機能です。
+リモート監視（Heartbeat）機能は、端末の状態データをKanbanBroのサーバーに一定間隔で送信し、専用の[リモート監視モニター](https://girasolenergy.github.io/girasol-tvbro-doc/heartbeat_monitor/)で起動状態を確認できる機能です。
 
 利用にはユーザー認証（ログイン）と機能の有効化が必要です。
 

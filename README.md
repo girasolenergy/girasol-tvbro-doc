@@ -53,7 +53,7 @@ Product overview:
 
 Guides:
 
-- [Kanban Broドキュメント (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/help)
+- [KanbanBroドキュメント (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/help)
 - [プラグイン (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/PLUGIN)
 
 ### Heartbeat
@@ -65,9 +65,9 @@ Guides:
 
 Web app:
 
-- [Kanban Bro Heartbeat Monitor (English)](https://girasolenergy.github.io/girasol-tvbro-doc/heartbeat_monitor/)
+- [KanbanBro Heartbeat Monitor (English)](https://girasolenergy.github.io/girasol-tvbro-doc/heartbeat_monitor/)
 
 ### Other Public Pages
 
 - [Debug Pages (English)](https://girasolenergy.github.io/girasol-tvbro-doc/debug/)
-- [Sample Kanban Bro Plugin Repository (English)](https://girasolenergy.github.io/girasol-tvbro-doc/plugins)
+- [Sample KanbanBro Plugin Repository (English)](https://girasolenergy.github.io/girasol-tvbro-doc/plugins)

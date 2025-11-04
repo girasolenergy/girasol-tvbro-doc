@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Heartbeat feature periodically sends device status data to the Kanban Bro server.
+The Heartbeat feature periodically sends device status data to the KanbanBro server.
 You can check the running status using the dedicated [Heartbeat Monitor](https://girasolenergy.github.io/girasol-tvbro-doc/heartbeat_monitor/).
 
 Using this feature requires user authentication (Log in) and enabling the feature.

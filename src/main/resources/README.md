@@ -1,4 +1,4 @@
-# Kanban Bro
+# KanbanBro
 
 ## 公式サイト
 
@@ -17,6 +17,6 @@
 
 - [デバッグページ](https://girasolenergy.github.io/girasol-tvbro-doc/debug/)
 
-## Kanban Bro Heartbeat Monitor
+## KanbanBro Heartbeat Monitor
 
-- [Kanban Bro Heartbeat Monitor](https://girasolenergy.github.io/girasol-tvbro-doc/heartbeat_monitor/)
+- [KanbanBro Heartbeat Monitor](https://girasolenergy.github.io/girasol-tvbro-doc/heartbeat_monitor/)
