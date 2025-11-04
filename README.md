@@ -48,8 +48,7 @@ Subproject for the Heartbeat Monitor UI.
 
 Product overview:
 
-- [KanbanBro: ブラウザで簡単デジタルサイネージ (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/ja/)
-- [KanbanBro: Turn Any Web Page into Digital Signage (English)](https://girasolenergy.github.io/girasol-tvbro-doc/en/)
+- [KanbanBro: Turn Any Web Page into Digital Signage](https://girasolenergy.github.io/girasol-tvbro-doc/en/)
 
 Guides:
 
@@ -60,14 +59,41 @@ Guides:
 
 Guides:
 
-- [リモート監視（Heartbeat）機能ガイド (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/ja/heartbeat)
-- [Heartbeat Guide (English)](https://girasolenergy.github.io/girasol-tvbro-doc/en/heartbeat)
+- [Heartbeat Guide](https://girasolenergy.github.io/girasol-tvbro-doc/en/heartbeat)
 
 Web app:
 
-- [KanbanBro Heartbeat Monitor (English)](https://girasolenergy.github.io/girasol-tvbro-doc/heartbeat_monitor/)
+- [KanbanBro Heartbeat Monitor](https://girasolenergy.github.io/girasol-tvbro-doc/heartbeat_monitor/)
 
 ### Other Public Pages
 
-- [Debug Pages (English)](https://girasolenergy.github.io/girasol-tvbro-doc/debug/)
-- [Sample KanbanBro Plugin Repository (English)](https://girasolenergy.github.io/girasol-tvbro-doc/plugins)
+- [Debug Pages](https://girasolenergy.github.io/girasol-tvbro-doc/debug/)
+- [Sample KanbanBro Plugin Repository](https://girasolenergy.github.io/girasol-tvbro-doc/plugins)
+
+## 公開ページ構造
+
+### 文書
+
+製品紹介:
+
+- [KanbanBro: ブラウザで簡単デジタルサイネージ](https://girasolenergy.github.io/girasol-tvbro-doc/ja/)
+
+ヘルプ:
+
+- [KanbanBroドキュメント (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/help)
+- [プラグイン (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/PLUGIN)
+
+### リモート監視機能
+
+ヘルプ:
+
+- [リモート監視（Heartbeat）機能ガイド](https://girasolenergy.github.io/girasol-tvbro-doc/ja/heartbeat)
+
+Webアプリ:
+
+- [KanbanBro Heartbeat Monitor](https://girasolenergy.github.io/girasol-tvbro-doc/heartbeat_monitor/)
+
+### その他の公開ページ
+
+- [Debug Pages](https://girasolenergy.github.io/girasol-tvbro-doc/debug/)
+- [Sample KanbanBro Plugin Repository](https://girasolenergy.github.io/girasol-tvbro-doc/plugins)
