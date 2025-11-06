@@ -138,6 +138,9 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                             },
                                         )
                                     },
+                                    document.createDivElement().also { screenshotDiv ->
+                                        screenshotDiv.className = "highlight"
+                                    },
                                 )
                             }.also {
                                 it.asDynamic()["_debug"] = json(

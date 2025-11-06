@@ -14,6 +14,7 @@
         :root {
             --text-color: #111111;
             --gray-text-color: #555555;
+            --highlight-background-color: rgba(255, 255, 255, 0.5);
             --overlay-background-color: rgba(0, 0, 0, 0.4);
 
             --topbar-background-color: rgba(255, 255, 255, 0.3);
@@ -50,6 +51,7 @@
         :root[data-theme="dark"] {
             --text-color: #e8e8e8;
             --gray-text-color: #b0b0b0;
+            --highlight-background-color: rgba(255, 255, 255, 0.1);
             --overlay-background-color: rgba(0, 0, 0, 0.7);
 
             --topbar-background-color: rgba(0, 0, 0, 0.3);
@@ -197,11 +199,15 @@
         #cards .card {
             display: grid;
             grid-template-rows: minmax(0, 1fr) auto;
+            position: relative;
             background: var(--card-background-color);
             border: 1px solid var(--card-border-color);
             border-radius: 8px;
             padding: var(--gap);
             gap: var(--gap);
+        }
+        #cards .card.clickable {
+            cursor: pointer;
         }
         #cards .card.yellow-alert {
             background: var(--card-yellow-alert-background-color);
@@ -274,6 +280,14 @@
         #cards .card .texts .datetime {
             color: var(--gray-text-color);
             font-size: 80%;
+        }
+        #cards .card .highlight {
+            position: absolute;
+            inset: 0;
+            border-radius: 8px;
+        }
+        #cards .card.clickable .highlight:hover {
+            background: var(--highlight-background-color);
         }
 
         #toast-container {
