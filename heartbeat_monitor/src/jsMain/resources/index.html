@@ -363,6 +363,26 @@
             background: var(--button-hover-background-color);
         }
 
+        .dialog-textbox {
+            width: 100%;
+            border: 1px solid var(--button-border-color);
+            border-radius: 8px;
+            padding: 8px 10px;
+            background: var(--area-background-color);
+            color: var(--text-color);
+            font: inherit;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+        }
+        .dialog-textbox::placeholder {
+            color: var(--gray-text-color);
+            opacity: 0.85;
+        }
+        .dialog-textbox:focus {
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
+            border-color: var(--transparent-button-hover-border-color);
+            background: var(--area-background-color);
+        }
+
     </style>
 </head>
 <body>
