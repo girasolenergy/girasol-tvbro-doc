@@ -6,14 +6,21 @@ import heartbeatmonitor.core.CardComparator
 import heartbeatmonitor.core.CardComparatorSpecifier
 import heartbeatmonitor.core.CardComparatorSpecifiers
 import heartbeatmonitor.core.UiContainers
+import heartbeatmonitor.core.actions
+import heartbeatmonitor.core.closeButton
+import heartbeatmonitor.core.container
+import heartbeatmonitor.core.frame
 import heartbeatmonitor.core.get
+import heartbeatmonitor.core.leftRight
+import heartbeatmonitor.core.onClick
 import heartbeatmonitor.core.showDialog
+import heartbeatmonitor.core.textButton
+import heartbeatmonitor.core.textTransparentButton
+import heartbeatmonitor.core.title
 import heartbeatmonitor.core.type
 import heartbeatmonitor.util.createButtonElement
 import heartbeatmonitor.util.createDivElement
-import heartbeatmonitor.util.gap
 import kotlinx.browser.document
-import mirrg.kotlin.event.emit
 import mirrg.kotlin.event.subscribe
 import mirrg.kotlin.event.toSubscriber
 import kotlin.math.sign
@@ -62,87 +69,51 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
         }
 
         fun openSortDialog() {
-            showDialog { context ->
-                context.container.append(
-                    document.createDivElement().also { titleDiv ->
-                        titleDiv.textContent = "Sort"
-                        titleDiv.style.fontWeight = "700"
-                    },
-                    document.createDivElement().also { buttonsDiv ->
-                        buttonsDiv.className = "dialog-container"
-                        fun updateButtons() {
-                            buttonsDiv.innerHTML = ""
-                            CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.forEachIndexed { index, cardComparatorSpecifier ->
-                                buttonsDiv.append(
-                                    document.createDivElement().also { buttonDiv ->
-                                        buttonDiv.style.display = "flex"
-                                        buttonDiv.style.gap = "12px"
-                                        buttonDiv.style.alignItems = "center"
-                                        buttonDiv.append(
-                                            document.createDivElement().also { leftDiv ->
-                                                leftDiv.append(
-                                                    document.createButtonElement().also { toggleButton ->
-                                                        toggleButton.type = "button"
-                                                        toggleButton.classList.add("dialog-button")
-                                                        toggleButton.textContent = getTitle(cardComparatorSpecifier)
-                                                        toggleButton.addEventListener("click", {
-                                                            val cardComparatorSpecifiers = CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.toMutableList()
-                                                            cardComparatorSpecifiers[index] = getNextCardComparatorSpecifier(cardComparatorSpecifiers[index])
-                                                            CardComparatorSpecifiers.currentCardComparatorSpecifiers.value = cardComparatorSpecifiers
-                                                        })
-                                                    },
-                                                )
-                                            },
-                                            document.createDivElement().also { rightDiv ->
-                                                rightDiv.style.marginLeft = "auto"
-                                                rightDiv.append(
-                                                    document.createButtonElement().also { removeButton ->
-                                                        removeButton.type = "button"
-                                                        removeButton.classList.add("dialog-button")
-                                                        removeButton.textContent = "🗑️"
-                                                        removeButton.addEventListener("click", {
-                                                            val cardComparatorSpecifiers = CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.toMutableList()
-                                                            cardComparatorSpecifiers.removeAt(index)
-                                                            CardComparatorSpecifiers.currentCardComparatorSpecifiers.value = cardComparatorSpecifiers
-                                                        })
-                                                    },
-                                                )
-                                            },
-                                        )
-                                    },
-                                )
+            showDialog {
+                frame {
+                    container {
+                        title("Sort")
+                        container {
+                            fun updateButtons() {
+                                innerHTML = ""
+                                CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.forEachIndexed { index, cardComparatorSpecifier ->
+                                    leftRight({
+                                        textButton(getTitle(cardComparatorSpecifier)) {
+                                            onClick {
+                                                val cardComparatorSpecifiers = CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.toMutableList()
+                                                cardComparatorSpecifiers[index] = getNextCardComparatorSpecifier(cardComparatorSpecifiers[index])
+                                                CardComparatorSpecifiers.currentCardComparatorSpecifiers.value = cardComparatorSpecifiers
+                                            }
+                                        }
+                                    }, {
+                                        textButton("🗑️") {
+                                            onClick {
+                                                val cardComparatorSpecifiers = CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.toMutableList()
+                                                cardComparatorSpecifiers.removeAt(index)
+                                                CardComparatorSpecifiers.currentCardComparatorSpecifiers.value = cardComparatorSpecifiers
+                                            }
+                                        }
+                                    })
+                                }
                             }
-                        }
 
-                        CardComparatorSpecifiers.currentCardComparatorSpecifiers.subscribe(context.onClosed.toSubscriber()) {
+                            CardComparatorSpecifiers.currentCardComparatorSpecifiers.subscribe(onClosed.toSubscriber()) {
+                                updateButtons()
+                            }
                             updateButtons()
                         }
-                        updateButtons()
-                    },
-                    document.createButtonElement().also { addButton ->
-                        addButton.type = "button"
-                        addButton.classList.add("dialog-transparent-button")
-                        addButton.textContent = "＋"
-                        addButton.addEventListener("click", {
-                            val cardComparatorSpecifiers = CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.toMutableList()
-                            cardComparatorSpecifiers.add(CardComparatorSpecifier("type" to "empty"))
-                            CardComparatorSpecifiers.currentCardComparatorSpecifiers.value = cardComparatorSpecifiers
-                        })
-                    },
-                    document.createDivElement().also { actionsDiv ->
-                        actionsDiv.style.display = "flex"
-                        actionsDiv.style.justifyContent = "end"
-                        actionsDiv.style.gap = "8px"
-                        actionsDiv.append(
-                            document.createButtonElement().also { closeButton ->
-                                closeButton.type = "button"
-                                closeButton.textContent = "Close"
-                                closeButton.classList.add("dialog-button")
-                                closeButton.addEventListener("click", { context.onClosed.emit() })
-                            },
-                        )
-                    },
-                )
+                        textTransparentButton("＋") {
+                            onClick {
+                                val cardComparatorSpecifiers = CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.toMutableList()
+                                cardComparatorSpecifiers.add(CardComparatorSpecifier("type" to "empty"))
+                                CardComparatorSpecifiers.currentCardComparatorSpecifiers.value = cardComparatorSpecifiers
+                            }
+                        }
+                        actions {
+                            closeButton()
+                        }
+                    }
+                }
             }
         }
 
