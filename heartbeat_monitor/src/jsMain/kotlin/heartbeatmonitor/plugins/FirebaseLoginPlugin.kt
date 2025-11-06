@@ -23,6 +23,7 @@ import heartbeatmonitor.util.firebase.FirebaseAuthModule
 import heartbeatmonitor.util.firebase.FirebaseOptions
 import heartbeatmonitor.util.getValue
 import heartbeatmonitor.util.property
+import heartbeatmonitor.util.randomUuid
 import heartbeatmonitor.util.setValue
 import heartbeatmonitor.util.xmap
 import kotlinx.browser.document
@@ -298,7 +299,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                         // 追加ボタン
                         textTransparentButton("＋") {
                             onClick {
-                                val appName = if ("[DEFAULT]" in appNames.value) window.asDynamic().crypto.randomUUID() as String else "[DEFAULT]"
+                                val appName = if ("[DEFAULT]" in appNames.value) randomUuid() else "[DEFAULT]"
                                 val app = FirebaseAppModule.initializeApp(firebaseConfig, appName)
                                 appNames.value = appNames.value + appName
                                 onAppAdded.emit(app)
