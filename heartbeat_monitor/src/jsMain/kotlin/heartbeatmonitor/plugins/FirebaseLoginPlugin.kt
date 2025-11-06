@@ -103,8 +103,8 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
         }
 
         fun openLoginDialog(app: FirebaseApp) {
-            showDialog { container, onClosed ->
-                container.append(
+            showDialog { context ->
+                context.container.append(
 
                     // タイトル
                     document.createDivElement().also { titleDiv ->
@@ -128,7 +128,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                         try {
                                             val provider = FirebaseAuthModule.GoogleAuthProvider()
                                             FirebaseAuthModule.signInWithPopup(FirebaseAuthModule.getAuth(app), provider).await()
-                                            onClosed.emit()
+                                            context.onClosed.emit()
                                         } catch (e: dynamic) {
                                             console.error("Log in failed", e)
                                             val msg = when (e?.code as String?) {
@@ -142,7 +142,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                         }
                                     }
                                 })
-                                registerUserListener(app, onClosed) {
+                                registerUserListener(app, context.onClosed) {
                                     googleButton.style.display = if (FirebaseAuthModule.getAuth(app).currentUser != null) "none" else ""
                                 }
                             },
@@ -160,7 +160,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                             val password = window.prompt("Enter password") ?: return@promise
                                             FirebaseAuthModule.signInWithEmailAndPassword(FirebaseAuthModule.getAuth(app), email, password).await()
                                             showToast("Logged in successfully.")
-                                            onClosed.emit()
+                                            context.onClosed.emit()
                                         } catch (e: dynamic) {
                                             console.error("Email log in failed", e)
                                             val msg = when (e?.code as String?) {
@@ -178,7 +178,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                         }
                                     }
                                 })
-                                registerUserListener(app, onClosed) {
+                                registerUserListener(app, context.onClosed) {
                                     emailSignInButton.style.display = if (FirebaseAuthModule.getAuth(app).currentUser != null) "none" else ""
                                 }
                             },
@@ -206,7 +206,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                             val credential = FirebaseAuthModule.EmailAuthProvider.credential(email, password)
                                             FirebaseAuthModule.linkWithCredential(currentUser, credential).await()
                                             showToast("Linked email/password to your account.")
-                                            onClosed.emit()
+                                            context.onClosed.emit()
                                         } catch (e: dynamic) {
                                             console.error("Link email failed", e)
                                             val msg = when (e?.code as String?) {
@@ -221,7 +221,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                         }
                                     }
                                 })
-                                registerUserListener(app, onClosed) {
+                                registerUserListener(app, context.onClosed) {
                                     val user = FirebaseAuthModule.getAuth(app).currentUser
                                     val hasPassword = user != null && user.providerData.any { p -> p.providerId == "password" }
                                     linkEmailButton.style.display = if (user != null && !hasPassword) "" else "none"
@@ -238,7 +238,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                         logoutButton.disabled = true
                                         try {
                                             FirebaseAuthModule.signOut(FirebaseAuthModule.getAuth(app)).await()
-                                            onClosed.emit()
+                                            context.onClosed.emit()
                                         } catch (e: dynamic) {
                                             console.error("Log out failed", e)
                                             showToast("Failed to log out: ${if (e != null && e.message != null) e.message as String else "$e"}")
@@ -247,7 +247,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                         }
                                     }
                                 })
-                                registerUserListener(app, onClosed) {
+                                registerUserListener(app, context.onClosed) {
                                     logoutButton.style.display = if (FirebaseAuthModule.getAuth(app).currentUser != null) "" else "none"
                                 }
                             },
@@ -265,7 +265,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                 cancelButton.type = "button"
                                 cancelButton.textContent = "Cancel"
                                 cancelButton.classList.add("dialog-button")
-                                cancelButton.addEventListener("click", { onClosed.emit() })
+                                cancelButton.addEventListener("click", { context.onClosed.emit() })
                             },
                         )
                     },
@@ -275,8 +275,8 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
         }
 
         fun openAccountsDialog() {
-            showDialog { container, onClosed ->
-                container.append(
+            showDialog { context ->
+                context.container.append(
 
                     // タイトル
                     document.createDivElement().also { titleDiv ->
@@ -312,7 +312,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                                     },
 
                                                     // ユーザバッジ
-                                                    createUserBadge(app, onClosed),
+                                                    createUserBadge(app, context.onClosed),
 
                                                     )
                                             },
@@ -369,7 +369,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                 closeButton.type = "button"
                                 closeButton.textContent = "Close"
                                 closeButton.classList.add("dialog-button")
-                                closeButton.addEventListener("click", { onClosed.emit() })
+                                closeButton.addEventListener("click", { context.onClosed.emit() })
                             },
                         )
                     },

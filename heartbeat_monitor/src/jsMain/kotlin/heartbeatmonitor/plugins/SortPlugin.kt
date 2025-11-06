@@ -62,8 +62,8 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
         }
 
         fun openSortDialog() {
-            showDialog { container, onClosed ->
-                container.append(
+            showDialog { context ->
+                context.container.append(
                     document.createDivElement().also { titleDiv ->
                         titleDiv.textContent = "Sort"
                         titleDiv.style.fontWeight = "700"
@@ -114,7 +114,7 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
                             }
                         }
 
-                        CardComparatorSpecifiers.currentCardComparatorSpecifiers.subscribe(onClosed.toSubscriber()) {
+                        CardComparatorSpecifiers.currentCardComparatorSpecifiers.subscribe(context.onClosed.toSubscriber()) {
                             updateButtons()
                         }
                         updateButtons()
@@ -138,7 +138,7 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
                                 closeButton.type = "button"
                                 closeButton.textContent = "Close"
                                 closeButton.classList.add("dialog-button")
-                                closeButton.addEventListener("click", { onClosed.emit() })
+                                closeButton.addEventListener("click", { context.onClosed.emit() })
                             },
                         )
                     },

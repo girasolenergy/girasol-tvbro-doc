@@ -6,9 +6,14 @@ import mirrg.kotlin.event.EmittableEventRegistry
 import mirrg.kotlin.event.EventRegistry
 import mirrg.kotlin.event.emit
 import mirrg.kotlin.event.once
-import org.w3c.dom.Element
+import org.w3c.dom.HTMLDivElement
 
-fun showDialog(initializer: (Element, EmittableEventRegistry<Unit, Unit, Unit>) -> Unit) {
+interface DialogContext {
+    val container: HTMLDivElement
+    val onClosed: EmittableEventRegistry<Unit, Unit, Unit>
+}
+
+fun showDialog(initializer: (DialogContext) -> Unit) {
     val onClosed = EventRegistry<Unit, Unit>()
 
     document.body!!.append(
@@ -28,7 +33,10 @@ fun showDialog(initializer: (Element, EmittableEventRegistry<Unit, Unit, Unit>) 
                     frameDiv.append(
                         document.createDivElement().also { containerDiv ->
                             containerDiv.className = "dialog-container"
-                            initializer(containerDiv, onClosed)
+                            initializer(object : DialogContext {
+                                override val container get() = containerDiv
+                                override val onClosed get() = onClosed
+                            })
                         },
                     )
                 },
