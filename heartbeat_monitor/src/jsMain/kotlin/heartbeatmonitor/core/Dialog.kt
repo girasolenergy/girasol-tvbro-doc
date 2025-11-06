@@ -50,21 +50,22 @@ fun frame(block: Element.() -> Unit = {}) {
 }
 
 context(context: DialogContext, parent: Element)
-fun element(element: Element) {
+fun <E : Element> element(element: E): E {
     parent.append(element)
+    return element
 }
 
 context(context: DialogContext, parent: Element)
-fun container(block: HTMLDivElement.() -> Unit = {}) {
-    element(document.createDivElement().also { div ->
+fun container(block: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
+    return element(document.createDivElement().also { div ->
         div.className = "dialog-container"
         block(div)
     })
 }
 
 context(context: DialogContext, parent: Element)
-fun actions(block: HTMLDivElement.() -> Unit = {}) {
-    element(document.createDivElement().also { div ->
+fun actions(block: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
+    return element(document.createDivElement().also { div ->
         div.style.display = "flex"
         div.style.justifyContent = "end"
         div.style.gap = "8px"
@@ -73,8 +74,8 @@ fun actions(block: HTMLDivElement.() -> Unit = {}) {
 }
 
 context(context: DialogContext, parent: Element)
-fun leftRight(leftBlock: HTMLDivElement.() -> Unit = {}, rightBlock: HTMLDivElement.() -> Unit = {}) {
-    element(document.createDivElement().also { div ->
+fun leftRight(leftBlock: HTMLDivElement.() -> Unit = {}, rightBlock: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
+    return element(document.createDivElement().also { div ->
         div.style.display = "flex"
         div.style.gap = "8px"
         div.style.alignItems = "center"
@@ -97,16 +98,16 @@ fun leftRight(leftBlock: HTMLDivElement.() -> Unit = {}, rightBlock: HTMLDivElem
 }
 
 context(context: DialogContext, parent: Element)
-fun title(title: String) {
-    element(document.createDivElement().also { div ->
+fun title(title: String): HTMLDivElement {
+    return element(document.createDivElement().also { div ->
         div.textContent = title
         div.style.fontWeight = "700"
     })
 }
 
 context(context: DialogContext, parent: Element)
-fun textButton(title: String, block: HTMLButtonElement.() -> Unit = {}) {
-    element(document.createButtonElement().also { button ->
+fun textButton(title: String, block: HTMLButtonElement.() -> Unit = {}): HTMLButtonElement {
+    return element(document.createButtonElement().also { button ->
         button.type = "button"
         button.classList.add("dialog-button")
         button.textContent = title
@@ -115,8 +116,8 @@ fun textButton(title: String, block: HTMLButtonElement.() -> Unit = {}) {
 }
 
 context(context: DialogContext, parent: Element)
-fun textTransparentButton(title: String, block: HTMLButtonElement.() -> Unit = {}) {
-    element(document.createButtonElement().also { button ->
+fun textTransparentButton(title: String, block: HTMLButtonElement.() -> Unit = {}): HTMLButtonElement {
+    return element(document.createButtonElement().also { button ->
         button.type = "button"
         button.classList.add("dialog-transparent-button")
         button.textContent = title
@@ -125,8 +126,8 @@ fun textTransparentButton(title: String, block: HTMLButtonElement.() -> Unit = {
 }
 
 context(context: DialogContext, parent: Element)
-fun closeButton(title: String = "Close") {
-    textButton(title) {
+fun closeButton(title: String = "Close"): HTMLButtonElement {
+    return textButton(title) {
         onClick {
             context.onClosed.emit()
         }
