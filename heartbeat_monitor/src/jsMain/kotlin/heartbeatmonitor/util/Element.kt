@@ -21,5 +21,5 @@ var CSSStyleDeclaration.gap: String
     set(value) = this.setProperty("gap", value)
 
 var CSSStyleDeclaration.colorScheme: String
-    get() = this.getPropertyValue("colorScheme")
-    set(value) = this.setProperty("colorScheme", value)
+    get() = this.getPropertyValue("color-scheme")
+    set(value) = this.setProperty("color-scheme", value)
