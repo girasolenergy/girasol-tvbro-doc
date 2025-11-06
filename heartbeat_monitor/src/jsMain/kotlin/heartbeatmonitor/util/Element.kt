@@ -3,6 +3,8 @@ package heartbeatmonitor.util
 import org.w3c.dom.Document
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLDivElement
+import org.w3c.dom.HTMLInputElement
+import org.w3c.dom.HTMLLabelElement
 import org.w3c.dom.HTMLLinkElement
 import org.w3c.dom.HTMLOptionElement
 import org.w3c.dom.HTMLSelectElement
@@ -15,6 +17,8 @@ fun Document.createSpanElement() = this.createElement("span").unsafeCast<HTMLSpa
 fun Document.createSelectElement() = this.createElement("select").unsafeCast<HTMLSelectElement>()
 fun Document.createOptionElement() = this.createElement("option").unsafeCast<HTMLOptionElement>()
 fun Document.createLinkElement() = this.createElement("link").unsafeCast<HTMLLinkElement>()
+fun Document.createLabelElement() = this.createElement("label").unsafeCast<HTMLLabelElement>()
+fun Document.createInputElement() = this.createElement("input").unsafeCast<HTMLInputElement>()
 
 var CSSStyleDeclaration.gap: String
     get() = this.getPropertyValue("gap")

@@ -2,6 +2,8 @@ package heartbeatmonitor.core
 
 import heartbeatmonitor.util.createButtonElement
 import heartbeatmonitor.util.createDivElement
+import heartbeatmonitor.util.createInputElement
+import heartbeatmonitor.util.createLabelElement
 import heartbeatmonitor.util.gap
 import kotlinx.browser.document
 import mirrg.kotlin.event.EmittableEventRegistry
@@ -11,6 +13,8 @@ import mirrg.kotlin.event.once
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLDivElement
+import org.w3c.dom.HTMLInputElement
+import org.w3c.dom.HTMLLabelElement
 
 interface DialogContext {
     val frame: Element
@@ -106,6 +110,14 @@ fun title(title: String): HTMLDivElement {
 }
 
 context(context: DialogContext, parent: Element)
+fun label(title: String, block: HTMLLabelElement.() -> Unit = {}): HTMLLabelElement {
+    return element(document.createLabelElement().also { label ->
+        label.textContent = title
+        block(label)
+    })
+}
+
+context(context: DialogContext, parent: Element)
 fun textButton(title: String, block: HTMLButtonElement.() -> Unit = {}): HTMLButtonElement {
     return element(document.createButtonElement().also { button ->
         button.type = "button"
@@ -132,6 +144,16 @@ fun closeButton(title: String = "Close"): HTMLButtonElement {
             context.onClosed.emit()
         }
     }
+}
+
+context(context: DialogContext, parent: Element)
+fun textBox(placeholder: String? = null, block: HTMLInputElement.() -> Unit = {}): HTMLInputElement {
+    return element(document.createInputElement().also { input ->
+        input.type = "text"
+        input.classList.add("dialog-textbox")
+        if (placeholder != null) input.placeholder = placeholder
+        block(input)
+    })
 }
 
 context(context: DialogContext, parent: Element)
