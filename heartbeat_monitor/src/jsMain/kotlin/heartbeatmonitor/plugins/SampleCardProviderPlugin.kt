@@ -12,6 +12,7 @@ import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import mirrg.kotlin.helium.join
 import org.w3c.dom.Image
 import kotlin.math.floor
 
@@ -89,7 +90,7 @@ object SampleCardProviderPlugin : AbstractPlugin("SampleCardProviderPlugin") {
                                         val factors = if (number == 1) mutableListOf() else primeFactors(number)
                                         factors
                                             .groupBy { it }
-                                            .map { it.value.joinToString("-") { n -> "$n" } }
+                                            .map { it.value.join("-") { n -> "$n" } }
                                             .forEach {
                                                 textDiv.append(
                                                     document.createDivElement().also { textDiv ->
