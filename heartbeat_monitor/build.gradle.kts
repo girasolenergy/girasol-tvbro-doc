@@ -26,7 +26,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
-                implementation("mirrg.kotlin:mirrg.kotlin.helium-kotlin-2-2:4.1.0")
+                implementation("mirrg.kotlin:mirrg.kotlin.helium-kotlin-2-2:4.2.0")
             }
         }
         val jsMain by getting {
