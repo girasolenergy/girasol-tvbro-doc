@@ -4,6 +4,17 @@ import heartbeatmonitor.core.AbstractPlugin
 import heartbeatmonitor.core.Card
 import heartbeatmonitor.core.CardProvider
 import heartbeatmonitor.core.Dispatcher
+import heartbeatmonitor.core.actions
+import heartbeatmonitor.core.closeButton
+import heartbeatmonitor.core.container
+import heartbeatmonitor.core.frame
+import heartbeatmonitor.core.label
+import heartbeatmonitor.core.leftRight
+import heartbeatmonitor.core.showDialog
+import heartbeatmonitor.core.showToast
+import heartbeatmonitor.core.textBox
+import heartbeatmonitor.core.title
+import heartbeatmonitor.util.awaitOrElse
 import heartbeatmonitor.util.createDivElement
 import heartbeatmonitor.util.createSpanElement
 import heartbeatmonitor.util.decode
@@ -12,6 +23,7 @@ import heartbeatmonitor.util.firebase.FirebaseAppModule
 import heartbeatmonitor.util.firebase.FirebaseAuthModule
 import heartbeatmonitor.util.firebase.FirebaseStorageModule
 import heartbeatmonitor.util.firebase.Unsubscribe
+import heartbeatmonitor.util.randomUuid
 import heartbeatmonitor.util.setImageBlob
 import kotlinx.browser.document
 import kotlinx.coroutines.CoroutineScope
@@ -20,9 +32,14 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.asDeferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.await
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.promise
+import mirrg.kotlin.event.once
+import mirrg.kotlin.helium.mapOfNotNull
+import mirrg.kotlin.helium.notBlankOrNull
 import onPluginLoaded
 import org.w3c.dom.Image
+import org.w3c.dom.events.KeyboardEvent
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
 import kotlin.js.Date
@@ -53,32 +70,104 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                 providers.add { coroutineScope ->
                     coroutineScope.async {
                         Dispatcher.dispatch {
-                            val imageBytes = FirebaseStorageModule.getBytes(FirebaseStorageModule.ref(folderRef, "screenshot.png")).asDeferred()
-                            val settingsBytes = FirebaseStorageModule.getBytes(FirebaseStorageModule.ref(folderRef, "settings.json")).asDeferred()
-                            val metadata = FirebaseStorageModule.getMetadata(FirebaseStorageModule.ref(folderRef, "settings.json")).asDeferred() // なぜかPromiseだと初手でundefinedが返る
 
-                            val settings = JSON.parse<Json>(settingsBytes.await().decode())
-                            val name = (settings["settings_code"].unsafeCast<Json>()["settings"].unsafeCast<Json>()["heartbeat_title"] as String?).takeUnless { it.isNullOrBlank() } ?: folderRef.name
-                            console.log(name, settings, metadata.await())
+                            val imageBytesDeferred = FirebaseStorageModule.getBytes(FirebaseStorageModule.ref(folderRef, "screenshot.png")).asDeferred()
+                            val imageCache = async {
+                                val bytes = imageBytesDeferred.awaitOrElse { e ->
+                                    console.error("Failed to get screenshot for device ${folderRef.name}", e)
+                                    return@async null
+                                }
+                                Blob(arrayOf(bytes), BlobPropertyBag("image/png"))
+                            }
+
+                            val settingsBytesDeferred = FirebaseStorageModule.getBytes(FirebaseStorageModule.ref(folderRef, "settings.json")).asDeferred()
+                            val settingsCache = async {
+                                val bytes = settingsBytesDeferred.awaitOrElse { e ->
+                                    console.error("Failed to get settings for device ${folderRef.name}", e)
+                                    return@async null
+                                }
+                                JSON.parse<Json>(bytes.decode())
+                            }
+
+                            val settingsOverridesBytesDeferred = FirebaseStorageModule.getBytes(FirebaseStorageModule.ref(folderRef, "settings_overrides.json")).asDeferred()
+                            val settingsOverridesCache = async {
+                                val bytes = settingsOverridesBytesDeferred.awaitOrElse { e ->
+                                    return@async null
+                                }
+                                JSON.parse<Json>(bytes.decode())
+                            }
+
+                            val metadataDeferred = FirebaseStorageModule.getMetadata(FirebaseStorageModule.ref(folderRef, "settings.json")).asDeferred() // なぜかPromiseだと初手でundefinedが返る
+                            val metadata = metadataDeferred.awaitOrElse { e ->
+                                throw IllegalStateException("Failed to get metadata for device ${folderRef.name}", e)
+                            }
+
+
+                            fun <T> asyncSetting(default: () -> T, function: (Json) -> T?) = async {
+                                settingsOverridesCache.await()?.let { settings ->
+                                    function(settings)?.let { setting ->
+                                        return@async setting
+                                    }
+                                }
+                                settingsCache.await()?.let { settings ->
+                                    function(settings)?.let { setting ->
+                                        return@async setting
+                                    }
+                                }
+                                default()
+                            }
+
+                            fun Json.getTitle() = (this["settings_code"].unsafeCast<Json>()["settings"].unsafeCast<Json>()["heartbeat_title"] as String?)?.notBlankOrNull
+                            val titleCache = asyncSetting({ folderRef.name }) { it.getTitle() }
+                            fun Json.getTags() = (this["settings_code"].unsafeCast<Json>()["settings"].unsafeCast<Json>()["heartbeat_tags"] as String?)?.notBlankOrNull
+                            val tagsCache = asyncSetting({ "" }) { it.getTags() }
+
+
+                            launch {
+                                val it = json(
+                                    "title" to titleCache.await(),
+                                    "tags" to tagsCache.await(),
+                                    "settings" to settingsCache.await(),
+                                    "settingsOverrides" to settingsOverridesCache.await(),
+                                    "metadata" to metadata,
+                                )
+                                console.log(it)
+                            }
+
 
                             Card(
-                                mapOf(
-                                    "name" to name,
-                                    "updated" to Date.parse(metadata.await().updated),
+                                mapOfNotNull(
+                                    "name" to titleCache.await(),
+                                    "tags" to tagsCache.await(),
+                                    "updated" to Date.parse(metadata.updated),
                                 ),
                             ) { cardDiv ->
                                 cardDiv.append(
                                     document.createDivElement().also { screenshotDiv ->
                                         screenshotDiv.className = "screenshot"
 
-                                        screenshotDiv.append(
-                                            Image().also { img ->
-                                                img.asDynamic().loading = "lazy"
-                                                img.asDynamic().decoding = "async"
-                                                setImageBlob(img, Blob(arrayOf(imageBytes.await()), BlobPropertyBag("image/png")))
-                                                img.alt = name
-                                            },
-                                        )
+                                        screenshotDiv.append(document.createDivElement().also { screenshotPlaceholderDiv -> // TODO ←このdivのせいでimageの表示が崩れる
+                                            MainScope().launch {
+                                                val image = imageCache.await()
+                                                if (image != null) {
+                                                    screenshotPlaceholderDiv.append(Image().also { img ->
+                                                        img.asDynamic().loading = "lazy"
+                                                        img.asDynamic().decoding = "async"
+                                                        setImageBlob(img, image)
+                                                        img.alt = titleCache.await()
+                                                    })
+                                                } else {
+                                                    screenshotPlaceholderDiv.style.width = "300px"
+                                                    screenshotPlaceholderDiv.style.height = "200px"
+                                                    screenshotPlaceholderDiv.textContent = "No Image"
+                                                    screenshotPlaceholderDiv.style.fontStyle = "italic"
+                                                    screenshotPlaceholderDiv.style.fontSize = "200%"
+                                                    screenshotPlaceholderDiv.style.color = "gray"
+                                                    screenshotPlaceholderDiv.style.textAlign = "center"
+                                                    screenshotPlaceholderDiv.style.lineHeight = "200px"
+                                                }
+                                            }
+                                        })
 
                                         fun createAlert(message: String, level: Int): Card.Alert {
                                             return Card.Alert(
@@ -90,17 +179,15 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                         }
 
                                         val alerts = mutableListOf<Card.Alert>()
-                                        if (settings["main_activity_has_focus"] as Boolean? == false) alerts += createAlert("Lost Focus", 2)
-                                        if (settings["main_activity_resumed"] as Boolean? == false) alerts += createAlert("Not Resumed", 2)
-                                        if (settings["main_activity_ui_active"] as Boolean? == true) alerts += createAlert("UI Opened", 1)
-                                        if (Date.now() - Date.parse(metadata.await().updated) >= 1000 * 60 * 60 * 2) {
-                                            alerts += createAlert("No updates (2 Hours+)", 2)
-                                        }
+                                        if (settingsCache.await()?.get("main_activity_has_focus") as Boolean? == false) alerts += createAlert("Lost Focus", 2)
+                                        if (settingsCache.await()?.get("main_activity_resumed") as Boolean? == false) alerts += createAlert("Not Resumed", 2)
+                                        if (settingsCache.await()?.get("main_activity_ui_active") as Boolean? == true) alerts += createAlert("UI Opened", 1)
+                                        if (Date.now() - Date.parse(metadata.updated) >= 1000 * 60 * 60 * 2) alerts += createAlert("No updates (2 Hours+)", 2)
 
                                         if (alerts.isNotEmpty()) {
                                             cardDiv.classList.add("yellow-alert")
                                             screenshotDiv.classList.add("yellow-alert")
-                                            if (alerts.any { a -> a.level === 2 }) {
+                                            if (alerts.any { a -> a.level == 2 }) {
                                                 cardDiv.classList.add("red-alert")
                                             }
 
@@ -127,12 +214,12 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                                 textDiv.append(
                                                     document.createDivElement().also { div ->
                                                         div.className = "name"
-                                                        div.textContent = name
+                                                        div.textContent = titleCache.await()
                                                     },
                                                     document.createDivElement().also { div ->
                                                         div.className = "datetime"
-                                                        div.textContent = Date(metadata.await().updated).asDynamic().toLocaleString(undefined, json("dateStyle" to "medium", "timeStyle" to "medium"))
-                                                        div.title = metadata.await().updated
+                                                        div.textContent = Date(metadata.updated).asDynamic().toLocaleString(undefined, json("dateStyle" to "medium", "timeStyle" to "medium"))
+                                                        div.title = metadata.updated
                                                     },
                                                 )
                                             },
@@ -143,13 +230,18 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                     },
                                 )
                             }.also {
-                                it.asDynamic()["_debug"] = json(
-                                    "appName" to app.name,
-                                    "app" to app,
-                                    "user" to user,
-                                    "settings" to settings,
-                                    "metadata" to metadata.await(),
-                                )
+                                launch {
+                                    it.asDynamic()["_debug"] = json(
+                                        "appName" to app.name,
+                                        "app" to app,
+                                        "user" to user,
+                                        "title" to titleCache.await(),
+                                        "tags" to tagsCache.await(),
+                                        "settings" to settingsCache.await(),
+                                        "settingsOverrides" to settingsOverridesCache.await(),
+                                        "metadata" to metadata,
+                                    )
+                                }
                             }
                         }
                     }
