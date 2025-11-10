@@ -6,6 +6,8 @@ import heartbeatmonitor.util.createInputElement
 import heartbeatmonitor.util.createLabelElement
 import heartbeatmonitor.util.gap
 import kotlinx.browser.document
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import mirrg.kotlin.event.EmittableEventRegistry
 import mirrg.kotlin.event.EventRegistry
 import mirrg.kotlin.event.emit
@@ -21,35 +23,37 @@ interface DialogContext {
     val onClosed: EmittableEventRegistry<Unit, Unit, Unit>
 }
 
-fun showDialog(initializer: DialogContext.() -> Unit) {
+fun showDialog(initializer: suspend DialogContext.() -> Unit) {
     val onClosed = EventRegistry<Unit, Unit>()
 
-    document.body!!.append(
-        document.createDivElement().also { overlayDiv ->
-            overlayDiv.className = "dialog-overlay"
+    MainScope().launch {
+        document.body!!.append(
+            document.createDivElement().also { overlayDiv ->
+                overlayDiv.className = "dialog-overlay"
 
-            overlayDiv.addEventListener("click", { e ->
-                if (e.target === overlayDiv) onClosed.emit()
-            })
-            onClosed.once.register {
-                document.body!!.removeChild(overlayDiv)
-            }
+                overlayDiv.addEventListener("click", { e ->
+                    if (e.target === overlayDiv) onClosed.emit()
+                })
+                onClosed.once.register {
+                    document.body!!.removeChild(overlayDiv)
+                }
 
-            overlayDiv.append(
-                document.createDivElement().also { frameDiv ->
-                    frameDiv.className = "dialog-frame"
-                    initializer(object : DialogContext {
-                        override val frame get() = frameDiv
-                        override val onClosed get() = onClosed
-                    })
-                },
-            )
-        },
-    )
+                overlayDiv.append(
+                    document.createDivElement().also { frameDiv ->
+                        frameDiv.className = "dialog-frame"
+                        initializer(object : DialogContext {
+                            override val frame get() = frameDiv
+                            override val onClosed get() = onClosed
+                        })
+                    },
+                )
+            },
+        )
+    }
 }
 
 context(context: DialogContext)
-fun frame(block: Element.() -> Unit = {}) {
+inline fun frame(block: Element.() -> Unit = {}) {
     block(context.frame)
 }
 
@@ -60,7 +64,7 @@ fun <E : Element> element(element: E): E {
 }
 
 context(context: DialogContext, parent: Element)
-fun container(block: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
+inline fun container(block: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
     return element(document.createDivElement().also { div ->
         div.className = "dialog-container"
         block(div)
@@ -68,7 +72,7 @@ fun container(block: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
 }
 
 context(context: DialogContext, parent: Element)
-fun actions(block: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
+inline fun actions(block: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
     return element(document.createDivElement().also { div ->
         div.style.display = "flex"
         div.style.justifyContent = "end"
@@ -78,7 +82,7 @@ fun actions(block: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
 }
 
 context(context: DialogContext, parent: Element)
-fun leftRight(leftBlock: HTMLDivElement.() -> Unit = {}, rightBlock: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
+inline fun leftRight(leftBlock: HTMLDivElement.() -> Unit = {}, rightBlock: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
     return element(document.createDivElement().also { div ->
         div.style.display = "flex"
         div.style.gap = "8px"
@@ -110,7 +114,7 @@ fun title(title: String): HTMLDivElement {
 }
 
 context(context: DialogContext, parent: Element)
-fun label(title: String, block: HTMLLabelElement.() -> Unit = {}): HTMLLabelElement {
+inline fun label(title: String, block: HTMLLabelElement.() -> Unit = {}): HTMLLabelElement {
     return element(document.createLabelElement().also { label ->
         label.textContent = title
         block(label)
@@ -118,7 +122,7 @@ fun label(title: String, block: HTMLLabelElement.() -> Unit = {}): HTMLLabelElem
 }
 
 context(context: DialogContext, parent: Element)
-fun textButton(title: String, block: HTMLButtonElement.() -> Unit = {}): HTMLButtonElement {
+inline fun textButton(title: String, block: HTMLButtonElement.() -> Unit = {}): HTMLButtonElement {
     return element(document.createButtonElement().also { button ->
         button.type = "button"
         button.classList.add("dialog-button")
@@ -128,7 +132,7 @@ fun textButton(title: String, block: HTMLButtonElement.() -> Unit = {}): HTMLBut
 }
 
 context(context: DialogContext, parent: Element)
-fun textTransparentButton(title: String, block: HTMLButtonElement.() -> Unit = {}): HTMLButtonElement {
+inline fun textTransparentButton(title: String, block: HTMLButtonElement.() -> Unit = {}): HTMLButtonElement {
     return element(document.createButtonElement().also { button ->
         button.type = "button"
         button.classList.add("dialog-transparent-button")
@@ -147,7 +151,7 @@ fun closeButton(title: String = "Close"): HTMLButtonElement {
 }
 
 context(context: DialogContext, parent: Element)
-fun textBox(placeholder: String? = null, block: HTMLInputElement.() -> Unit = {}): HTMLInputElement {
+inline fun textBox(placeholder: String? = null, block: HTMLInputElement.() -> Unit = {}): HTMLInputElement {
     return element(document.createInputElement().also { input ->
         input.type = "text"
         input.classList.add("dialog-textbox")
