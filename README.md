@@ -19,6 +19,10 @@ Guides:
 - [プラグイン (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/PLUGIN)
 - [Heartbeat Guide](https://girasolenergy.github.io/girasol-tvbro-doc/en/heartbeat)
 
+Application Notes:
+
+- [ヒラソルオフィスインターホン前会議室予約表サイネージ設置事例 (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/ja/notes/20251105/)
+
 ### Web app
 
 - [KanbanBro Heartbeat Monitor](https://girasolenergy.github.io/girasol-tvbro-doc/heartbeat_monitor/)
@@ -46,6 +50,10 @@ Guides:
 - [KanbanBroドキュメント (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/help)
 - [プラグイン (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/PLUGIN)
 - [リモート監視（Heartbeat）機能ガイド](https://girasolenergy.github.io/girasol-tvbro-doc/ja/heartbeat)
+
+応用事例:
+
+- [ヒラソルオフィスインターホン前会議室予約表サイネージ設置事例](https://girasolenergy.github.io/girasol-tvbro-doc/ja/notes/20251105/)
 
 ### Webアプリ
 
