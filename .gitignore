@@ -3,3 +3,4 @@
 .kotlin/
 kotlin-js-store/
 build/
+*.ai.html
