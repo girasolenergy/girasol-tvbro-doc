@@ -38,7 +38,7 @@ Googleカレンダーで会議室の利用予約状況をリアルタイムで�
 
 次の製品を入手します。
 
-[Redmi-8-7インチディスプレイ-最大2TB拡張-低ブルーライト-最大輝度600nit](https://www.amazon.co.jp/Redmi-8-7%E3%82%A4%E3%83%B3%E3%83%81%E3%83%87%E3%82%A3%E3%82%B9%E3%83%97%E3%83%AC%E3%82%A4-%E6%9C%80%E5%A4%A72TB%E6%8B%A1%E5%BC%B5-%E4%BD%8E%E3%83%96%E3%83%AB%E3%83%BC%E3%83%A9%E3%82%A4%E3%83%88-%E6%9C%80%E5%A4%A7%E8%BC%9D%E5%BA%A6600nit/dp/B0D97P58SS?th=1)
+[Redmi-8-7インチディスプレイ-最大2TB拡張-低ブルーライト-最大輝度600nit](https://www.amazon.co.jp/dp/B0D97P58SS?th=1)
 
 <img alt="購入されたタブレットの写真" src="img.png" width="400">
 
