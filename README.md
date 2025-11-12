@@ -4,8 +4,8 @@
 
 ### Google Play
 
-- [KanbanBro](https://play.google.com/store/apps/details?id=co.pplc.kanbanbro)
-- [KanbanBro Trial](https://play.google.com/store/apps/details?id=co.pplc.kanbanbro.trial)
+- ![](https://www.google.com/s2/favicons?sz=16&domain_url=play.google.com) [KanbanBro](https://play.google.com/store/apps/details?id=co.pplc.kanbanbro)
+- ![](https://www.google.com/s2/favicons?sz=16&domain_url=play.google.com) [KanbanBro Trial](https://play.google.com/store/apps/details?id=co.pplc.kanbanbro.trial)
 
 ### Documentation
 
@@ -36,8 +36,8 @@ Application Notes:
 
 ### Google Play
 
-- [KanbanBro](https://play.google.com/store/apps/details?id=co.pplc.kanbanbro)
-- [KanbanBro Trial](https://play.google.com/store/apps/details?id=co.pplc.kanbanbro.trial)
+- ![](https://www.google.com/s2/favicons?sz=16&domain_url=play.google.com) [KanbanBro](https://play.google.com/store/apps/details?id=co.pplc.kanbanbro)
+- ![](https://www.google.com/s2/favicons?sz=16&domain_url=play.google.com) [KanbanBro Trial](https://play.google.com/store/apps/details?id=co.pplc.kanbanbro.trial)
 
 ### 文書
 
