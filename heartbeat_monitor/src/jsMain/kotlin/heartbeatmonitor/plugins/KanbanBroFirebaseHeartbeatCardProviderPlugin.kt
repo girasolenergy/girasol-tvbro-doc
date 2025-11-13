@@ -4,27 +4,21 @@ import heartbeatmonitor.core.AbstractPlugin
 import heartbeatmonitor.core.Card
 import heartbeatmonitor.core.CardProvider
 import heartbeatmonitor.core.Dispatcher
-import heartbeatmonitor.core.actions
-import heartbeatmonitor.core.closeButton
-import heartbeatmonitor.core.container
-import heartbeatmonitor.core.frame
-import heartbeatmonitor.core.label
-import heartbeatmonitor.core.leftRight
-import heartbeatmonitor.core.showDialog
-import heartbeatmonitor.core.showToast
-import heartbeatmonitor.core.textBox
-import heartbeatmonitor.core.title
+import heartbeatmonitor.util.JsonWrapper
 import heartbeatmonitor.util.awaitOrElse
+import heartbeatmonitor.util.boolean
 import heartbeatmonitor.util.createDivElement
 import heartbeatmonitor.util.createSpanElement
 import heartbeatmonitor.util.decode
+import heartbeatmonitor.util.decodeFromJson
 import heartbeatmonitor.util.firebase.FirebaseApp
 import heartbeatmonitor.util.firebase.FirebaseAppModule
 import heartbeatmonitor.util.firebase.FirebaseAuthModule
 import heartbeatmonitor.util.firebase.FirebaseStorageModule
 import heartbeatmonitor.util.firebase.Unsubscribe
-import heartbeatmonitor.util.randomUuid
+import heartbeatmonitor.util.get
 import heartbeatmonitor.util.setImageBlob
+import heartbeatmonitor.util.string
 import kotlinx.browser.document
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -34,16 +28,13 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.await
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.promise
-import mirrg.kotlin.event.once
 import mirrg.kotlin.helium.mapOfNotNull
 import mirrg.kotlin.helium.notBlankOrNull
 import onPluginLoaded
 import org.w3c.dom.Image
-import org.w3c.dom.events.KeyboardEvent
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
 import kotlin.js.Date
-import kotlin.js.Json
 import kotlin.js.json
 
 object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroFirebaseHeartbeatCardProviderPlugin") {
@@ -86,7 +77,7 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                     console.error("Failed to get settings for device ${folderRef.name}", e)
                                     return@async null
                                 }
-                                JSON.parse<Json>(bytes.decode())
+                                bytes.decode().decodeFromJson()
                             }
 
                             val settingsOverridesBytesDeferred = FirebaseStorageModule.getBytes(FirebaseStorageModule.ref(folderRef, "settings_overrides.json")).asDeferred()
@@ -94,7 +85,7 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                 val bytes = settingsOverridesBytesDeferred.awaitOrElse { e ->
                                     return@async null
                                 }
-                                JSON.parse<Json>(bytes.decode())
+                                bytes.decode().decodeFromJson()
                             }
 
                             val metadataDeferred = FirebaseStorageModule.getMetadata(FirebaseStorageModule.ref(folderRef, "settings.json")).asDeferred() // なぜかPromiseだと初手でundefinedが返る
@@ -103,7 +94,7 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                             }
 
 
-                            fun <T> asyncSetting(default: () -> T, function: (Json) -> T?) = async {
+                            fun <T> asyncSetting(default: () -> T, function: (JsonWrapper) -> T?) = async {
                                 settingsOverridesCache.await()?.let { settings ->
                                     function(settings)?.let { setting ->
                                         return@async setting
@@ -117,9 +108,9 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                 default()
                             }
 
-                            fun Json.getTitle() = (this["settings_code"].unsafeCast<Json>()["settings"].unsafeCast<Json>()["heartbeat_title"] as String?)?.notBlankOrNull
+                            fun JsonWrapper.getTitle() = this["settings_code"]["settings"]["heartbeat_title"].string.get()?.notBlankOrNull
                             val titleCache = asyncSetting({ folderRef.name }) { it.getTitle() }
-                            fun Json.getTags() = (this["settings_code"].unsafeCast<Json>()["settings"].unsafeCast<Json>()["heartbeat_tags"] as String?)?.notBlankOrNull
+                            fun JsonWrapper.getTags() = this["settings_code"]["settings"]["heartbeat_tags"].string.get()?.notBlankOrNull
                             val tagsCache = asyncSetting({ "" }) { it.getTags() }
 
 
@@ -179,9 +170,9 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                         }
 
                                         val alerts = mutableListOf<Card.Alert>()
-                                        if (settingsCache.await()?.get("main_activity_has_focus") as Boolean? == false) alerts += createAlert("Lost Focus", 2)
-                                        if (settingsCache.await()?.get("main_activity_resumed") as Boolean? == false) alerts += createAlert("Not Resumed", 2)
-                                        if (settingsCache.await()?.get("main_activity_ui_active") as Boolean? == true) alerts += createAlert("UI Opened", 1)
+                                        if (settingsCache.await()?.let { it["main_activity_has_focus"].boolean }?.get() == false) alerts += createAlert("Lost Focus", 2)
+                                        if (settingsCache.await()?.let { it["main_activity_resumed"].boolean }?.get() == false) alerts += createAlert("Not Resumed", 2)
+                                        if (settingsCache.await()?.let { it["main_activity_ui_active"].boolean }?.get() == true) alerts += createAlert("UI Opened", 1)
                                         if (Date.now() - Date.parse(metadata.updated) >= 1000 * 60 * 60 * 2) alerts += createAlert("No updates (2 Hours+)", 2)
 
                                         if (alerts.isNotEmpty()) {

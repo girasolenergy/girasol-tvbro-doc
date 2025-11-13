@@ -1,6 +1,7 @@
 package heartbeatmonitor.core
 
 import heartbeatmonitor.util.Codec
+import heartbeatmonitor.util.JsonObject
 import heartbeatmonitor.util.getValue
 import heartbeatmonitor.util.list
 import heartbeatmonitor.util.property
@@ -12,12 +13,11 @@ import kotlinx.browser.document
 import kotlinx.browser.localStorage
 import mirrg.kotlin.event.ObservableValue
 import onPluginLoaded
-import kotlin.js.Json
 
 data class CardComparatorSpecifier(val map: Map<String, Any?>) {
     companion object {
         val JSON_CODEC = Codec<Any?, CardComparatorSpecifier>(
-            { input -> CardComparatorSpecifier(input.unsafeCast<Json>().toMap()) },
+            { input -> CardComparatorSpecifier(input.unsafeCast<JsonObject>().toMap()) },
             { output -> output.map.toJson() },
         )
     }

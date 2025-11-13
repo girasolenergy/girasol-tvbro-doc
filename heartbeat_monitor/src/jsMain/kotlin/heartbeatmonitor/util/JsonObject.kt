@@ -7,9 +7,11 @@ external interface JsonObject
 fun jsonObject(vararg pairs: Pair<String, Any?>) = json(*pairs).unsafeCast<JsonObject>()
 fun Array<Pair<String, Any?>>.toJsonObject() = jsonObject(*this)
 fun Iterable<Pair<String, Any?>>.toJsonObject() = this.toList().toTypedArray().toJsonObject()
+fun Map<String, Any?>.toJson() = this.map { it.toPair() }.toJsonObject()
 
 val JsonObject.sortedKeys get() = js("Object").keys(this.asDynamic()).unsafeCast<Array<String>>().sorted()
 val JsonObject.sortedEntries get() = this.sortedKeys.map { key -> key to this.asDynamic()[key].unsafeCast<Any?>() }
+fun JsonObject.toMap() = this.sortedEntries.toMap()
 
 operator fun JsonObject.contains(key: String): Boolean {
     val propertyDescriptor = js("Object").getOwnPropertyDescriptor(this.asDynamic(), key)
