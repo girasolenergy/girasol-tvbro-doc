@@ -146,7 +146,7 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                     document.createDivElement().also { screenshotDiv ->
                                         screenshotDiv.className = "screenshot"
 
-                                        screenshotDiv.append(document.createDivElement().also { screenshotPlaceholderDiv -> // TODO ←このdivのせいでimageの表示が崩れる
+                                        screenshotDiv.append(document.createDivElement().also { screenshotPlaceholderDiv ->
                                             MainScope().launch {
                                                 val image = imageCache.await()
                                                 if (image != null) {
