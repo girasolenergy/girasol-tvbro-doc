@@ -142,11 +142,12 @@ inline fun textTransparentButton(title: String, block: HTMLButtonElement.() -> U
 }
 
 context(context: DialogContext, parent: Element)
-fun closeButton(title: String = "Close"): HTMLButtonElement {
+fun closeButton(title: String = "Close", block: HTMLButtonElement.() -> Unit = {}): HTMLButtonElement {
     return textButton(title) {
         onClick {
             context.onClosed.emit()
         }
+        block(this)
     }
 }
 
