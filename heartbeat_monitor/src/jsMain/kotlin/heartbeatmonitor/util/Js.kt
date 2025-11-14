@@ -4,6 +4,7 @@ import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import org.khronos.webgl.ArrayBuffer
+import org.khronos.webgl.Uint8Array
 import org.w3c.dom.Image
 import org.w3c.dom.events.Event
 import org.w3c.dom.url.URL
@@ -27,6 +28,8 @@ fun <T> suspendingPromise(block: suspend ((T) -> Unit, (Throwable) -> Unit) -> U
 fun new(constructor: dynamic, vararg args: dynamic): dynamic = window.asDynamic().Reflect.construct(constructor, args)
 
 fun ArrayBuffer.decode() = new(window.asDynamic().TextDecoder).decode(this) as String
+
+fun String.encode() = (new(window.asDynamic().TextEncoder).encode(this) as Uint8Array).buffer
 
 fun getPageParameter(key: String): String? {
     val params = URLSearchParams(window.location.search)
