@@ -36,7 +36,7 @@ Previously, staff had to call out inside Office 501 to identify the visitor’s 
 
 Obtain the following product.
 
-[Redmi-8-7インチディスプレイ-最大2TB拡張-低ブルーライト-最大輝度600nit](https://www.amazon.co.jp/dp/B0D97P58SS?th=1)
+[Redmi-8-7インチディスプレイ](https://www.amazon.co.jp/dp/B0D97P58SS?th=1)
 
 <img alt="Purchased tablet" src="img.png" width="400">
 
