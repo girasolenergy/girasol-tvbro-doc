@@ -4,6 +4,17 @@ import heartbeatmonitor.core.AbstractPlugin
 import heartbeatmonitor.core.Card
 import heartbeatmonitor.core.CardProvider
 import heartbeatmonitor.core.Dispatcher
+import heartbeatmonitor.core.actions
+import heartbeatmonitor.core.container
+import heartbeatmonitor.core.frame
+import heartbeatmonitor.core.label
+import heartbeatmonitor.core.leftRight
+import heartbeatmonitor.core.onClick
+import heartbeatmonitor.core.showDialog
+import heartbeatmonitor.core.showToast
+import heartbeatmonitor.core.textBox
+import heartbeatmonitor.core.textButton
+import heartbeatmonitor.core.title
 import heartbeatmonitor.util.JsonWrapper
 import heartbeatmonitor.util.awaitOrElse
 import heartbeatmonitor.util.boolean
@@ -11,27 +22,42 @@ import heartbeatmonitor.util.createDivElement
 import heartbeatmonitor.util.createSpanElement
 import heartbeatmonitor.util.decode
 import heartbeatmonitor.util.decodeFromJson
+import heartbeatmonitor.util.deepClone
+import heartbeatmonitor.util.encode
+import heartbeatmonitor.util.encodeToNormalizedString
 import heartbeatmonitor.util.firebase.FirebaseApp
 import heartbeatmonitor.util.firebase.FirebaseAppModule
 import heartbeatmonitor.util.firebase.FirebaseAuthModule
 import heartbeatmonitor.util.firebase.FirebaseStorageModule
 import heartbeatmonitor.util.firebase.Unsubscribe
+import heartbeatmonitor.util.firebase.UploadMetadata
 import heartbeatmonitor.util.get
+import heartbeatmonitor.util.jsonObject
+import heartbeatmonitor.util.randomUuid
+import heartbeatmonitor.util.sameAs
 import heartbeatmonitor.util.setImageBlob
 import heartbeatmonitor.util.string
+import heartbeatmonitor.util.toJsonWrapper
 import kotlinx.browser.document
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.asDeferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.await
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.promise
+import mirrg.kotlin.event.EventRegistry
+import mirrg.kotlin.event.emit
+import mirrg.kotlin.event.initialEmit
+import mirrg.kotlin.event.subscribe
+import mirrg.kotlin.event.toSubscriber
 import mirrg.kotlin.helium.mapOfNotNull
 import mirrg.kotlin.helium.notBlankOrNull
 import onPluginLoaded
 import org.w3c.dom.Image
+import org.w3c.dom.events.KeyboardEvent
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
 import kotlin.js.Date
@@ -109,8 +135,10 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                             }
 
                             fun JsonWrapper.getTitle() = this["settings_code"]["settings"]["heartbeat_title"].string.get()?.notBlankOrNull
+                            fun JsonWrapper.setTitle(title: String?) = this["settings_code"]["settings"]["heartbeat_title"].string.set(title?.notBlankOrNull)
                             val titleCache = asyncSetting({ folderRef.name }) { it.getTitle() }
                             fun JsonWrapper.getTags() = this["settings_code"]["settings"]["heartbeat_tags"].string.get()?.notBlankOrNull
+                            fun JsonWrapper.setTags(tags: String?) = this["settings_code"]["settings"]["heartbeat_tags"].string.set(tags?.notBlankOrNull)
                             val tagsCache = asyncSetting({ "" }) { it.getTags() }
 
 
@@ -133,6 +161,134 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                     "updated" to Date.parse(metadata.updated),
                                 ),
                             ) { cardDiv ->
+                                cardDiv.classList.add("clickable")
+                                cardDiv.tabIndex = 0
+                                cardDiv.setAttribute("role", "button")
+
+                                var spaceDown = false
+                                cardDiv.addEventListener("keydown", { e ->
+                                    e as KeyboardEvent
+                                    when (e.key) {
+                                        "Enter" -> {
+                                            e.preventDefault()
+                                            cardDiv.click()
+                                        }
+
+                                        " " -> {
+                                            e.preventDefault()
+                                            spaceDown = true
+                                        }
+                                    }
+                                })
+                                cardDiv.addEventListener("keyup", { e ->
+                                    e as KeyboardEvent
+                                    when (e.key) {
+                                        " " -> {
+                                            if (spaceDown) {
+                                                spaceDown = false
+                                                cardDiv.click()
+                                            }
+                                        }
+                                    }
+                                })
+
+                                cardDiv.addEventListener("click", {
+                                    showDialog {
+                                        frame {
+                                            container {
+                                                title("Card")
+
+                                                val subscriber = onClosed.toSubscriber()
+                                                val onFormUpdate = EventRegistry<Unit, Unit>()
+                                                val onModifySettingsOverrides = EventRegistry<JsonWrapper, Unit>()
+
+                                                leftRight({
+                                                    val textBoxId = randomUuid()
+                                                    label("Title") {
+                                                        this@label.htmlFor = textBoxId
+                                                    }
+                                                    textBox(settingsCache.await()?.getTitle() ?: folderRef.name) {
+                                                        this@textBox.id = textBoxId
+                                                        this@textBox.value = settingsOverridesCache.await()?.getTitle() ?: ""
+                                                        onModifySettingsOverrides.subscribe(subscriber) { settingsOverrides ->
+                                                            settingsOverrides.setTitle(this@textBox.value.trim())
+                                                        }
+                                                        this@textBox.addEventListener("input", {
+                                                            onFormUpdate.emit()
+                                                        })
+                                                    }
+                                                }, {
+
+                                                })
+                                                leftRight({
+                                                    val textBoxId = randomUuid()
+                                                    label("Tags") {
+                                                        this@label.htmlFor = textBoxId
+                                                    }
+                                                    textBox(settingsCache.await()?.getTags() ?: "") {
+                                                        this@textBox.id = textBoxId
+                                                        this@textBox.value = settingsOverridesCache.await()?.getTags() ?: ""
+                                                        onModifySettingsOverrides.subscribe(subscriber) { settingsOverrides ->
+                                                            settingsOverrides.setTags(this@textBox.value.trim())
+                                                        }
+                                                        this@textBox.addEventListener("input", {
+                                                            onFormUpdate.emit()
+                                                        })
+                                                    }
+                                                }, {
+
+                                                })
+
+                                                actions {
+                                                    textButton("Close") {
+                                                        onClick {
+                                                            if (this@textButton.disabled) return@onClick
+                                                            this@textButton.disabled = true
+                                                            MainScope().launch {
+                                                                try {
+                                                                    val oldSettingsOverrides = settingsOverridesCache.await() ?: jsonObject().toJsonWrapper()
+                                                                    val newSettingsOverrides = oldSettingsOverrides.deepClone()
+                                                                    onModifySettingsOverrides.emit(newSettingsOverrides)
+                                                                    val noChanges = newSettingsOverrides sameAs oldSettingsOverrides
+
+                                                                    if (noChanges) return@launch
+
+                                                                    console.log("Settings overrides changing:", oldSettingsOverrides, newSettingsOverrides)
+                                                                    FirebaseStorageModule.uploadBytes(
+                                                                        FirebaseStorageModule.ref(folderRef, "settings_overrides.json"),
+                                                                        newSettingsOverrides.encodeToNormalizedString().encode(),
+                                                                        UploadMetadata().also {
+                                                                            it.contentType = "application/json; charset=utf-8"
+                                                                        }
+                                                                    ).asDeferred().await()
+                                                                    console.log("Settings overrides changed.")
+                                                                    showToast("Settings saved")
+                                                                    Card.scheduleUpdate() // TODO このカードのみ再取得
+
+                                                                } finally {
+                                                                    onClosed.emit()
+                                                                }
+                                                            }
+                                                        }
+                                                        var updateJob: Job? = null
+                                                        onFormUpdate.initialEmit.subscribe(subscriber) {
+                                                            updateJob?.cancel()
+                                                            updateJob = MainScope().launch {
+                                                                val oldSettingsOverrides = settingsOverridesCache.await() ?: jsonObject().toJsonWrapper()
+                                                                val newSettingsOverrides = oldSettingsOverrides.deepClone()
+                                                                onModifySettingsOverrides.emit(newSettingsOverrides)
+                                                                val noChanges = newSettingsOverrides sameAs oldSettingsOverrides
+
+                                                                this@textButton.textContent = if (noChanges) "Close" else "Save and Close"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                })
+
                                 cardDiv.append(
                                     document.createDivElement().also { screenshotDiv ->
                                         screenshotDiv.className = "screenshot"
