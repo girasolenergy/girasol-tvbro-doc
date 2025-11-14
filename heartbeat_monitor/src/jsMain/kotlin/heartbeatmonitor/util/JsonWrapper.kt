@@ -12,7 +12,7 @@ inline fun <T> wrap(block: () -> T): T {
     return try {
         block()
     } catch (e: dynamic) {
-        throw IllegalArgumentException("${e.message} at ${context.path}", e)
+        throw IllegalArgumentException("${e.message ?: "$e"} at ${context.path}", e)
     }
 }
 
@@ -128,6 +128,7 @@ class JsonObjectItemAccessor(private val parent: JsonProvider, private val key: 
     override fun asJsonOrCreate(): JsonObject {
         val parentValue = parent.asJsonOrCreate()
         return JsonUtils.asJsonObjectOrNull(parentValue[key]) ?: run {
+            if (key in parentValue) throw IllegalStateException("Not a Json at $path")
             val value = jsonObject()
             parentValue[key] = value
             value
