@@ -1,6 +1,7 @@
 package heartbeatmonitor.util.firebase
 
 import org.khronos.webgl.ArrayBuffer
+import kotlin.js.Json
 import kotlin.js.Promise
 
 // https://firebase.google.com/docs/reference/js/storage
@@ -34,4 +35,28 @@ external object FirebaseStorageModule {
 
     fun getMetadata(ref: StorageReference): Promise<FullMetadata>
 
+    fun uploadBytes(ref: StorageReference, data: ArrayBuffer, metadata: UploadMetadata = definedExternally): Promise<UploadResult>
+
+}
+
+external interface SettableMetadata {
+    var cacheControl: String?
+    var contentDisposition: String?
+    var contentEncoding: String?
+    var contentLanguage: String?
+    var contentType: String?
+    var customMetadata: Json?
+}
+
+fun SettableMetadata() = js("({})").unsafeCast<SettableMetadata>()
+
+external interface UploadMetadata : SettableMetadata {
+    var md5Hash: String?
+}
+
+fun UploadMetadata() = js("({})").unsafeCast<UploadMetadata>()
+
+external interface UploadResult {
+    val metadata: FullMetadata
+    val ref: StorageReference
 }
