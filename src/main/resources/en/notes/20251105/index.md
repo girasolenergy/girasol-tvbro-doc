@@ -150,4 +150,40 @@ Close the viewport mode settings to apply the calendar display size.
 
 ## Wall Mounting
 
-TODO
+### Purchase a Tablet Holder
+
+Purchase the following tablet holder:
+
+[マグネットタブレットホルダー タワー](https://www.amazon.co.jp/dp/B0846DXFD5/?th=1)
+
+<img alt="Photo of the tablet holder box" src="image-10.png" width="400">
+
+<img alt="Photo of the tablet holder" src="image-11.png" width="400">
+
+### Purchase Double-Sided Tape
+
+To attach the tablet holder to a non-magnetic surface, purchase the following automotive-grade double-sided tape:
+
+[スコッチ 超強力両面テープ](https://www.amazon.co.jp/gp/aw/d/B09V359T81?th=1)
+
+<img alt="Photo of the double-sided tape" src="image-12.png" width="400">
+
+### Purchase a Power Cable
+
+The tablet includes a USB Type-A to USB Type-C charging cable and an AC outlet to USB Type-A power adapter.
+
+The included charging cable is relatively short, so you may need an extension cord depending on the installation location.
+
+### Installation
+
+Apply the double-sided tape to the tablet holder.
+
+<img alt="Photo of the tablet holder with double-sided tape attached" src="image-13.png" width="400">
+
+---
+
+Affix the tablet holder to the wall and mount the tablet.
+
+<img alt="Photo of the wall with only the tablet holder attached" src="image-14.png" width="400">
+
+<img alt="Photo of the wall with the tablet installed" src="image-15.png" width="400">
