@@ -105,7 +105,7 @@ Example: `Example Plugin`
 
 The plugin version.
 
-The version is expected to be the `version core` of [Semantic Versioning](https://semver.org/) (`/([1-9][0-9]*)\.([1-9][0-9]*)\.([1-9][0-9]*)/`).
+The version is expected to be the `<version core>` of [Semantic Versioning](https://semver.org/) (`/([1-9][0-9]*)\.([1-9][0-9]*)\.([1-9][0-9]*)/`).
 
 Example: `1.0.0`
 
