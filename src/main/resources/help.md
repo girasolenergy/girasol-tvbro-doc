@@ -68,6 +68,12 @@
 
 ## 個別機能説明
 
+### English
+
 - [Heartbeat Guide](en/heartbeat.md)
+- [Promotion Code Usage Guide](en/promotion-code/index.md)
+
+### 日本語
 
 - [リモート監視（Heartbeat）機能ガイド](ja/heartbeat.md)
+- [プロモーションコード利用ガイド](ja/promotion-code/index.md)
