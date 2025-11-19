@@ -26,13 +26,13 @@ You can use the Heartbeat feature with the following steps.
 
 You can access the Heartbeat settings from the common settings screen.
 
-![Access to Heartbeat settings](../heartbeat_access.png)
+![Access to Heartbeat settings](heartbeat_access.png)
 
 ### Layout of the Heartbeat settings screen
 
 The image below shows the Heartbeat settings screen.
 
-![Heartbeat settings screen](../heartbeat.png)
+![Heartbeat settings screen](heartbeat.png)
 
 ### 1: Log in / Log out
 

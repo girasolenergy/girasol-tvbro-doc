@@ -70,10 +70,10 @@
 
 ### English
 
-- [Heartbeat Guide](en/heartbeat.md)
+- [Heartbeat Guide](en/heartbeat/index.md)
 - [Promotion Code Usage Guide](en/promotion-code/index.md)
 
 ### 日本語
 
-- [リモート監視（Heartbeat）機能ガイド](ja/heartbeat.md)
+- [リモート監視（Heartbeat）機能ガイド](ja/heartbeat/index.md)
 - [プロモーションコード利用ガイド](ja/promotion-code/index.md)
