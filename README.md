@@ -17,7 +17,6 @@ Guides:
 
 - [KanbanBroドキュメント (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/help)
 - [プラグイン (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/PLUGIN)
-- [Heartbeat Guide](https://girasolenergy.github.io/girasol-tvbro-doc/en/heartbeat)
 
 Application Notes:
 
@@ -49,7 +48,6 @@ Application Notes:
 
 - [KanbanBroドキュメント (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/help)
 - [プラグイン (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/PLUGIN)
-- [リモート監視（Heartbeat）機能ガイド](https://girasolenergy.github.io/girasol-tvbro-doc/ja/heartbeat)
 
 応用事例:
 
