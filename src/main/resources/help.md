@@ -72,7 +72,7 @@
 
 - [Heartbeat Guide](en/heartbeat/index.md)
 - [Promotion Code Usage Guide](en/promotion-code/index.md)
-- [プラグイン (Japanese)](ja/plugin/index.md)
+- [Plugin](en/plugin/index.md)
 
 ### 日本語
 
