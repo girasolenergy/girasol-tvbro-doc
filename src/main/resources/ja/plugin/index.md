@@ -129,9 +129,9 @@ if (location.href === 'https://example.com/') {
 
 ---
 
-プラグインの本文ではawaitを使うことができません。
+プラグインの本文では `await` を使うことができません。
 
-awaitを使う場合は、以下のようにPromiseで囲う必要があります。
+`await` を使う場合は、以下のように `Promise` で囲う必要があります。
 
 ```javascript
 new Promise(async () => {
