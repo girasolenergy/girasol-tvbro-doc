@@ -16,7 +16,6 @@ Product overview:
 Guides:
 
 - [KanbanBroドキュメント (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/help)
-- [プラグイン (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/PLUGIN)
 
 Application Notes:
 
@@ -47,7 +46,6 @@ Application Notes:
 ヘルプ:
 
 - [KanbanBroドキュメント (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/help)
-- [プラグイン (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/PLUGIN)
 
 応用事例:
 
