@@ -7,7 +7,7 @@
 
 ## ヘルプ
 
-- [ヘルプ](https://girasolenergy.github.io/girasol-tvbro-doc/help)
+- [ヘルプ](https://girasolenergy.github.io/girasol-tvbro-doc/ja/)
 
 ## デバッグページ
 

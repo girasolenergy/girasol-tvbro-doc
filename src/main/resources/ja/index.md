@@ -70,12 +70,12 @@
 
 ### English
 
-- [Heartbeat Guide](en/heartbeat/index.md)
-- [Promotion Code Usage Guide](en/promotion-code/index.md)
-- [Plugin](en/plugin/index.md)
+- [Heartbeat Guide](../en/heartbeat/)
+- [Promotion Code Usage Guide](../en/promotion-code/)
+- [Plugin](../en/plugin/)
 
 ### 日本語
 
-- [リモート監視（Heartbeat）機能ガイド](ja/heartbeat/index.md)
-- [プロモーションコード利用ガイド](ja/promotion-code/index.md)
-- [プラグイン](ja/plugin/index.md)
+- [リモート監視（Heartbeat）機能ガイド](heartbeat/)
+- [プロモーションコード利用ガイド](promotion-code/)
+- [プラグイン](plugin/)
