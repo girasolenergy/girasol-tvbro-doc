@@ -2,8 +2,8 @@
 
 ## 公式サイト
 
-- [English](https://girasolenergy.github.io/girasol-tvbro-doc/en/)
-- [Japanese](https://girasolenergy.github.io/girasol-tvbro-doc/ja/)
+- [English](https://girasolenergy.github.io/girasol-tvbro-doc/en/product/)
+- [Japanese](https://girasolenergy.github.io/girasol-tvbro-doc/ja/product/)
 
 ## ヘルプ
 

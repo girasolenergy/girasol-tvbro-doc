@@ -11,7 +11,7 @@
 
 Product overview:
 
-- [KanbanBro: Turn Any Web Page into Digital Signage](https://girasolenergy.github.io/girasol-tvbro-doc/en/)
+- [KanbanBro: Turn Any Web Page into Digital Signage](https://girasolenergy.github.io/girasol-tvbro-doc/en/product/)
 
 Guides:
 
@@ -41,7 +41,7 @@ Application Notes:
 
 製品紹介:
 
-- [KanbanBro: ブラウザで簡単デジタルサイネージ](https://girasolenergy.github.io/girasol-tvbro-doc/ja/)
+- [KanbanBro: ブラウザで簡単デジタルサイネージ](https://girasolenergy.github.io/girasol-tvbro-doc/ja/product/)
 
 ヘルプ:
 
