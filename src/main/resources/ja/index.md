@@ -70,12 +70,14 @@
 
 ### English
 
+- [Product Introduction](../en/product/)
 - [Heartbeat Guide](../en/heartbeat/)
 - [Promotion Code Usage Guide](../en/promotion-code/)
 - [Plugin](../en/plugin/)
 
 ### 日本語
 
+- [製品紹介](product/)
 - [リモート監視（Heartbeat）機能ガイド](heartbeat/)
 - [プロモーションコード利用ガイド](promotion-code/)
 - [プラグイン](plugin/)
