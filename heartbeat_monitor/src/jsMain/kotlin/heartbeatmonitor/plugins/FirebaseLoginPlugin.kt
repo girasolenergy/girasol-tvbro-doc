@@ -2,13 +2,13 @@ package heartbeatmonitor.plugins
 
 import heartbeatmonitor.core.AbstractPlugin
 import heartbeatmonitor.core.UiContainers
-import heartbeatmonitor.core.actions
 import heartbeatmonitor.core.closeButton
 import heartbeatmonitor.core.container
 import heartbeatmonitor.core.element
 import heartbeatmonitor.core.frame
 import heartbeatmonitor.core.leftRight
 import heartbeatmonitor.core.onClick
+import heartbeatmonitor.core.right
 import heartbeatmonitor.core.showDialog
 import heartbeatmonitor.core.showToast
 import heartbeatmonitor.core.textButton
@@ -243,7 +243,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                             }
 
                         }
-                        actions {
+                        right {
                             closeButton("Cancel")
                         }
                     }
@@ -306,7 +306,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                             }
                         }
 
-                        actions {
+                        right {
                             closeButton()
                         }
                     }

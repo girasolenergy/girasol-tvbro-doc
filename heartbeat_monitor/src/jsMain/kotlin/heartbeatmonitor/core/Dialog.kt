@@ -72,16 +72,6 @@ inline fun container(block: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
 }
 
 context(context: DialogContext, parent: Element)
-inline fun actions(block: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
-    return element(document.createDivElement().also { div ->
-        div.style.display = "flex"
-        div.style.justifyContent = "end"
-        div.style.gap = "8px"
-        block(div)
-    })
-}
-
-context(context: DialogContext, parent: Element)
 inline fun leftRight(leftBlock: HTMLDivElement.() -> Unit = {}, rightBlock: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
     return element(document.createDivElement().also { div ->
         div.style.display = "flex"
@@ -104,6 +94,12 @@ inline fun leftRight(leftBlock: HTMLDivElement.() -> Unit = {}, rightBlock: HTML
         )
     })
 }
+
+context(context: DialogContext, parent: Element)
+inline fun left(block: HTMLDivElement.() -> Unit = {}) = leftRight(leftBlock = block)
+
+context(context: DialogContext, parent: Element)
+inline fun right(block: HTMLDivElement.() -> Unit = {}) = leftRight(rightBlock = block)
 
 context(context: DialogContext, parent: Element)
 fun title(title: String): HTMLDivElement {

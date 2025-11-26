@@ -6,13 +6,13 @@ import heartbeatmonitor.core.CardComparator
 import heartbeatmonitor.core.CardComparatorSpecifier
 import heartbeatmonitor.core.CardComparatorSpecifiers
 import heartbeatmonitor.core.UiContainers
-import heartbeatmonitor.core.actions
 import heartbeatmonitor.core.closeButton
 import heartbeatmonitor.core.container
 import heartbeatmonitor.core.frame
 import heartbeatmonitor.core.get
 import heartbeatmonitor.core.leftRight
 import heartbeatmonitor.core.onClick
+import heartbeatmonitor.core.right
 import heartbeatmonitor.core.showDialog
 import heartbeatmonitor.core.textButton
 import heartbeatmonitor.core.textTransparentButton
@@ -109,7 +109,7 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
                                 CardComparatorSpecifiers.currentCardComparatorSpecifiers.value = cardComparatorSpecifiers
                             }
                         }
-                        actions {
+                        right {
                             closeButton()
                         }
                     }

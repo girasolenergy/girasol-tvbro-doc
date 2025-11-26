@@ -4,12 +4,12 @@ import heartbeatmonitor.core.AbstractPlugin
 import heartbeatmonitor.core.Card
 import heartbeatmonitor.core.CardProvider
 import heartbeatmonitor.core.Dispatcher
-import heartbeatmonitor.core.actions
 import heartbeatmonitor.core.container
 import heartbeatmonitor.core.frame
 import heartbeatmonitor.core.label
 import heartbeatmonitor.core.leftRight
 import heartbeatmonitor.core.onClick
+import heartbeatmonitor.core.right
 import heartbeatmonitor.core.showDialog
 import heartbeatmonitor.core.showToast
 import heartbeatmonitor.core.textBox
@@ -239,7 +239,7 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
 
                                                 })
 
-                                                actions {
+                                                right {
                                                     textButton("Close") {
                                                         onClick {
                                                             if (this@textButton.disabled) return@onClick
