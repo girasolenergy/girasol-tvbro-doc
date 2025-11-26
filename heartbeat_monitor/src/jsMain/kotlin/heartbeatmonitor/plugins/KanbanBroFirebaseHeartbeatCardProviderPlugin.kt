@@ -7,7 +7,7 @@ import heartbeatmonitor.core.Dispatcher
 import heartbeatmonitor.core.container
 import heartbeatmonitor.core.frame
 import heartbeatmonitor.core.label
-import heartbeatmonitor.core.leftRight
+import heartbeatmonitor.core.left
 import heartbeatmonitor.core.onClick
 import heartbeatmonitor.core.right
 import heartbeatmonitor.core.showDialog
@@ -202,7 +202,7 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                                 val onFormUpdate = EventRegistry<Unit, Unit>()
                                                 val onModifySettingsOverrides = EventRegistry<JsonWrapper, Unit>()
 
-                                                leftRight({
+                                                left {
                                                     val textBoxId = randomUuid()
                                                     label("Title") {
                                                         this@label.htmlFor = textBoxId
@@ -217,10 +217,8 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                                             onFormUpdate.emit()
                                                         })
                                                     }
-                                                }, {
-
-                                                })
-                                                leftRight({
+                                                }
+                                                left {
                                                     val textBoxId = randomUuid()
                                                     label("Tags") {
                                                         this@label.htmlFor = textBoxId
@@ -235,9 +233,7 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                                             onFormUpdate.emit()
                                                         })
                                                     }
-                                                }, {
-
-                                                })
+                                                }
 
                                                 right {
                                                     textButton("Close") {
