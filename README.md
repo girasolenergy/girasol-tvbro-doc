@@ -15,7 +15,7 @@ Product overview:
 
 Guides:
 
-- [KanbanBroドキュメント (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/ja/)
+- [KanbanBro Documentation](https://girasolenergy.github.io/girasol-tvbro-doc/en/)
 
 Application Notes:
 
