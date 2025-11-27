@@ -208,7 +208,7 @@ body {
 #cards .card.red-alert {
     background: var(--card-red-alert-background-color);
 }
-#cards .card .screenshot {
+.screenshot {
     display: grid;
     place-items: center;
     position: relative;
@@ -217,7 +217,7 @@ body {
     width: 100%;
     margin: 0;
 }
-#cards .card .screenshot img {
+.screenshot img {
     display: block;
     width: auto;
     height: auto;

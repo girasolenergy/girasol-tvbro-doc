@@ -4,12 +4,15 @@ import heartbeatmonitor.core.AbstractPlugin
 import heartbeatmonitor.core.Card
 import heartbeatmonitor.core.CardProvider
 import heartbeatmonitor.core.Dispatcher
+import heartbeatmonitor.core.center
 import heartbeatmonitor.core.container
+import heartbeatmonitor.core.element
 import heartbeatmonitor.core.frame
 import heartbeatmonitor.core.label
 import heartbeatmonitor.core.left
 import heartbeatmonitor.core.onClick
 import heartbeatmonitor.core.right
+import heartbeatmonitor.core.shadow
 import heartbeatmonitor.core.showDialog
 import heartbeatmonitor.core.showToast
 import heartbeatmonitor.core.textBox
@@ -202,6 +205,36 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                                 val onFormUpdate = EventRegistry<Unit, Unit>()
                                                 val onModifySettingsOverrides = EventRegistry<JsonWrapper, Unit>()
 
+                                                center {
+                                                    shadow {
+                                                        element(document.createDivElement().also { screenshotDiv ->
+                                                            screenshotDiv.className = "screenshot"
+
+                                                            screenshotDiv.append(document.createDivElement().also { screenshotPlaceholderDiv ->
+                                                                MainScope().launch {
+                                                                    val image = imageCache.await()
+                                                                    if (image != null) {
+                                                                        screenshotPlaceholderDiv.append(Image().also { img ->
+                                                                            img.asDynamic().loading = "lazy"
+                                                                            img.asDynamic().decoding = "async"
+                                                                            setImageBlob(img, image)
+                                                                            img.alt = titleCache.await()
+                                                                        })
+                                                                    } else {
+                                                                        screenshotPlaceholderDiv.style.width = "300px"
+                                                                        screenshotPlaceholderDiv.style.height = "200px"
+                                                                        screenshotPlaceholderDiv.textContent = "No Image"
+                                                                        screenshotPlaceholderDiv.style.fontStyle = "italic"
+                                                                        screenshotPlaceholderDiv.style.fontSize = "200%"
+                                                                        screenshotPlaceholderDiv.style.color = "gray"
+                                                                        screenshotPlaceholderDiv.style.textAlign = "center"
+                                                                        screenshotPlaceholderDiv.style.lineHeight = "200px"
+                                                                    }
+                                                                }
+                                                            })
+                                                        })
+                                                    }
+                                                }
                                                 left {
                                                     val textBoxId = randomUuid()
                                                     label("Title") {

@@ -72,6 +72,17 @@ inline fun container(block: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
 }
 
 context(context: DialogContext, parent: Element)
+inline fun center(block: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
+    return element(document.createDivElement().also { div ->
+        div.style.display = "flex"
+        div.style.gap = "8px"
+        div.style.alignItems = "center"
+        div.style.justifyContent = "center"
+        block(div)
+    })
+}
+
+context(context: DialogContext, parent: Element)
 inline fun leftRight(leftBlock: HTMLDivElement.() -> Unit = {}, rightBlock: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
     return element(document.createDivElement().also { div ->
         div.style.display = "flex"
@@ -100,6 +111,16 @@ inline fun left(block: HTMLDivElement.() -> Unit = {}) = leftRight(leftBlock = b
 
 context(context: DialogContext, parent: Element)
 inline fun right(block: HTMLDivElement.() -> Unit = {}) = leftRight(rightBlock = block)
+
+context(context: DialogContext, parent: Element)
+inline fun shadow(block: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
+    return element(document.createDivElement().also { div ->
+        div.style.display = "inline-block"
+        div.style.margin = "8px"
+        div.style.boxShadow = "0 6px 24px var(--dialog-shadow-color)"
+        block(div)
+    })
+}
 
 context(context: DialogContext, parent: Element)
 fun title(title: String): HTMLDivElement {
