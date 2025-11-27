@@ -199,8 +199,16 @@ body {
     padding: var(--gap);
     gap: var(--gap);
 }
-#cards .card.clickable {
+.clickable {
+    position: relative;
     cursor: pointer;
+}
+.clickable:hover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--highlight-background-color);
+    pointer-events: none;
 }
 #cards .card.yellow-alert {
     background: var(--card-yellow-alert-background-color);
@@ -278,9 +286,6 @@ body {
     position: absolute;
     inset: 0;
     border-radius: 8px;
-}
-#cards .card.clickable .highlight:hover {
-    background: var(--highlight-background-color);
 }
 
 #toast-container {

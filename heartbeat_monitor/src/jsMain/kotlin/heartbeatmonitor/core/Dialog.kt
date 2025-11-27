@@ -123,6 +123,14 @@ inline fun shadow(block: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
 }
 
 context(context: DialogContext, parent: Element)
+inline fun clickable(block: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
+    return element(document.createDivElement().also { div ->
+        div.classList.add("clickable")
+        block(div)
+    })
+}
+
+context(context: DialogContext, parent: Element)
 fun title(title: String): HTMLDivElement {
     return element(document.createDivElement().also { div ->
         div.textContent = title
