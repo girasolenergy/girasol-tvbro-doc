@@ -210,34 +210,60 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
 
                                                     center {
                                                         shadow {
-                                                            element(document.createDivElement().also { screenshotDiv ->
-                                                                screenshotDiv.className = "screenshot"
-                                                                screenshotDiv.style.maxWidth = "var(--base)"
+                                                            clickable {
+                                                                element(document.createDivElement().also { screenshotDiv ->
+                                                                    screenshotDiv.className = "screenshot"
+                                                                    screenshotDiv.style.maxWidth = "var(--base)"
 
-                                                                screenshotDiv.append(document.createDivElement().also { screenshotPlaceholderDiv ->
-                                                                    screenshotPlaceholderDiv.style.textAlign = "center"
-                                                                    MainScope().launch {
-                                                                        val image = imageCache.await()
-                                                                        if (image != null) {
-                                                                            screenshotPlaceholderDiv.append(Image().also { img ->
-                                                                                img.asDynamic().loading = "lazy"
-                                                                                img.asDynamic().decoding = "async"
-                                                                                setImageBlob(img, image)
-                                                                                img.alt = titleCache.await()
-                                                                            })
-                                                                        } else {
-                                                                            screenshotPlaceholderDiv.style.width = "300px"
-                                                                            screenshotPlaceholderDiv.style.height = "200px"
-                                                                            screenshotPlaceholderDiv.textContent = "No Image"
-                                                                            screenshotPlaceholderDiv.style.fontStyle = "italic"
-                                                                            screenshotPlaceholderDiv.style.fontSize = "200%"
-                                                                            screenshotPlaceholderDiv.style.color = "gray"
-                                                                            screenshotPlaceholderDiv.style.textAlign = "center"
-                                                                            screenshotPlaceholderDiv.style.lineHeight = "200px"
+                                                                    screenshotDiv.append(document.createDivElement().also { screenshotPlaceholderDiv ->
+                                                                        screenshotPlaceholderDiv.style.textAlign = "center"
+                                                                        MainScope().launch {
+                                                                            val image = imageCache.await()
+                                                                            if (image != null) {
+                                                                                screenshotPlaceholderDiv.append(Image().also { img ->
+                                                                                    img.asDynamic().loading = "lazy"
+                                                                                    img.asDynamic().decoding = "async"
+                                                                                    setImageBlob(img, image)
+                                                                                    img.alt = titleCache.await()
+                                                                                })
+                                                                            } else {
+                                                                                screenshotPlaceholderDiv.style.width = "300px"
+                                                                                screenshotPlaceholderDiv.style.height = "200px"
+                                                                                screenshotPlaceholderDiv.textContent = "No Image"
+                                                                                screenshotPlaceholderDiv.style.fontStyle = "italic"
+                                                                                screenshotPlaceholderDiv.style.fontSize = "200%"
+                                                                                screenshotPlaceholderDiv.style.color = "gray"
+                                                                                screenshotPlaceholderDiv.style.textAlign = "center"
+                                                                                screenshotPlaceholderDiv.style.lineHeight = "200px"
+                                                                            }
+                                                                        }
+                                                                    })
+                                                                })
+
+                                                                clickable = false
+                                                                MainScope().launch {
+                                                                    val image = imageCache.await() ?: return@launch
+                                                                    clickable = true
+                                                                    onClick {
+                                                                        showDialog {
+                                                                            frame {
+                                                                                yScrollable {
+                                                                                    element(Image().also { img ->
+                                                                                        img.asDynamic().loading = "lazy"
+                                                                                        img.asDynamic().decoding = "async"
+                                                                                        setImageBlob(img, image)
+                                                                                        img.alt = titleCache.await()
+                                                                                        img.style.width = "100%"
+                                                                                    })
+                                                                                }
+                                                                                onClick {
+                                                                                    onClosed.emit()
+                                                                                }
+                                                                            }
                                                                         }
                                                                     }
-                                                                })
-                                                            })
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                     left {
