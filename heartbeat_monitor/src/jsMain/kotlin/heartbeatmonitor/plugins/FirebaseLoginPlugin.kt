@@ -14,6 +14,7 @@ import heartbeatmonitor.core.showToast
 import heartbeatmonitor.core.textButton
 import heartbeatmonitor.core.textTransparentButton
 import heartbeatmonitor.core.title
+import heartbeatmonitor.core.yScrollable
 import heartbeatmonitor.util.createButtonElement
 import heartbeatmonitor.util.createDivElement
 import heartbeatmonitor.util.createSpanElement
@@ -115,136 +116,138 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
         fun openLoginDialog(app: FirebaseApp) {
             showDialog {
                 frame {
-                    container {
-                        title("Account")
+                    yScrollable {
                         container {
+                            title("Account")
+                            container {
 
-                            // Googleログインボタン
-                            textButton("Log in with Google") {
-                                onClick {
-                                    MainScope().promise {
-                                        disabled = true
-                                        try {
-                                            val provider = FirebaseAuthModule.GoogleAuthProvider()
-                                            FirebaseAuthModule.signInWithPopup(FirebaseAuthModule.getAuth(app), provider).await()
-                                            onClosed.emit()
-                                        } catch (e: dynamic) {
-                                            console.error("Log in failed", e)
-                                            val msg = when (e?.code as String?) {
-                                                "auth/popup-blocked" -> "Popup was blocked by the browser."
-                                                "auth/popup-closed-by-user" -> "Popup closed before completing sign in."
-                                                else -> if (e != null && e.message != null) e.message as String else "$e"
+                                // Googleログインボタン
+                                textButton("Log in with Google") {
+                                    onClick {
+                                        MainScope().promise {
+                                            disabled = true
+                                            try {
+                                                val provider = FirebaseAuthModule.GoogleAuthProvider()
+                                                FirebaseAuthModule.signInWithPopup(FirebaseAuthModule.getAuth(app), provider).await()
+                                                onClosed.emit()
+                                            } catch (e: dynamic) {
+                                                console.error("Log in failed", e)
+                                                val msg = when (e?.code as String?) {
+                                                    "auth/popup-blocked" -> "Popup was blocked by the browser."
+                                                    "auth/popup-closed-by-user" -> "Popup closed before completing sign in."
+                                                    else -> if (e != null && e.message != null) e.message as String else "$e"
+                                                }
+                                                showToast("Failed to log in: $msg")
+                                            } finally {
+                                                disabled = false
                                             }
-                                            showToast("Failed to log in: $msg")
-                                        } finally {
-                                            disabled = false
                                         }
                                     }
-                                }
-                                registerUserListener(app, onClosed) {
-                                    style.display = if (FirebaseAuthModule.getAuth(app).currentUser != null) "none" else ""
-                                }
-                            }
-
-                            // メールアドレスでログインボタン
-                            textButton("Log in with Email / Password") {
-                                onClick {
-                                    MainScope().promise {
-                                        disabled = true
-                                        try {
-                                            val email = window.prompt("Enter email address") ?: return@promise
-                                            val password = window.prompt("Enter password") ?: return@promise
-                                            FirebaseAuthModule.signInWithEmailAndPassword(FirebaseAuthModule.getAuth(app), email, password).await()
-                                            showToast("Logged in successfully.")
-                                            onClosed.emit()
-                                        } catch (e: dynamic) {
-                                            console.error("Email log in failed", e)
-                                            val msg = when (e?.code as String?) {
-                                                "auth/invalid-email" -> "Invalid email address."
-                                                "auth/user-disabled" -> "This user account has been disabled."
-                                                "auth/user-not-found" -> "No user found with this email."
-                                                "auth/wrong-password" -> "Incorrect password."
-                                                "auth/too-many-requests" -> "Too many attempts. Try again later."
-                                                "auth/network-request-failed" -> "Network error. Please check your connection."
-                                                else -> if (e != null && e.message != null) e.message as String else "$e"
-                                            }
-                                            showToast("Failed to log in: $msg")
-                                        } finally {
-                                            disabled = false
-                                        }
+                                    registerUserListener(app, onClosed) {
+                                        style.display = if (FirebaseAuthModule.getAuth(app).currentUser != null) "none" else ""
                                     }
                                 }
-                                registerUserListener(app, onClosed) {
-                                    style.display = if (FirebaseAuthModule.getAuth(app).currentUser != null) "none" else ""
-                                }
-                            }
 
-                            // メールアドレスをリンクボタン
-                            textButton("Link Email / Password") {
-                                onClick {
-                                    MainScope().promise {
-                                        val currentUser = FirebaseAuthModule.getAuth(app).currentUser
-                                        if (currentUser == null) {
-                                            showToast("Please log in first.")
-                                            return@promise
+                                // メールアドレスでログインボタン
+                                textButton("Log in with Email / Password") {
+                                    onClick {
+                                        MainScope().promise {
+                                            disabled = true
+                                            try {
+                                                val email = window.prompt("Enter email address") ?: return@promise
+                                                val password = window.prompt("Enter password") ?: return@promise
+                                                FirebaseAuthModule.signInWithEmailAndPassword(FirebaseAuthModule.getAuth(app), email, password).await()
+                                                showToast("Logged in successfully.")
+                                                onClosed.emit()
+                                            } catch (e: dynamic) {
+                                                console.error("Email log in failed", e)
+                                                val msg = when (e?.code as String?) {
+                                                    "auth/invalid-email" -> "Invalid email address."
+                                                    "auth/user-disabled" -> "This user account has been disabled."
+                                                    "auth/user-not-found" -> "No user found with this email."
+                                                    "auth/wrong-password" -> "Incorrect password."
+                                                    "auth/too-many-requests" -> "Too many attempts. Try again later."
+                                                    "auth/network-request-failed" -> "Network error. Please check your connection."
+                                                    else -> if (e != null && e.message != null) e.message as String else "$e"
+                                                }
+                                                showToast("Failed to log in: $msg")
+                                            } finally {
+                                                disabled = false
+                                            }
                                         }
-                                        disabled = true
-                                        try {
-                                            val email = window.prompt("Enter email address") ?: return@promise
-                                            val password = window.prompt("Enter password (min 6 chars)") ?: return@promise
-                                            if (password.length < 6) {
-                                                showToast("Password must be at least 6 characters.")
+                                    }
+                                    registerUserListener(app, onClosed) {
+                                        style.display = if (FirebaseAuthModule.getAuth(app).currentUser != null) "none" else ""
+                                    }
+                                }
+
+                                // メールアドレスをリンクボタン
+                                textButton("Link Email / Password") {
+                                    onClick {
+                                        MainScope().promise {
+                                            val currentUser = FirebaseAuthModule.getAuth(app).currentUser
+                                            if (currentUser == null) {
+                                                showToast("Please log in first.")
                                                 return@promise
                                             }
-                                            val credential = FirebaseAuthModule.EmailAuthProvider.credential(email, password)
-                                            FirebaseAuthModule.linkWithCredential(currentUser, credential).await()
-                                            showToast("Linked email/password to your account.")
-                                            onClosed.emit()
-                                        } catch (e: dynamic) {
-                                            console.error("Link email failed", e)
-                                            val msg = when (e?.code as String?) {
-                                                "auth/credential-already-in-use" -> "This email is already in use by another account."
-                                                "auth/provider-already-linked" -> "Email/password is already linked to this account."
-                                                "auth/requires-recent-login" -> "Please reauthenticate and try again."
-                                                else -> if (e != null && e.message != null) e.message as String else "$e"
+                                            disabled = true
+                                            try {
+                                                val email = window.prompt("Enter email address") ?: return@promise
+                                                val password = window.prompt("Enter password (min 6 chars)") ?: return@promise
+                                                if (password.length < 6) {
+                                                    showToast("Password must be at least 6 characters.")
+                                                    return@promise
+                                                }
+                                                val credential = FirebaseAuthModule.EmailAuthProvider.credential(email, password)
+                                                FirebaseAuthModule.linkWithCredential(currentUser, credential).await()
+                                                showToast("Linked email/password to your account.")
+                                                onClosed.emit()
+                                            } catch (e: dynamic) {
+                                                console.error("Link email failed", e)
+                                                val msg = when (e?.code as String?) {
+                                                    "auth/credential-already-in-use" -> "This email is already in use by another account."
+                                                    "auth/provider-already-linked" -> "Email/password is already linked to this account."
+                                                    "auth/requires-recent-login" -> "Please reauthenticate and try again."
+                                                    else -> if (e != null && e.message != null) e.message as String else "$e"
+                                                }
+                                                showToast("Failed to link: $msg")
+                                            } finally {
+                                                disabled = false
                                             }
-                                            showToast("Failed to link: $msg")
-                                        } finally {
-                                            disabled = false
                                         }
                                     }
-                                }
-                                registerUserListener(app, onClosed) {
-                                    val user = FirebaseAuthModule.getAuth(app).currentUser
-                                    val hasPassword = user != null && user.providerData.any { p -> p.providerId == "password" }
-                                    style.display = if (user != null && !hasPassword) "" else "none"
-                                }
-                            }
-
-                            // ログアウトボタン
-                            textButton("Log out") {
-                                onClick {
-                                    MainScope().promise {
-                                        disabled = true
-                                        try {
-                                            FirebaseAuthModule.signOut(FirebaseAuthModule.getAuth(app)).await()
-                                            onClosed.emit()
-                                        } catch (e: dynamic) {
-                                            console.error("Log out failed", e)
-                                            showToast("Failed to log out: ${if (e != null && e.message != null) e.message as String else "$e"}")
-                                        } finally {
-                                            disabled = false
-                                        }
+                                    registerUserListener(app, onClosed) {
+                                        val user = FirebaseAuthModule.getAuth(app).currentUser
+                                        val hasPassword = user != null && user.providerData.any { p -> p.providerId == "password" }
+                                        style.display = if (user != null && !hasPassword) "" else "none"
                                     }
                                 }
-                                registerUserListener(app, onClosed) {
-                                    style.display = if (FirebaseAuthModule.getAuth(app).currentUser != null) "" else "none"
-                                }
-                            }
 
-                        }
-                        right {
-                            closeButton("Cancel")
+                                // ログアウトボタン
+                                textButton("Log out") {
+                                    onClick {
+                                        MainScope().promise {
+                                            disabled = true
+                                            try {
+                                                FirebaseAuthModule.signOut(FirebaseAuthModule.getAuth(app)).await()
+                                                onClosed.emit()
+                                            } catch (e: dynamic) {
+                                                console.error("Log out failed", e)
+                                                showToast("Failed to log out: ${if (e != null && e.message != null) e.message as String else "$e"}")
+                                            } finally {
+                                                disabled = false
+                                            }
+                                        }
+                                    }
+                                    registerUserListener(app, onClosed) {
+                                        style.display = if (FirebaseAuthModule.getAuth(app).currentUser != null) "" else "none"
+                                    }
+                                }
+
+                            }
+                            right {
+                                closeButton("Cancel")
+                            }
                         }
                     }
                 }
@@ -254,60 +257,62 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
         fun openAccountsDialog() {
             showDialog {
                 frame {
-                    container {
-                        title("Accounts")
-
-                        // ユーザーリスト
+                    yScrollable {
                         container {
-                            fun updateButtons() {
-                                innerHTML = ""
-                                appNames.value.forEach { appName ->
-                                    val app = FirebaseAppModule.getApp(appName)
-                                    leftRight({
+                            title("Accounts")
 
-                                        // ログインボタン
-                                        textButton("Log in") {
-                                            onClick {
-                                                openLoginDialog(app)
-                                            }
-                                        }
+                            // ユーザーリスト
+                            container {
+                                fun updateButtons() {
+                                    innerHTML = ""
+                                    appNames.value.forEach { appName ->
+                                        val app = FirebaseAppModule.getApp(appName)
+                                        leftRight({
 
-                                        // ユーザバッジ
-                                        element(createUserBadge(app, onClosed))
-
-                                    }, {
-
-                                        // ログアウトボタン
-                                        textButton("🗑️") {
-                                            onClick {
-                                                MainScope().promise {
-                                                    FirebaseAuthModule.signOut(FirebaseAuthModule.getAuth(app)).await()
-                                                    FirebaseAppModule.deleteApp(app)
-                                                    appNames.value = appNames.value - app.name
-                                                    onAppRemoved.emit(app)
+                                            // ログインボタン
+                                            textButton("Log in") {
+                                                onClick {
+                                                    openLoginDialog(app)
                                                 }
                                             }
-                                        }
 
-                                    })
+                                            // ユーザバッジ
+                                            element(createUserBadge(app, onClosed))
+
+                                        }, {
+
+                                            // ログアウトボタン
+                                            textButton("🗑️") {
+                                                onClick {
+                                                    MainScope().promise {
+                                                        FirebaseAuthModule.signOut(FirebaseAuthModule.getAuth(app)).await()
+                                                        FirebaseAppModule.deleteApp(app)
+                                                        appNames.value = appNames.value - app.name
+                                                        onAppRemoved.emit(app)
+                                                    }
+                                                }
+                                            }
+
+                                        })
+                                    }
+                                }
+                                appNames.register { updateButtons() }
+                                updateButtons()
+                            }
+
+                            // 追加ボタン
+                            textTransparentButton("＋") {
+                                onClick {
+                                    val appName = if ("[DEFAULT]" in appNames.value) randomUuid() else "[DEFAULT]"
+                                    val app = FirebaseAppModule.initializeApp(firebaseConfig, appName)
+                                    appNames.value = appNames.value + appName
+                                    onAppAdded.emit(app)
                                 }
                             }
-                            appNames.register { updateButtons() }
-                            updateButtons()
-                        }
 
-                        // 追加ボタン
-                        textTransparentButton("＋") {
-                            onClick {
-                                val appName = if ("[DEFAULT]" in appNames.value) randomUuid() else "[DEFAULT]"
-                                val app = FirebaseAppModule.initializeApp(firebaseConfig, appName)
-                                appNames.value = appNames.value + appName
-                                onAppAdded.emit(app)
+                            right {
+                                closeButton()
                             }
-                        }
-
-                        right {
-                            closeButton()
                         }
                     }
                 }

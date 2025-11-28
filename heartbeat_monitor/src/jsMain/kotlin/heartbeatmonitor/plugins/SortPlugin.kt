@@ -18,6 +18,7 @@ import heartbeatmonitor.core.textButton
 import heartbeatmonitor.core.textTransparentButton
 import heartbeatmonitor.core.title
 import heartbeatmonitor.core.type
+import heartbeatmonitor.core.yScrollable
 import heartbeatmonitor.util.createButtonElement
 import heartbeatmonitor.util.createDivElement
 import kotlinx.browser.document
@@ -71,46 +72,48 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
         fun openSortDialog() {
             showDialog {
                 frame {
-                    container {
-                        title("Sort")
+                    yScrollable {
                         container {
-                            fun updateButtons() {
-                                innerHTML = ""
-                                CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.forEachIndexed { index, cardComparatorSpecifier ->
-                                    leftRight({
-                                        textButton(getTitle(cardComparatorSpecifier)) {
-                                            onClick {
-                                                val cardComparatorSpecifiers = CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.toMutableList()
-                                                cardComparatorSpecifiers[index] = getNextCardComparatorSpecifier(cardComparatorSpecifiers[index])
-                                                CardComparatorSpecifiers.currentCardComparatorSpecifiers.value = cardComparatorSpecifiers
+                            title("Sort")
+                            container {
+                                fun updateButtons() {
+                                    innerHTML = ""
+                                    CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.forEachIndexed { index, cardComparatorSpecifier ->
+                                        leftRight({
+                                            textButton(getTitle(cardComparatorSpecifier)) {
+                                                onClick {
+                                                    val cardComparatorSpecifiers = CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.toMutableList()
+                                                    cardComparatorSpecifiers[index] = getNextCardComparatorSpecifier(cardComparatorSpecifiers[index])
+                                                    CardComparatorSpecifiers.currentCardComparatorSpecifiers.value = cardComparatorSpecifiers
+                                                }
                                             }
-                                        }
-                                    }, {
-                                        textButton("🗑️") {
-                                            onClick {
-                                                val cardComparatorSpecifiers = CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.toMutableList()
-                                                cardComparatorSpecifiers.removeAt(index)
-                                                CardComparatorSpecifiers.currentCardComparatorSpecifiers.value = cardComparatorSpecifiers
+                                        }, {
+                                            textButton("🗑️") {
+                                                onClick {
+                                                    val cardComparatorSpecifiers = CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.toMutableList()
+                                                    cardComparatorSpecifiers.removeAt(index)
+                                                    CardComparatorSpecifiers.currentCardComparatorSpecifiers.value = cardComparatorSpecifiers
+                                                }
                                             }
-                                        }
-                                    })
+                                        })
+                                    }
                                 }
-                            }
 
-                            CardComparatorSpecifiers.currentCardComparatorSpecifiers.subscribe(onClosed.toSubscriber()) {
+                                CardComparatorSpecifiers.currentCardComparatorSpecifiers.subscribe(onClosed.toSubscriber()) {
+                                    updateButtons()
+                                }
                                 updateButtons()
                             }
-                            updateButtons()
-                        }
-                        textTransparentButton("＋") {
-                            onClick {
-                                val cardComparatorSpecifiers = CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.toMutableList()
-                                cardComparatorSpecifiers.add(CardComparatorSpecifier("type" to "empty"))
-                                CardComparatorSpecifiers.currentCardComparatorSpecifiers.value = cardComparatorSpecifiers
+                            textTransparentButton("＋") {
+                                onClick {
+                                    val cardComparatorSpecifiers = CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.toMutableList()
+                                    cardComparatorSpecifiers.add(CardComparatorSpecifier("type" to "empty"))
+                                    CardComparatorSpecifiers.currentCardComparatorSpecifiers.value = cardComparatorSpecifiers
+                                }
                             }
-                        }
-                        right {
-                            closeButton()
+                            right {
+                                closeButton()
+                            }
                         }
                     }
                 }

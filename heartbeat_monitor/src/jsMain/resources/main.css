@@ -327,12 +327,17 @@ body {
     z-index: 1000;
 }
 .dialog-frame {
-    width: min(92vw, 420px);
+    display: flex;
+    flex-direction: column;
+    min-width: min(92vw, 420px);
+    max-width: calc(100% - 20px * 2);
+    max-height: calc(100% - 20px * 2);
     background: var(--dialog-background-color);
     border: 1px solid var(--dialog-border-color);
     border-radius: 12px;
-    padding: 16px;
     box-shadow: 0 10px 30px var(--dialog-shadow-color);
+    padding: 16px;
+    overflow: hidden;
 }
 .dialog-container {
     display: grid;

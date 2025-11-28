@@ -131,6 +131,14 @@ inline fun clickable(block: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
 }
 
 context(context: DialogContext, parent: Element)
+inline fun yScrollable(block: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
+    return element(document.createDivElement().also { div ->
+        div.style.overflowY = "auto"
+        block(div)
+    })
+}
+
+context(context: DialogContext, parent: Element)
 fun title(title: String): HTMLDivElement {
     return element(document.createDivElement().also { div ->
         div.textContent = title

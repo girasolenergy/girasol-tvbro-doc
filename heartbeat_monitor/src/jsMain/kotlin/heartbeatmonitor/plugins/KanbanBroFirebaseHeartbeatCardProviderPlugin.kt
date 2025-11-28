@@ -5,6 +5,7 @@ import heartbeatmonitor.core.Card
 import heartbeatmonitor.core.CardProvider
 import heartbeatmonitor.core.Dispatcher
 import heartbeatmonitor.core.center
+import heartbeatmonitor.core.clickable
 import heartbeatmonitor.core.container
 import heartbeatmonitor.core.element
 import heartbeatmonitor.core.frame
@@ -18,6 +19,7 @@ import heartbeatmonitor.core.showToast
 import heartbeatmonitor.core.textBox
 import heartbeatmonitor.core.textButton
 import heartbeatmonitor.core.title
+import heartbeatmonitor.core.yScrollable
 import heartbeatmonitor.util.JsonWrapper
 import heartbeatmonitor.util.awaitOrElse
 import heartbeatmonitor.util.boolean
@@ -198,117 +200,119 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                 cardDiv.addEventListener("click", {
                                     showDialog {
                                         frame {
-                                            container {
-                                                title("Card")
+                                            yScrollable {
+                                                container {
+                                                    title("Card")
 
-                                                val subscriber = onClosed.toSubscriber()
-                                                val onFormUpdate = EventRegistry<Unit, Unit>()
-                                                val onModifySettingsOverrides = EventRegistry<JsonWrapper, Unit>()
+                                                    val subscriber = onClosed.toSubscriber()
+                                                    val onFormUpdate = EventRegistry<Unit, Unit>()
+                                                    val onModifySettingsOverrides = EventRegistry<JsonWrapper, Unit>()
 
-                                                center {
-                                                    shadow {
-                                                        element(document.createDivElement().also { screenshotDiv ->
-                                                            screenshotDiv.className = "screenshot"
+                                                    center {
+                                                        shadow {
+                                                            element(document.createDivElement().also { screenshotDiv ->
+                                                                screenshotDiv.className = "screenshot"
 
-                                                            screenshotDiv.append(document.createDivElement().also { screenshotPlaceholderDiv ->
+                                                                screenshotDiv.append(document.createDivElement().also { screenshotPlaceholderDiv ->
+                                                                    MainScope().launch {
+                                                                        val image = imageCache.await()
+                                                                        if (image != null) {
+                                                                            screenshotPlaceholderDiv.append(Image().also { img ->
+                                                                                img.asDynamic().loading = "lazy"
+                                                                                img.asDynamic().decoding = "async"
+                                                                                setImageBlob(img, image)
+                                                                                img.alt = titleCache.await()
+                                                                            })
+                                                                        } else {
+                                                                            screenshotPlaceholderDiv.style.width = "300px"
+                                                                            screenshotPlaceholderDiv.style.height = "200px"
+                                                                            screenshotPlaceholderDiv.textContent = "No Image"
+                                                                            screenshotPlaceholderDiv.style.fontStyle = "italic"
+                                                                            screenshotPlaceholderDiv.style.fontSize = "200%"
+                                                                            screenshotPlaceholderDiv.style.color = "gray"
+                                                                            screenshotPlaceholderDiv.style.textAlign = "center"
+                                                                            screenshotPlaceholderDiv.style.lineHeight = "200px"
+                                                                        }
+                                                                    }
+                                                                })
+                                                            })
+                                                        }
+                                                    }
+                                                    left {
+                                                        val textBoxId = randomUuid()
+                                                        label("Title") {
+                                                            this@label.htmlFor = textBoxId
+                                                        }
+                                                        textBox(settingsCache.await()?.getTitle() ?: folderRef.name) {
+                                                            this@textBox.id = textBoxId
+                                                            this@textBox.value = settingsOverridesCache.await()?.getTitle() ?: ""
+                                                            onModifySettingsOverrides.subscribe(subscriber) { settingsOverrides ->
+                                                                settingsOverrides.setTitle(this@textBox.value.trim())
+                                                            }
+                                                            this@textBox.addEventListener("input", {
+                                                                onFormUpdate.emit()
+                                                            })
+                                                        }
+                                                    }
+                                                    left {
+                                                        val textBoxId = randomUuid()
+                                                        label("Tags") {
+                                                            this@label.htmlFor = textBoxId
+                                                        }
+                                                        textBox(settingsCache.await()?.getTags() ?: "") {
+                                                            this@textBox.id = textBoxId
+                                                            this@textBox.value = settingsOverridesCache.await()?.getTags() ?: ""
+                                                            onModifySettingsOverrides.subscribe(subscriber) { settingsOverrides ->
+                                                                settingsOverrides.setTags(this@textBox.value.trim())
+                                                            }
+                                                            this@textBox.addEventListener("input", {
+                                                                onFormUpdate.emit()
+                                                            })
+                                                        }
+                                                    }
+
+                                                    right {
+                                                        textButton("Close") {
+                                                            onClick {
+                                                                if (this@textButton.disabled) return@onClick
+                                                                this@textButton.disabled = true
                                                                 MainScope().launch {
-                                                                    val image = imageCache.await()
-                                                                    if (image != null) {
-                                                                        screenshotPlaceholderDiv.append(Image().also { img ->
-                                                                            img.asDynamic().loading = "lazy"
-                                                                            img.asDynamic().decoding = "async"
-                                                                            setImageBlob(img, image)
-                                                                            img.alt = titleCache.await()
-                                                                        })
-                                                                    } else {
-                                                                        screenshotPlaceholderDiv.style.width = "300px"
-                                                                        screenshotPlaceholderDiv.style.height = "200px"
-                                                                        screenshotPlaceholderDiv.textContent = "No Image"
-                                                                        screenshotPlaceholderDiv.style.fontStyle = "italic"
-                                                                        screenshotPlaceholderDiv.style.fontSize = "200%"
-                                                                        screenshotPlaceholderDiv.style.color = "gray"
-                                                                        screenshotPlaceholderDiv.style.textAlign = "center"
-                                                                        screenshotPlaceholderDiv.style.lineHeight = "200px"
+                                                                    try {
+                                                                        val oldSettingsOverrides = settingsOverridesCache.await() ?: jsonObject().toJsonWrapper()
+                                                                        val newSettingsOverrides = oldSettingsOverrides.deepClone()
+                                                                        onModifySettingsOverrides.emit(newSettingsOverrides)
+                                                                        val noChanges = newSettingsOverrides sameAs oldSettingsOverrides
+
+                                                                        if (noChanges) return@launch
+
+                                                                        console.log("Settings overrides changing:", oldSettingsOverrides, newSettingsOverrides)
+                                                                        FirebaseStorageModule.uploadBytes(
+                                                                            FirebaseStorageModule.ref(folderRef, "settings_overrides.json"),
+                                                                            newSettingsOverrides.encodeToNormalizedString().encode(),
+                                                                            UploadMetadata().also {
+                                                                                it.contentType = "application/json; charset=utf-8"
+                                                                            }
+                                                                        ).asDeferred().await()
+                                                                        console.log("Settings overrides changed.")
+                                                                        showToast("Settings saved")
+                                                                        Card.scheduleUpdate() // TODO このカードのみ再取得
+
+                                                                    } finally {
+                                                                        onClosed.emit()
                                                                     }
                                                                 }
-                                                            })
-                                                        })
-                                                    }
-                                                }
-                                                left {
-                                                    val textBoxId = randomUuid()
-                                                    label("Title") {
-                                                        this@label.htmlFor = textBoxId
-                                                    }
-                                                    textBox(settingsCache.await()?.getTitle() ?: folderRef.name) {
-                                                        this@textBox.id = textBoxId
-                                                        this@textBox.value = settingsOverridesCache.await()?.getTitle() ?: ""
-                                                        onModifySettingsOverrides.subscribe(subscriber) { settingsOverrides ->
-                                                            settingsOverrides.setTitle(this@textBox.value.trim())
-                                                        }
-                                                        this@textBox.addEventListener("input", {
-                                                            onFormUpdate.emit()
-                                                        })
-                                                    }
-                                                }
-                                                left {
-                                                    val textBoxId = randomUuid()
-                                                    label("Tags") {
-                                                        this@label.htmlFor = textBoxId
-                                                    }
-                                                    textBox(settingsCache.await()?.getTags() ?: "") {
-                                                        this@textBox.id = textBoxId
-                                                        this@textBox.value = settingsOverridesCache.await()?.getTags() ?: ""
-                                                        onModifySettingsOverrides.subscribe(subscriber) { settingsOverrides ->
-                                                            settingsOverrides.setTags(this@textBox.value.trim())
-                                                        }
-                                                        this@textBox.addEventListener("input", {
-                                                            onFormUpdate.emit()
-                                                        })
-                                                    }
-                                                }
-
-                                                right {
-                                                    textButton("Close") {
-                                                        onClick {
-                                                            if (this@textButton.disabled) return@onClick
-                                                            this@textButton.disabled = true
-                                                            MainScope().launch {
-                                                                try {
+                                                            }
+                                                            var updateJob: Job? = null
+                                                            onFormUpdate.initialEmit.subscribe(subscriber) {
+                                                                updateJob?.cancel()
+                                                                updateJob = MainScope().launch {
                                                                     val oldSettingsOverrides = settingsOverridesCache.await() ?: jsonObject().toJsonWrapper()
                                                                     val newSettingsOverrides = oldSettingsOverrides.deepClone()
                                                                     onModifySettingsOverrides.emit(newSettingsOverrides)
                                                                     val noChanges = newSettingsOverrides sameAs oldSettingsOverrides
 
-                                                                    if (noChanges) return@launch
-
-                                                                    console.log("Settings overrides changing:", oldSettingsOverrides, newSettingsOverrides)
-                                                                    FirebaseStorageModule.uploadBytes(
-                                                                        FirebaseStorageModule.ref(folderRef, "settings_overrides.json"),
-                                                                        newSettingsOverrides.encodeToNormalizedString().encode(),
-                                                                        UploadMetadata().also {
-                                                                            it.contentType = "application/json; charset=utf-8"
-                                                                        }
-                                                                    ).asDeferred().await()
-                                                                    console.log("Settings overrides changed.")
-                                                                    showToast("Settings saved")
-                                                                    Card.scheduleUpdate() // TODO このカードのみ再取得
-
-                                                                } finally {
-                                                                    onClosed.emit()
+                                                                    this@textButton.textContent = if (noChanges) "Close" else "Save and Close"
                                                                 }
-                                                            }
-                                                        }
-                                                        var updateJob: Job? = null
-                                                        onFormUpdate.initialEmit.subscribe(subscriber) {
-                                                            updateJob?.cancel()
-                                                            updateJob = MainScope().launch {
-                                                                val oldSettingsOverrides = settingsOverridesCache.await() ?: jsonObject().toJsonWrapper()
-                                                                val newSettingsOverrides = oldSettingsOverrides.deepClone()
-                                                                onModifySettingsOverrides.emit(newSettingsOverrides)
-                                                                val noChanges = newSettingsOverrides sameAs oldSettingsOverrides
-
-                                                                this@textButton.textContent = if (noChanges) "Close" else "Save and Close"
                                                             }
                                                         }
                                                     }
