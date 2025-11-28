@@ -123,12 +123,24 @@ inline fun shadow(block: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
 }
 
 context(context: DialogContext, parent: Element)
-inline fun clickable(block: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
-    return element(document.createDivElement().also { div ->
+inline fun clickable(block: ClickableElement.() -> Unit = {}): ClickableElement {
+    return element(document.createDivElement().unsafeCast<ClickableElement>().also { div ->
         div.classList.add("clickable")
         block(div)
     })
 }
+
+abstract external class ClickableElement : HTMLDivElement
+
+var ClickableElement.clickable: Boolean
+    get() = this.classList.contains("clickable")
+    set(value) {
+        if (value) {
+            this.classList.add("clickable")
+        } else {
+            this.classList.remove("clickable")
+        }
+    }
 
 context(context: DialogContext, parent: Element)
 inline fun yScrollable(block: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
