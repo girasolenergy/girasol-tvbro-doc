@@ -212,8 +212,10 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                                         shadow {
                                                             element(document.createDivElement().also { screenshotDiv ->
                                                                 screenshotDiv.className = "screenshot"
+                                                                screenshotDiv.style.maxWidth = "var(--base)"
 
                                                                 screenshotDiv.append(document.createDivElement().also { screenshotPlaceholderDiv ->
+                                                                    screenshotPlaceholderDiv.style.textAlign = "center"
                                                                     MainScope().launch {
                                                                         val image = imageCache.await()
                                                                         if (image != null) {
@@ -327,6 +329,7 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                         screenshotDiv.className = "screenshot"
 
                                         screenshotDiv.append(document.createDivElement().also { screenshotPlaceholderDiv ->
+                                            screenshotPlaceholderDiv.style.textAlign = "center"
                                             MainScope().launch {
                                                 val image = imageCache.await()
                                                 if (image != null) {

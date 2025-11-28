@@ -220,17 +220,11 @@ body {
     display: grid;
     place-items: center;
     position: relative;
-    min-height: 0;
-    min-width: 0;
-    width: 100%;
-    margin: 0;
 }
 .screenshot img {
-    display: block;
-    width: auto;
-    height: auto;
     max-width: min(100%, var(--base));
     max-height: var(--base);
+    vertical-align: bottom;
 }
 #cards .card .screenshot.yellow-alert img {
     opacity: .45;

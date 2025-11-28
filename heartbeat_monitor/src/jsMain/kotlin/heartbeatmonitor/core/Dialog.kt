@@ -117,7 +117,7 @@ inline fun shadow(block: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
     return element(document.createDivElement().also { div ->
         div.style.display = "inline-block"
         div.style.margin = "8px"
-        div.style.boxShadow = "0 6px 24px var(--dialog-shadow-color)"
+        div.style.boxShadow = "0px 0px 8px var(--dialog-shadow-color)"
         block(div)
     })
 }
