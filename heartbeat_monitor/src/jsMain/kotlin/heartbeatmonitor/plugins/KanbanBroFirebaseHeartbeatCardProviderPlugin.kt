@@ -4,6 +4,7 @@ import heartbeatmonitor.core.AbstractPlugin
 import heartbeatmonitor.core.Card
 import heartbeatmonitor.core.CardProvider
 import heartbeatmonitor.core.Dispatcher
+import heartbeatmonitor.core.Expand
 import heartbeatmonitor.core.center
 import heartbeatmonitor.core.clickable
 import heartbeatmonitor.core.container
@@ -268,8 +269,9 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                                     }
                                                     run {
                                                         val textBoxId = randomUuid()
-                                                        leftRight(left = {
+                                                        leftRight(expand = Expand.LEFT, left = {
                                                             label("Title") {
+                                                                this@label.style.flexGrow = "1"
                                                                 this@label.htmlFor = textBoxId
                                                             }
                                                         }, right = {
@@ -288,8 +290,9 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                                     }
                                                     run {
                                                         val textBoxId = randomUuid()
-                                                        leftRight(left = {
+                                                        leftRight(expand = Expand.LEFT, left = {
                                                             label("Tags") {
+                                                                this@label.style.flexGrow = "1"
                                                                 this@label.htmlFor = textBoxId
                                                             }
                                                         }, right = {
