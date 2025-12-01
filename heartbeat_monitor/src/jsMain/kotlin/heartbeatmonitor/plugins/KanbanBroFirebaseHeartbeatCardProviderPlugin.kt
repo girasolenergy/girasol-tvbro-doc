@@ -7,6 +7,7 @@ import heartbeatmonitor.core.Dispatcher
 import heartbeatmonitor.core.Expand
 import heartbeatmonitor.core.center
 import heartbeatmonitor.core.clickable
+import heartbeatmonitor.core.closeButton
 import heartbeatmonitor.core.container
 import heartbeatmonitor.core.element
 import heartbeatmonitor.core.frame
@@ -308,6 +309,41 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                                                 })
                                                             }
                                                         })
+                                                    }
+                                                    center {
+                                                        textButton("Show Settings Code") {
+                                                            onClick {
+                                                                MainScope().launch {
+                                                                    val settings = settingsCache.await() ?: run {
+                                                                        showToast("Settings not available")
+                                                                        return@launch
+                                                                    }
+                                                                    val settingsCode = settings["settings_code"].get()?.value
+
+                                                                    console.log("[Show Settings Code] settings_code object:", settingsCode)
+                                                                    showDialog {
+                                                                        frame {
+                                                                            container {
+                                                                                this.style.overflowX = "auto"
+                                                                                this.style.overflowY = "auto"
+                                                                                element(document.createDivElement().also { textArea ->
+                                                                                    textArea.classList.add("dialog-textbox")
+                                                                                    textArea.textContent = JSON.stringify(settingsCode, null, "  ")
+                                                                                    textArea.contentEditable = "true"
+                                                                                    textArea.style.maxWidth = "max(400px,50vw)"
+                                                                                    textArea.style.whiteSpace = "pre"
+                                                                                    textArea.style.overflowX = "auto"
+                                                                                    textArea.style.overflowY = "auto"
+                                                                                })
+                                                                                center {
+                                                                                    closeButton()
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
                                                     }
 
                                                     right {
