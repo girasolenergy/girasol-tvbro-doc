@@ -267,7 +267,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                     innerHTML = ""
                                     appNames.value.forEach { appName ->
                                         val app = FirebaseAppModule.getApp(appName)
-                                        leftRight({
+                                        leftRight(left = {
 
                                             // ログインボタン
                                             textButton("Log in") {
@@ -279,7 +279,7 @@ object FirebaseLoginPlugin : AbstractPlugin("FirebaseLoginPlugin") {
                                             // ユーザバッジ
                                             element(createUserBadge(app, onClosed))
 
-                                        }, {
+                                        }, right = {
 
                                             // ログアウトボタン
                                             textButton("🗑️") {

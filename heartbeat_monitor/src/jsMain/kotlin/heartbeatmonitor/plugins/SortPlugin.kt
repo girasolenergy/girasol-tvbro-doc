@@ -79,7 +79,7 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
                                 fun updateButtons() {
                                     innerHTML = ""
                                     CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.forEachIndexed { index, cardComparatorSpecifier ->
-                                        leftRight({
+                                        leftRight(left = {
                                             textButton(getTitle(cardComparatorSpecifier)) {
                                                 onClick {
                                                     val cardComparatorSpecifiers = CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.toMutableList()
@@ -87,7 +87,7 @@ object SortPlugin : AbstractPlugin("SortPlugin") {
                                                     CardComparatorSpecifiers.currentCardComparatorSpecifiers.value = cardComparatorSpecifiers
                                                 }
                                             }
-                                        }, {
+                                        }, right = {
                                             textButton("🗑️") {
                                                 onClick {
                                                     val cardComparatorSpecifiers = CardComparatorSpecifiers.currentCardComparatorSpecifiers.value.toMutableList()

@@ -82,35 +82,41 @@ inline fun center(block: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
     })
 }
 
+enum class Expand {
+    LEFT, RIGHT,
+}
+
 context(context: DialogContext, parent: Element)
-inline fun leftRight(leftBlock: HTMLDivElement.() -> Unit = {}, rightBlock: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
+inline fun leftRight(expand: Expand? = null, left: HTMLDivElement.() -> Unit = {}, right: HTMLDivElement.() -> Unit = {}): HTMLDivElement {
     return element(document.createDivElement().also { div ->
         div.style.display = "flex"
         div.style.gap = "8px"
         div.style.alignItems = "center"
+        if (expand == null) div.style.justifyContent = "space-between"
         div.append(
             document.createDivElement().also { leftDiv ->
                 leftDiv.style.display = "flex"
                 leftDiv.style.gap = "8px"
                 leftDiv.style.alignItems = "center"
-                leftBlock(leftDiv)
+                if (expand == Expand.LEFT) leftDiv.style.flexGrow = "1"
+                left(leftDiv)
             },
             document.createDivElement().also { rightDiv ->
-                rightDiv.style.marginLeft = "auto"
                 rightDiv.style.display = "flex"
                 rightDiv.style.gap = "8px"
                 rightDiv.style.alignItems = "center"
-                rightBlock(rightDiv)
+                if (expand == Expand.RIGHT) rightDiv.style.flexGrow = "1"
+                right(rightDiv)
             },
         )
     })
 }
 
 context(context: DialogContext, parent: Element)
-inline fun left(block: HTMLDivElement.() -> Unit = {}) = leftRight(leftBlock = block)
+inline fun left(block: HTMLDivElement.() -> Unit = {}) = leftRight(left = block)
 
 context(context: DialogContext, parent: Element)
-inline fun right(block: HTMLDivElement.() -> Unit = {}) = leftRight(rightBlock = block)
+inline fun right(block: HTMLDivElement.() -> Unit = {}) = leftRight(right = block)
 
 context(context: DialogContext, parent: Element)
 inline fun shadow(block: HTMLDivElement.() -> Unit = {}): HTMLDivElement {

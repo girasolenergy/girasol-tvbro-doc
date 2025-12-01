@@ -268,11 +268,11 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                                     }
                                                     run {
                                                         val textBoxId = randomUuid()
-                                                        leftRight({
+                                                        leftRight(left = {
                                                             label("Title") {
                                                                 this@label.htmlFor = textBoxId
                                                             }
-                                                        }, {
+                                                        }, right = {
                                                             textBox(settingsCache.await()?.getTitle() ?: folderRef.name) {
                                                                 this@textBox.style.minWidth = "250px"
                                                                 this@textBox.id = textBoxId
@@ -288,11 +288,11 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                                     }
                                                     run {
                                                         val textBoxId = randomUuid()
-                                                        leftRight({
+                                                        leftRight(left = {
                                                             label("Tags") {
                                                                 this@label.htmlFor = textBoxId
                                                             }
-                                                        }, {
+                                                        }, right = {
                                                             textBox(settingsCache.await()?.getTags() ?: "") {
                                                                 this@textBox.style.minWidth = "250px"
                                                                 this@textBox.id = textBoxId
