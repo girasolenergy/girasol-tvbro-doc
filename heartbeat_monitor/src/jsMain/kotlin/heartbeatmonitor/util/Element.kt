@@ -9,6 +9,7 @@ import org.w3c.dom.HTMLLinkElement
 import org.w3c.dom.HTMLOptionElement
 import org.w3c.dom.HTMLSelectElement
 import org.w3c.dom.HTMLSpanElement
+import org.w3c.dom.HTMLTextAreaElement
 import org.w3c.dom.css.CSSStyleDeclaration
 
 fun Document.createDivElement() = this.createElement("div").unsafeCast<HTMLDivElement>()
@@ -19,6 +20,7 @@ fun Document.createOptionElement() = this.createElement("option").unsafeCast<HTM
 fun Document.createLinkElement() = this.createElement("link").unsafeCast<HTMLLinkElement>()
 fun Document.createLabelElement() = this.createElement("label").unsafeCast<HTMLLabelElement>()
 fun Document.createInputElement() = this.createElement("input").unsafeCast<HTMLInputElement>()
+fun Document.createTextAreaElement() = this.createElement("textarea").unsafeCast<HTMLTextAreaElement>()
 
 var CSSStyleDeclaration.gap: String
     get() = this.getPropertyValue("gap")
