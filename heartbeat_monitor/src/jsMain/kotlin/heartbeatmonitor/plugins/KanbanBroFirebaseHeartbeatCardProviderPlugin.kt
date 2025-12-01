@@ -10,7 +10,7 @@ import heartbeatmonitor.core.container
 import heartbeatmonitor.core.element
 import heartbeatmonitor.core.frame
 import heartbeatmonitor.core.label
-import heartbeatmonitor.core.left
+import heartbeatmonitor.core.leftRight
 import heartbeatmonitor.core.onClick
 import heartbeatmonitor.core.right
 import heartbeatmonitor.core.shadow
@@ -266,37 +266,45 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                                             }
                                                         }
                                                     }
-                                                    left {
+                                                    run {
                                                         val textBoxId = randomUuid()
-                                                        label("Title") {
-                                                            this@label.htmlFor = textBoxId
-                                                        }
-                                                        textBox(settingsCache.await()?.getTitle() ?: folderRef.name) {
-                                                            this@textBox.id = textBoxId
-                                                            this@textBox.value = settingsOverridesCache.await()?.getTitle() ?: ""
-                                                            onModifySettingsOverrides.subscribe(subscriber) { settingsOverrides ->
-                                                                settingsOverrides.setTitle(this@textBox.value.trim())
+                                                        leftRight({
+                                                            label("Title") {
+                                                                this@label.htmlFor = textBoxId
                                                             }
-                                                            this@textBox.addEventListener("input", {
-                                                                onFormUpdate.emit()
-                                                            })
-                                                        }
+                                                        }, {
+                                                            textBox(settingsCache.await()?.getTitle() ?: folderRef.name) {
+                                                                this@textBox.style.minWidth = "250px"
+                                                                this@textBox.id = textBoxId
+                                                                this@textBox.value = settingsOverridesCache.await()?.getTitle() ?: ""
+                                                                onModifySettingsOverrides.subscribe(subscriber) { settingsOverrides ->
+                                                                    settingsOverrides.setTitle(this@textBox.value.trim())
+                                                                }
+                                                                this@textBox.addEventListener("input", {
+                                                                    onFormUpdate.emit()
+                                                                })
+                                                            }
+                                                        })
                                                     }
-                                                    left {
+                                                    run {
                                                         val textBoxId = randomUuid()
-                                                        label("Tags") {
-                                                            this@label.htmlFor = textBoxId
-                                                        }
-                                                        textBox(settingsCache.await()?.getTags() ?: "") {
-                                                            this@textBox.id = textBoxId
-                                                            this@textBox.value = settingsOverridesCache.await()?.getTags() ?: ""
-                                                            onModifySettingsOverrides.subscribe(subscriber) { settingsOverrides ->
-                                                                settingsOverrides.setTags(this@textBox.value.trim())
+                                                        leftRight({
+                                                            label("Tags") {
+                                                                this@label.htmlFor = textBoxId
                                                             }
-                                                            this@textBox.addEventListener("input", {
-                                                                onFormUpdate.emit()
-                                                            })
-                                                        }
+                                                        }, {
+                                                            textBox(settingsCache.await()?.getTags() ?: "") {
+                                                                this@textBox.style.minWidth = "250px"
+                                                                this@textBox.id = textBoxId
+                                                                this@textBox.value = settingsOverridesCache.await()?.getTags() ?: ""
+                                                                onModifySettingsOverrides.subscribe(subscriber) { settingsOverrides ->
+                                                                    settingsOverrides.setTags(this@textBox.value.trim())
+                                                                }
+                                                                this@textBox.addEventListener("input", {
+                                                                    onFormUpdate.emit()
+                                                                })
+                                                            }
+                                                        })
                                                     }
 
                                                     right {
