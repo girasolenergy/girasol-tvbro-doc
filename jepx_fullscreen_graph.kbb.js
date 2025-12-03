@@ -2,7 +2,7 @@
 // {
 //     "name": "co.pplc.kanbanbro.plugins.jepx_fullscreen_graph",
 //     "title": "JEPX全画面グラフ",
-//     "version": "1.0.4",
+//     "version": "1.1.0",
 //     "description": "JEPXのページでグラフを全画面にし、すべての項目を表示します。"
 // }
 
@@ -24,6 +24,74 @@ if (window.location.href == 'https://www.jepx.info/spot_free') {
     });
   }
   new Promise(async () => {
+    const range = (start, until) => Array.from({ length: until - start }, (_, i) => start + i);
+
+    // レジェンド改行パッチ
+    {
+      console.log("[jepx_fullscreen_graph] legend patch: pre");
+      const old = google.visualization.ChartWrapper.prototype.setOptions;
+      google.visualization.ChartWrapper.prototype.setOptions = function (options) {
+        console.log("setOptions", this, options);
+        options.legend.maxLines = 2;
+        return old.call(this, options);
+      };
+      console.log("[jepx_fullscreen_graph] legend patch: post");
+    }
+
+    // 系列半透明パッチ
+    {
+      console.log("[jepx_fullscreen_graph] series transparency patch: pre");
+      const old = google.visualization.LineChart.prototype.draw;
+      google.visualization.LineChart.prototype.draw = function (data, b, c) {
+        console.log("draw", this, data, b, c);
+
+        // 既に改変済みもしくは想定外のデータが降ってきた
+        let skip = false;
+        range(0, data.getNumberOfColumns()).forEach(c => {
+          if (data.getColumnRole(c) !== "") {
+            console.log(`Unexpected column role at index ${c}: ${data.getColumnRole(c)}`);
+            skip = true;
+          }
+        });
+        if (skip) {
+          console.log("skip: already modified or unexpected data");
+          return old.call(this, data, b, c);
+        }
+
+        // スタイル列を追加
+        const seriesCount = data.getNumberOfColumns() - 1;
+        range(0, seriesCount).forEach(s => {
+          // D V V      初期状態
+          // D V S V    index=2
+          // D V S V S  index=4
+          data.insertColumn(2 + s * 2, { type: "string", role: "style" });
+        });
+        range(0, seriesCount).forEach(s => {
+          range(0, data.getNumberOfRows()).forEach(r => {
+            const MAX_DISTANCE = 0.2;
+            const getDataC = s => 1 + s * 2;
+            const getStyleC = s => 2 + s * 2;
+            const getData = (r, s) => data.getValue(r, getDataC(s));
+            const setStyle = (r, s, v) => data.setValue(r, getStyleC(s), v);
+
+            // マーカーにかぶさってるマーカーの個数に応じてマーカーサイズを調整
+            let neighborPointCount = 0;
+            range(0, seriesCount).forEach(s2 => {
+              if (s2 != s) {
+                if (Math.abs(getData(r, s) - getData(r, s2)) <= MAX_DISTANCE) {
+                  neighborPointCount++;
+                }
+              }
+            });
+
+            setStyle(r, s, `line { opacity: 0.5; } point { opacity: 0.5; size: ${neighborPointCount <= 0 ? 0 : (2 + neighborPointCount) * 1}; }`);
+          });
+        });
+
+        return old.call(this, data, b, c);
+      };
+      console.log("[jepx_fullscreen_graph] series transparency patch: post");
+    }
 
     // すべての項目にチェックが入っている場合、先頭だけをチェックした状態にする
     {
