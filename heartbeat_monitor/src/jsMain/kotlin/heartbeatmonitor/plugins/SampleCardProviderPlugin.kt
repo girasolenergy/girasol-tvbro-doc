@@ -36,8 +36,6 @@ object SampleCardProviderPlugin : AbstractPlugin("SampleCardProviderPlugin") {
 
                                 screenshotDiv.append(
                                     Image().also { img ->
-                                        img.asDynamic().loading = "lazy"
-                                        img.asDynamic().decoding = "async"
                                         img.src = if (isPrime(number)) {
                                             "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Leonardo_da_Vinci_%281452-1519%29_-_The_Last_Supper_%281495-1498%29.jpg/1920px-Leonardo_da_Vinci_%281452-1519%29_-_The_Last_Supper_%281495-1498%29.jpg"
                                         } else {

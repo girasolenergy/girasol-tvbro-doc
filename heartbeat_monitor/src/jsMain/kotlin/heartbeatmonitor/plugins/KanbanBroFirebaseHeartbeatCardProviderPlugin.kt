@@ -223,8 +223,6 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                                                             val image = imageCache.await()
                                                                             if (image != null) {
                                                                                 screenshotPlaceholderDiv.append(Image().also { img ->
-                                                                                    img.asDynamic().loading = "lazy"
-                                                                                    img.asDynamic().decoding = "async"
                                                                                     setImageBlob(img, image)
                                                                                     img.alt = titleCache.await()
                                                                                 })
@@ -251,8 +249,6 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                                                             frame {
                                                                                 yScrollable {
                                                                                     element(Image().also { img ->
-                                                                                        img.asDynamic().loading = "lazy"
-                                                                                        img.asDynamic().decoding = "async"
                                                                                         setImageBlob(img, image)
                                                                                         img.alt = titleCache.await()
                                                                                         img.style.width = "100%"
@@ -407,8 +403,6 @@ object KanbanBroFirebaseHeartbeatCardProviderPlugin : AbstractPlugin("KanbanBroF
                                                 val image = imageCache.await()
                                                 if (image != null) {
                                                     screenshotPlaceholderDiv.append(Image().also { img ->
-                                                        img.asDynamic().loading = "lazy"
-                                                        img.asDynamic().decoding = "async"
                                                         setImageBlob(img, image)
                                                         img.alt = titleCache.await()
                                                     })
