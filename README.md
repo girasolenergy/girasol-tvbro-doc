@@ -94,7 +94,7 @@ Static assets for the public pages included in the girasol-tvbro-doc repository.
 
 Subproject for the Heartbeat Monitor UI.
 
-- `heartbeat_monitor`
+- `heartbeat-monitor`
 
 ### Working files
 

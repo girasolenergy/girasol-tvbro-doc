@@ -7,4 +7,4 @@ pluginManagement {
 
 rootProject.name = "girasol-tvbro-doc"
 
-include("heartbeat_monitor")
+include("heartbeat-monitor")
