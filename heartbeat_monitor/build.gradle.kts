@@ -15,21 +15,21 @@ kotlin {
         browser()
         binaries.executable()
         compilerOptions {
-            moduleKind.set(JsModuleKind.MODULE_ES)
-            moduleName.set("heartbeat_monitor")
+            moduleKind = JsModuleKind.MODULE_ES
+            moduleName = "heartbeat_monitor"
             sourceMapEmbedSources = JsSourceMapEmbedMode.SOURCE_MAP_SOURCE_CONTENT_ALWAYS
             freeCompilerArgs.add("-Xcontext-parameters")
         }
     }
 
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
                 implementation("mirrg.kotlin:mirrg.kotlin.helium-kotlin-2-2:4.2.0")
             }
         }
-        val jsMain by getting {
+        jsMain {
             resources.srcDir("src/main/resources")
             resources.exclude("**/*.pdn")
             dependencies {
