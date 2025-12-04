@@ -13,10 +13,10 @@ repositories {
 kotlin {
     js {
         browser()
-        binaries.executable()
+        binaries.library()
+        outputModuleName = "heartbeat-monitor"
         compilerOptions {
             moduleKind = JsModuleKind.MODULE_ES
-            moduleName = "heartbeat_monitor"
             sourceMapEmbedSources = JsSourceMapEmbedMode.SOURCE_MAP_SOURCE_CONTENT_ALWAYS
             freeCompilerArgs.add("-Xcontext-parameters")
         }

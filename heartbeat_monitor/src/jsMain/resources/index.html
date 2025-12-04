@@ -13,8 +13,17 @@
 </div>
 <div id="cards"></div>
 <div id="toast-container"></div>
+<script type="importmap">
+    {
+        "imports": {
+            "firebase/app": "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js",
+            "firebase/auth": "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js",
+            "firebase/storage": "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js"
+        }
+    }
+</script>
 <script type="module">
-    import { init } from "./heartbeat_monitor.js";
+    import { init } from "./heartbeat-monitor.mjs";
     await init();
 </script>
 </body>
