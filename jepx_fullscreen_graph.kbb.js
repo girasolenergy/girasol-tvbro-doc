@@ -2,9 +2,11 @@
 // {
 //     "name": "co.pplc.kanbanbro.plugins.jepx_fullscreen_graph",
 //     "title": "JEPX全画面グラフ",
-//     "version": "1.1.1",
+//     "version": "1.2.0",
 //     "description": "JEPXのページでグラフを全画面にし、すべての項目を表示します。"
 // }
+
+const enabledIds = ["shikoku", "kyushu", "tokyo", "hokuriku", "tohoku"];
 
 if (window.location.href == 'https://www.jepx.info/spot_free') {
   function delay(wait) {
@@ -192,7 +194,7 @@ if (window.location.href == 'https://www.jepx.info/spot_free') {
     let count = 0; // DEBUG
     Array.from(areaCard.querySelectorAll('.card-body input[type="checkbox"]')).forEach(checkbox => {
       console.log("[jepx_fullscreen_graph] checkbox = " + checkbox);
-      if (!checkbox.checked) {
+      if (checkbox.checked != enabledIds.includes(checkbox.id)) {
         console.log("[jepx_fullscreen_graph] checking");
         checkbox.click();
         count++; // DEBUG
