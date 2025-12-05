@@ -2,7 +2,7 @@
 // {
 //     "name": "co.pplc.kanbanbro.plugins.jepx_fullscreen_graph",
 //     "title": "JEPX全画面グラフ",
-//     "version": "1.1.0",
+//     "version": "1.1.1",
 //     "description": "JEPXのページでグラフを全画面にし、すべての項目を表示します。"
 // }
 
@@ -25,27 +25,52 @@ if (window.location.href == 'https://www.jepx.info/spot_free') {
   }
   new Promise(async () => {
     const range = (start, until) => Array.from({ length: until - start }, (_, i) => start + i);
+    const colors = [
+      "#3366CC", "#DC3912", "#FF9900", "#109618", "#990099",
+      "#3B3EAC", "#0099C6", "#DD4477", "#66AA00", "#B82E2E",
+      "#316395", "#994499", "#22AA99", "#AAAA11", "#6633CC",
+      "#E67300", "#8B0707", "#329262", "#5574A6", "#651067"
+    ];
+    function blend(color, opacity) {
+      const r = parseInt(color.substr(1, 2), 16);
+      const g = parseInt(color.substr(3, 2), 16);
+      const b = parseInt(color.substr(5, 2), 16);
+      const r2 = Math.round(r * opacity + 255 * (1 - opacity));
+      const g2 = Math.round(g * opacity + 255 * (1 - opacity));
+      const b2 = Math.round(b * opacity + 255 * (1 - opacity));
+      return `#${r2.toString(16).padStart(2, '0')}${g2.toString(16).padStart(2, '0')}${b2.toString(16).padStart(2, '0')}`;
+    }
 
-    // レジェンド改行パッチ
+    // 凡例パッチ
     {
       console.log("[jepx_fullscreen_graph] legend patch: pre");
       const old = google.visualization.ChartWrapper.prototype.setOptions;
       google.visualization.ChartWrapper.prototype.setOptions = function (options) {
         console.log("setOptions", this, options);
+
+        // 凡例をページングせずに改行させる
         options.legend.maxLines = 2;
+
+        // 凡例の色を薄くするために系列自体の色をブレンド済みの色にする
+        if (options.series === undefined) options.series = [];
+        range(0, 20).forEach(s => { // 20系列までを決め打ちする
+          if (options.series[s] === undefined) options.series[s] = {};
+          options.series[s].color = blend(colors[s % 20], 0.5);
+        });
+
         return old.call(this, options);
       };
       console.log("[jepx_fullscreen_graph] legend patch: post");
     }
 
-    // 系列半透明パッチ
+    // 系列パッチ
     {
       console.log("[jepx_fullscreen_graph] series transparency patch: pre");
       const old = google.visualization.LineChart.prototype.draw;
       google.visualization.LineChart.prototype.draw = function (data, b, c) {
         console.log("draw", this, data, b, c);
 
-        // 既に改変済みもしくは想定外のデータが降ってきた
+        // 既に改変済みもしくは想定外のデータが降ってきた場合は無視
         let skip = false;
         range(0, data.getNumberOfColumns()).forEach(c => {
           if (data.getColumnRole(c) !== "") {
@@ -84,7 +109,20 @@ if (window.location.href == 'https://www.jepx.info/spot_free') {
               }
             });
 
-            setStyle(r, s, `line { opacity: 0.5; } point { opacity: 0.5; size: ${neighborPointCount <= 0 ? 0 : (2 + neighborPointCount) * 1}; }`);
+            // 凡例のために系列自体の色を変更しているのでここでデフォルトに上書きする
+            const color = colors[s % 20];
+
+            setStyle(r, s, `
+              line {
+                color: ${color};
+                opacity: 0.5;
+              }
+              point {
+                color: ${color};
+                opacity: 0.5;
+                size: ${neighborPointCount <= 0 ? 0 : (2 + neighborPointCount) * 1};
+              }
+            `);
           });
         });
 
