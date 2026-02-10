@@ -3,7 +3,7 @@
 //   "name": "co.pplc.kanbanbro.plugins.jepx_market_data",
 //   "title": "JEPX取引市場データ",
 //   "version": "1.0.0",
-//   "description": "JEPXの時間前市場の約定価格グラフを全画面表示し、自動更新します。"
+//   "description": "JEPXの時間前市場の約定価格グラフを全画面表示します。"
 // }
 
 if (window.location.href.startsWith('https://www.jepx.jp/electricpower/market-data/intraday/')) {
@@ -76,30 +76,6 @@ if (window.location.href.startsWith('https://www.jepx.jp/electricpower/market-da
     graphWrapper.style.zIndex = '99999';
     graphWrapper.style.backgroundColor = 'white';
     console.log("[jepx_market_data] fullscreen graph: post");
-
-    // 自動消灯防止（Wake Lock API）
-    console.log("[jepx_market_data] preventing screen sleep");
-    let wakeLock = null;
-    const requestWakeLock = async () => {
-      try {
-        if ('wakeLock' in navigator) {
-          wakeLock = await navigator.wakeLock.request('screen');
-          console.log("[jepx_market_data] wake lock activated");
-        } else {
-          console.log("[jepx_market_data] wake lock API not supported");
-        }
-      } catch (err) {
-        console.error("[jepx_market_data] wake lock error:", err);
-      }
-    };
-    await requestWakeLock();
-
-    // 5分おきに更新
-    console.log("[jepx_market_data] starting auto-refresh (every 5 minutes)");
-    setInterval(() => {
-      console.log("[jepx_market_data] refreshing page");
-      location.reload();
-    }, 5 * 60 * 1000); // 5分 = 300,000ミリ秒
 
   });
 }
