@@ -1,9 +1,9 @@
 // @KanbanBroPlugin
 // {
-//   "name": "co.pplc.kanbanbro.plugins.jepx_market_data",
-//   "title": "JEPX取引市場データ",
-//   "version": "1.0.0",
-//   "description": "JEPXの時間前市場の約定価格グラフを全画面表示します。"
+//     "name": "co.pplc.kanbanbro.plugins.jepx_market_data",
+//     "title": "JEPX取引市場データ",
+//     "version": "1.0.0",
+//     "description": "JEPXの時間前市場の約定価格グラフを全画面表示します。"
 // }
 
 if (window.location.href.startsWith('https://www.jepx.jp/electricpower/market-data/intraday/')) {
@@ -14,7 +14,7 @@ if (window.location.href.startsWith('https://www.jepx.jp/electricpower/market-da
     return new Promise(async callback => {
       for (let t = 0; t < limit; t++) {
         if (t > 0) await delay(wait);
-        const result = await getter();
+        const result = getter();
         if (result !== undefined) {
           callback(result);
           return;
