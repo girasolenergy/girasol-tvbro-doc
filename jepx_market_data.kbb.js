@@ -53,10 +53,6 @@ if (window.location.href.startsWith('https://www.jepx.jp/electricpower/market-da
     // グラフの読み込みを待つ
     await delay(2000);
 
-    // ページ全体のスクロールバーを消す
-    console.log("[jepx_market_data] hiding scrollbar");
-    document.documentElement.style.overflow = 'hidden';
-
     // グラフを全画面にする
     console.log("[jepx_market_data] fullscreen graph: pre");
     const graphWrapper = await retry(1000, 10, () => {
@@ -67,14 +63,34 @@ if (window.location.href.startsWith('https://www.jepx.jp/electricpower/market-da
       console.error("[jepx_market_data] Failed to get graph wrapper element");
       return;
     }
-    graphWrapper.style.position = 'fixed';
-    graphWrapper.style.top = '0';
-    graphWrapper.style.left = '0';
-    graphWrapper.style.width = '100vw';
-    graphWrapper.style.height = '100vh';
-    graphWrapper.style.boxSizing = 'border-box';
-    graphWrapper.style.zIndex = '99999';
-    graphWrapper.style.backgroundColor = 'white';
+
+    // ターゲット自身および、htmlタグを含むそれより先祖のすべてのエレメントにスタイルを適用
+    let current = graphWrapper;
+    while (current) {
+      current.style.margin = '0';
+      current.style.borderStyle = 'none';
+      current.style.padding = '0';
+      current.style.width = '100%';
+      current.style.height = '100%';
+      current.style.boxSizing = 'border-box';
+
+      // bodyのみ例外的に余白を保証
+      if (current.tagName === 'BODY') {
+        current.style.padding = '1vw';
+      }
+
+      // 兄弟要素を非表示にする
+      if (current.parentElement) {
+        Array.from(current.parentElement.children).forEach(sibling => {
+          if (sibling !== current) {
+            sibling.style.display = 'none';
+          }
+        });
+      }
+
+      current = current.parentElement;
+    }
+
     console.log("[jepx_market_data] fullscreen graph: post");
 
   });
