@@ -66,16 +66,16 @@ if (window.location.href.startsWith('https://www.jepx.jp/electricpower/market-da
 
     // ターゲット自身および、htmlタグを含むそれより先祖のすべてのエレメントにスタイルを適用
     let current = graphWrapper;
-    while (current) {
+    while (current) { // htmlタグまで到達するまで先祖を辿る
       current.style.margin = '0';
-      current.style.borderStyle = 'none';
+      current.style.border = 'none';
       current.style.padding = '0';
       current.style.width = '100%';
       current.style.height = '100%';
       current.style.boxSizing = 'border-box';
 
       // bodyのみ例外的に余白を保証
-      if (current.tagName === 'BODY') {
+      if (current.tagName && current.tagName.toUpperCase() === 'BODY') {
         current.style.padding = '1vw';
       }
 
