@@ -10,21 +10,19 @@ if (window.location.href == 'https://www.jepx.jp/electricpower/market-data/intra
   function delay(wait) {
     return new Promise(callback => setTimeout(() => callback(), wait));
   }
-  function retry(wait, limit, getter) {
-    return new Promise(async callback => {
-      for (let t = 0; t < limit; t++) {
-        if (t > 0) await delay(wait);
-        const result = getter();
-        if (result !== undefined) {
-          callback(result);
-          return;
-        }
+  async function retry(wait, limit, getter) {
+    for (let t = 0; t < limit; t++) {
+      if (t > 0) await delay(wait);
+      const result = getter();
+      if (result !== undefined) {
+        return result;
       }
-      callback(undefined);
-    });
+    }
+    return undefined;
   }
-  new Promise(async () => {
+  (async () => {
     const $ = await retry(1000, 10, () => window.jQuery);
+    if ($ === undefined) throw new Error("Failed to find jQuery.");
 
     // 日付を今日に設定
     {
@@ -40,7 +38,7 @@ if (window.location.href == 'https://www.jepx.jp/electricpower/market-data/intra
 
       // 日付を設定
       console.log("[jepx_market_data/set_date] pre");
-      datepicker.datepicker("setDate", todayString); // UI上の日付の選択状態を変更
+      datepicker.datepicker("setDate", now); // UI上の日付の選択状態を変更
       datepicker.datepicker("option", "onSelect").call(datepicker[0], todayString, datepicker.data("datepicker")); // 選択時のイベントを発火させる
       console.log("[jepx_market_data/set_date] post");
 
@@ -80,5 +78,5 @@ if (window.location.href == 'https://www.jepx.jp/electricpower/market-data/intra
 
     }
 
-  });
+  })();
 }
