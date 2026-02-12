@@ -6,7 +6,7 @@
 //     "description": "JEPXの時間前市場の約定価格グラフを全画面表示します。"
 // }
 
-if (window.location.href.startsWith('https://www.jepx.jp/electricpower/market-data/intraday/')) {
+if (window.location.href == 'https://www.jepx.jp/electricpower/market-data/intraday/') {
   function delay(wait) {
     return new Promise(callback => setTimeout(() => callback(), wait));
   }
@@ -24,74 +24,61 @@ if (window.location.href.startsWith('https://www.jepx.jp/electricpower/market-da
     });
   }
   new Promise(async () => {
-
-    // 日付を今日に設定する関数
-    function setDateAndFire(dateText) {
-      $("#datepicker").datepicker("setDate", dateText);
-      ($("#datepicker").datepicker("option", "onSelect") || function () { }).call(
-        $("#datepicker")[0],
-        dateText,
-        $("#datepicker").data("datepicker")
-      );
-    }
-
-    // 今日の日付を取得してフォーマット
-    const today = new Date();
-    const dateText = `${today.getFullYear()}/${String(today.getMonth() + 1).padStart(2, '0')}/${String(today.getDate()).padStart(2, '0')}`;
+    const $ = await retry(1000, 10, () => window.jQuery);
 
     // 日付を今日に設定
-    console.log("[jepx_market_data] setting date to today: " + dateText);
-    await retry(1000, 10, () => {
-      if (typeof $ !== 'undefined' && $("#datepicker").length > 0) {
-        setDateAndFire(dateText);
-        return true;
-      }
-      return undefined;
-    });
-    console.log("[jepx_market_data] date set");
+    {
 
-    // グラフの読み込みを待つ
-    await delay(2000);
+      // 今日の日付を計算
+      const now = new Date();
+      const todayString = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}`;
+      console.log(`[jepx_market_data/set_date] date: ${todayString}`);
+
+      // UIの初期化を待つ
+      const datepicker = await retry(1000, 10, () => $("#datepicker").length > 0 ? $("#datepicker") : undefined);
+      if (datepicker === undefined) throw new Error("Failed to find datepicker.");
+
+      // 日付を設定
+      console.log("[jepx_market_data/set_date] pre");
+      datepicker.datepicker("setDate", todayString); // UI上の日付の選択状態を変更
+      datepicker.datepicker("option", "onSelect").call(datepicker[0], todayString, datepicker.data("datepicker")); // 選択時のイベントを発火させる
+      console.log("[jepx_market_data/set_date] post");
+
+    }
 
     // グラフを全画面にする
-    console.log("[jepx_market_data] fullscreen graph: pre");
-    const graphWrapper = await retry(1000, 10, () => {
-      const wrapper = document.querySelector(".graph-section__content-wrapper");
-      return wrapper === null ? undefined : wrapper;
-    });
-    if (graphWrapper === undefined) {
-      console.error("[jepx_market_data] Failed to get graph wrapper element");
-      return;
-    }
+    {
 
-    // ターゲット自身および、htmlタグを含むそれより先祖のすべてのエレメントにスタイルを適用
-    let current = graphWrapper;
-    while (current) { // htmlタグまで到達するまで先祖を辿る
-      current.style.margin = '0';
-      current.style.border = 'none';
-      current.style.padding = '0';
-      current.style.width = '100%';
-      current.style.height = '100%';
-      current.style.boxSizing = 'border-box';
+      // グラフの初期化を待つ
+      const graphWrapper = await retry(1000, 10, () => document.querySelector(".graph-section__content-wrapper") ?? undefined);
+      if (graphWrapper === undefined) throw new Error("Failed to find graph wrapper.");
 
-      // bodyのみ例外的に余白を保証
-      if (current.tagName && current.tagName.toUpperCase() === 'BODY') {
-        current.style.padding = '1vw';
+      // ターゲット自身および、htmlタグを含むそれより先祖のすべてのエレメントにスタイルを適用
+      console.log("[jepx_market_data/fullscreen_graph] pre");
+      let element = graphWrapper;
+      while (element) { // htmlタグまで到達するまで先祖を辿る
+        console.log(`[jepx_market_data/fullscreen_graph] applying style to <${element.tagName.toLowerCase()}>`);
+
+        // ターゲット要素が全画面に表示されるようにする
+        element.style.margin = '0';
+        element.style.border = 'none';
+        element.style.padding = element.tagName?.toLowerCase() === 'body' ? '1vw' : '0'; // bodyのみ例外的に余白を保証
+        element.style.width = '100%';
+        element.style.height = '100%';
+        element.style.boxSizing = 'border-box';
+
+        // 兄弟要素を非表示にする
+        if (element.parentElement) {
+          Array.from(element.parentElement.children).forEach(sibling => {
+            if (sibling !== element) sibling.style.display = 'none';
+          });
+        }
+
+        element = element.parentElement;
       }
+      console.log("[jepx_market_data/fullscreen_graph] post");
 
-      // 兄弟要素を非表示にする
-      if (current.parentElement) {
-        Array.from(current.parentElement.children).forEach(sibling => {
-          if (sibling !== current) {
-            sibling.style.display = 'none';
-          }
-        });
-      }
-
-      current = current.parentElement;
     }
-
-    console.log("[jepx_market_data] fullscreen graph: post");
 
   });
 }
