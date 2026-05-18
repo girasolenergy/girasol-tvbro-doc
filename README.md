@@ -11,24 +11,24 @@
 
 Product overview:
 
-- [KanbanBro: Turn Any Web Page into Digital Signage](https://girasolenergy.github.io/girasol-tvbro-doc/en/product/)
+- [KanbanBro: Turn Any Web Page into Digital Signage](https://kanbanbro.pplc.co/en/product/)
 
 Guides:
 
-- [KanbanBro Documentation](https://girasolenergy.github.io/girasol-tvbro-doc/en/)
+- [KanbanBro Documentation](https://kanbanbro.pplc.co/en/)
 
 Application Notes:
 
-- [ヒラソルオフィスインターホン前会議室予約表サイネージ設置事例 (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/ja/notes/20251105/)
+- [ヒラソルオフィスインターホン前会議室予約表サイネージ設置事例 (Japanese)](https://kanbanbro.pplc.co/ja/notes/20251105/)
 
 ### Web app
 
-- [KanbanBro Heartbeat Monitor](https://girasolenergy.github.io/girasol-tvbro-doc/heartbeat_monitor/)
+- [KanbanBro Heartbeat Monitor](https://kanbanbro.pplc.co/heartbeat_monitor/)
 
 ### Other Public Pages
 
-- [Debug Pages](https://girasolenergy.github.io/girasol-tvbro-doc/debug/)
-- [Sample KanbanBro Plugin Repository](https://girasolenergy.github.io/girasol-tvbro-doc/plugins)
+- [Debug Pages](https://kanbanbro.pplc.co/debug/)
+- [Sample KanbanBro Plugin Repository](https://kanbanbro.pplc.co/plugins)
 
 ## 公開ページ
 
@@ -41,24 +41,24 @@ Application Notes:
 
 製品紹介:
 
-- [KanbanBro: ブラウザで簡単デジタルサイネージ](https://girasolenergy.github.io/girasol-tvbro-doc/ja/product/)
+- [KanbanBro: ブラウザで簡単デジタルサイネージ](https://kanbanbro.pplc.co/ja/product/)
 
 ヘルプ:
 
-- [KanbanBroドキュメント (Japanese)](https://girasolenergy.github.io/girasol-tvbro-doc/ja/)
+- [KanbanBroドキュメント (Japanese)](https://kanbanbro.pplc.co/ja/)
 
 応用事例:
 
-- [ヒラソルオフィスインターホン前会議室予約表サイネージ設置事例](https://girasolenergy.github.io/girasol-tvbro-doc/ja/notes/20251105/)
+- [ヒラソルオフィスインターホン前会議室予約表サイネージ設置事例](https://kanbanbro.pplc.co/ja/notes/20251105/)
 
 ### Webアプリ
 
-- [KanbanBro Heartbeat Monitor](https://girasolenergy.github.io/girasol-tvbro-doc/heartbeat_monitor/)
+- [KanbanBro Heartbeat Monitor](https://kanbanbro.pplc.co/heartbeat_monitor/)
 
 ### その他の公開ページ
 
-- [Debug Pages](https://girasolenergy.github.io/girasol-tvbro-doc/debug/)
-- [Sample KanbanBro Plugin Repository](https://girasolenergy.github.io/girasol-tvbro-doc/plugins)
+- [Debug Pages](https://kanbanbro.pplc.co/debug/)
+- [Sample KanbanBro Plugin Repository](https://kanbanbro.pplc.co/plugins)
 
 ## Repository Structure
 
