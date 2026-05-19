@@ -51,9 +51,7 @@ jobs:
           working-directory: build/pages
 
       - name: Markdown を HTML に変換
-        run: |
-          cd build/pages
-          bundle exec github-pages build --source . --destination ../pages_converted --verbose
+        run: ./scripts/build-jekyll.sh
         env:
           JEKYLL_ENV: production
           PAGES_REPO_NWO: ${{ github.repository }}
