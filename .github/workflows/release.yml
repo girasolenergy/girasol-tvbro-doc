@@ -43,11 +43,18 @@ jobs:
           chmod +x ./gradlew
           ./gradlew :buildPages
 
-      - name: Markdown を HTML に変換
-        uses: actions/jekyll-build-pages@v1
+      - name: Ruby のセットアップ
+        uses: ruby/setup-ruby@v1
         with:
-          source: build/pages
-          destination: build/pages_converted
+          ruby-version: '3.3'
+          bundler-cache: true
+          working-directory: build/pages
+
+      - name: Markdown を HTML に変換
+        run: ./scripts/build-jekyll.sh
+        env:
+          JEKYLL_ENV: production
+          PAGES_REPO_NWO: ${{ github.repository }}
 
       - name: 成果物のアップロード
         uses: actions/upload-pages-artifact@v4
