@@ -4,12 +4,13 @@ set -euo pipefail
 # Jekyll ビルドスクリプト
 # GitHub Pages 用の Markdown を HTML に変換する
 
-SOURCE_DIR="${1:-build/pages}"
-DEST_DIR="${2:-../pages_converted}"
+# 固定パス（このスクリプトはリポジトリルートから実行される前提）
+SOURCE_DIR="build/pages"
+DEST_DIR="../pages_converted"
 
 echo "=== Jekyll ビルド開始 ==="
 echo "ソースディレクトリ: ${SOURCE_DIR}"
-echo "出力ディレクトリ: ${DEST_DIR}"
+echo "出力ディレクトリ: ${DEST_DIR} (SOURCE_DIR からの相対パス)"
 
 if [[ ! -d "${SOURCE_DIR}" ]]; then
   echo "エラー: ソースディレクトリが存在しません: ${SOURCE_DIR}" >&2
