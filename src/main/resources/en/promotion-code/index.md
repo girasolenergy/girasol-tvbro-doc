@@ -1,3 +1,7 @@
+---
+lang: en
+---
+
 # Promotion Code Usage Guide
 
 ## Steps

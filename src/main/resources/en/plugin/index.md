@@ -1,3 +1,7 @@
+---
+lang: en
+---
+
 # Plugin
 
 KanbanBro plugins are a mechanism for extending the behavior of pages displayed by KanbanBro.

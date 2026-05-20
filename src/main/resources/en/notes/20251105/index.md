@@ -1,3 +1,7 @@
+---
+lang: en
+---
+
 # Case Study: Meeting Room Schedule Signage at the Girasol Office Intercom
 
 This is a deployment example of tablet-based signage placed beside the intercom at Girasol Energy Corporation’s office, showing the same-day meeting room booking timetable.

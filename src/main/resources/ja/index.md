@@ -1,3 +1,7 @@
+---
+lang: ja
+---
+
 # KanbanBroドキュメント
 
 * 目次

@@ -1,3 +1,7 @@
+---
+lang: en
+---
+
 # KanbanBro Documentation
 
 * Table of contents

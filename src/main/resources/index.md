@@ -1,3 +1,7 @@
+---
+lang: ja
+---
+
 # KanbanBro ドキュメント
 
 KanbanBro（カンバンブロ）の公式ドキュメントサイトです。
