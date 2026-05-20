@@ -1,3 +1,4 @@
 url: https://kanbanbro.pplc.co
+baseurl: ""
 plugins:
   - jekyll-sitemap
