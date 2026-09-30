@@ -2,13 +2,13 @@
 // {
 //     "name": "co.pplc.kanbanbro.plugins.jepx_fullscreen_graph",
 //     "title": "JEPX全画面グラフ",
-//     "version": "1.3.0",
+//     "version": "2.0.0",
 //     "description": "JEPXのページでグラフを全画面にし、すべての項目を表示します。"
 // }
 
 const enabledIds = ["shikoku", "kyushu", "tokyo", "hokuriku", "tohoku"];
 
-if (window.location.href == 'https://www.jepx.info/spot_free') {
+if (window.location.origin + window.location.pathname == 'https://www.jepx.info/spot_free') {
   function delay(wait) {
     return new Promise(callback => setTimeout(() => callback(), wait));
   }
@@ -46,22 +46,47 @@ if (window.location.href == 'https://www.jepx.info/spot_free') {
     // 日付を今日にする
     {
       console.log("[jepx_fullscreen_graph] date patch: pre");
-      const date = new Date();
-      const dateString = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, "0")}/${String(date.getDate()).padStart(2, "0")}`;
-      const input = await retry(1000, 10, () => {
-        const elements = [...document.querySelectorAll(".card")]
-          .filter(card => [...card.querySelectorAll(".card-header .card-title")].some(t => (t.textContent ?? "").includes("表示したい日付を選択してください")))
-          .flatMap(card => [...card.querySelectorAll('.card-body input[type="text"]')]);
-        if (elements.length == 0) return undefined;
-        if (elements.length > 1) throw new Error("Unexpected multiple date input elements: " + elements.length);
-        return elements[0];
-      });
-      const old = input.value;
-      input.value = dateString;
-      input._valueTracker.setValue(old);
-      input.dispatchEvent(new Event("input", { bubbles: true, cancelable: true }));
-      input.dispatchEvent(new Event("change", { bubbles: true, cancelable: true }));
-      console.log("[jepx_fullscreen_graph] date patch: post");
+
+      const params = new URLSearchParams(window.location.search);
+      const dateParam = params.get("date");
+
+      let date;
+      if (dateParam == null) {
+        date = null;
+      } else if (dateParam == "today") {
+        date = new Date();
+      } else if (dateParam == "tomorrow") {
+        const now = new Date();
+        date = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate() + 1
+        );
+      } else if (/^\d{4}-\d{2}-\d{2}$/.test(dateParam)) {
+        const [year, month, day] = dateParam.split("-").map(Number);
+        date = new Date(year, month - 1, day);
+      } else {
+        throw new Error("Invalid date parameter: " + dateParam);
+      }
+
+      if (date != null) {
+        date.setHours(0, 0, 0, 0);
+        const dateString = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, "0")}/${String(date.getDate()).padStart(2, "0")}`;
+        const input = await retry(1000, 10, () => {
+          const elements = [...document.querySelectorAll(".card")]
+            .filter(card => [...card.querySelectorAll(".card-header .card-title")].some(t => (t.textContent ?? "").includes("表示したい日付を選択してください")))
+            .flatMap(card => [...card.querySelectorAll('.card-body input[type="text"]')]);
+          if (elements.length == 0) return undefined;
+          if (elements.length > 1) throw new Error("Unexpected multiple date input elements: " + elements.length);
+          return elements[0];
+        });
+        const old = input.value;
+        input.value = dateString;
+        input._valueTracker.setValue(old);
+        input.dispatchEvent(new Event("input", { bubbles: true, cancelable: true }));
+        input.dispatchEvent(new Event("change", { bubbles: true, cancelable: true }));
+        console.log("[jepx_fullscreen_graph] date patch: post");
+      }
     }
 
     // 凡例パッチ
