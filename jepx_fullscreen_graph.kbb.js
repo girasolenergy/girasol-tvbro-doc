@@ -80,11 +80,24 @@ if (window.location.origin + window.location.pathname == 'https://www.jepx.info/
           if (elements.length > 1) throw new Error("Unexpected multiple date input elements: " + elements.length);
           return elements[0];
         });
-        const old = input.value;
-        input.value = dateString;
-        input._valueTracker.setValue(old);
-        input.dispatchEvent(new Event("input", { bubbles: true, cancelable: true }));
-        input.dispatchEvent(new Event("change", { bubbles: true, cancelable: true }));
+        // ページ側が読み込みの途中で日付を「今日」から「明日」へ書き換えるため、
+        // 一度設定しただけでは上書きされてしまう。
+        // そこで、設定した値が 5 秒間保たれることを確認できるまで、設定し直しを繰り返す。
+        let stableCount = 0;
+        for (let attempt = 0; attempt < 60; attempt++) {
+          if (input.value == dateString) {
+            stableCount++;
+            if (stableCount >= 10) break;
+          } else {
+            stableCount = 0;
+            const old = input.value;
+            input.value = dateString;
+            input._valueTracker.setValue(old);
+            input.dispatchEvent(new Event("input", { bubbles: true, cancelable: true }));
+            input.dispatchEvent(new Event("change", { bubbles: true, cancelable: true }));
+          }
+          await delay(500);
+        }
         console.log("[jepx_fullscreen_graph] date patch: post");
       }
     }
@@ -213,19 +226,32 @@ if (window.location.origin + window.location.pathname == 'https://www.jepx.info/
 
     // グラフを全画面にする
     console.log("[jepx_fullscreen_graph] fullscreen graph: pre");
-    const chartCard = await retry(1000, 10, () => {
-      return Array.from(document.querySelectorAll('.card')).find(card => {
-        const header = card.querySelector('.card-header');
-        return header && header.innerText.startsWith('スポット市場日間価格');
-      });
-    });
-    chartCard.style.position = 'fixed';
-    chartCard.style.top = '0';
-    chartCard.style.left = '0';
-    chartCard.style.width = '100vw';
-    chartCard.style.height = '100vh';
-    chartCard.style.boxSizing = 'border-box';
-    chartCard.style.zIndex = '99999';
+    // React がカードの要素を作り直すため、要素ではなく CSS ルールで指定する
+    // グラフ本体には react-google-charts がインラインで height: 400px を付けるので、それも上書きする
+    const fullscreenStyle = document.createElement('style');
+    fullscreenStyle.textContent = `
+      #react_container > div > .card.card-default {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        box-sizing: border-box !important;
+        z-index: 99999 !important;
+        display: flex !important;
+        flex-direction: column !important;
+      }
+      #react_container > div > .card.card-default > .card-body {
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+      }
+      #react_container > div > .card.card-default .chart,
+      #react_container > div > .card.card-default .chart > div,
+      #react_container > div > .card.card-default [id^="reactgooglegraph"] {
+        height: 100% !important;
+      }
+    `;
+    document.head.appendChild(fullscreenStyle);
     console.log("[jepx_fullscreen_graph] fullscreen graph: post");
 
     // すべての項目にチェックを入れる
@@ -238,18 +264,19 @@ if (window.location.origin + window.location.pathname == 'https://www.jepx.info/
     });
     console.log("[jepx_fullscreen_graph] check all: areaCard = " + areaCard);
     let count = 0; // DEBUG
-    Array.from(areaCard.querySelectorAll('.card-body input[type="checkbox"]')).forEach(checkbox => {
+    for (const checkbox of Array.from(areaCard.querySelectorAll('.card-body input[type="checkbox"]'))) {
       console.log("[jepx_fullscreen_graph] checkbox = " + checkbox);
       if (checkbox.checked != enabledIds.includes(checkbox.id)) {
         console.log("[jepx_fullscreen_graph] checking");
         checkbox.click();
         count++; // DEBUG
+        await delay(1000);
       }
-    });
+    }
     console.log("[jepx_fullscreen_graph] check all: post");
     if (count == 0) { // DEBUG
       console.log("[jepx_fullscreen_graph] rollback");
-      document.querySelectorAll('.card')[3].style.position = 'static';
+      fullscreenStyle.remove();
       document.documentElement.style.overflow = 'scroll';
     }
 
