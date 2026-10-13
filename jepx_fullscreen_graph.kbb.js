@@ -2,7 +2,7 @@
 // {
 //     "name": "co.pplc.kanbanbro.plugins.jepx_fullscreen_graph",
 //     "title": "JEPX全画面グラフ",
-//     "version": "2.0.0",
+//     "version": "2.0.1",
 //     "description": "JEPXのページでグラフを全画面にし、すべての項目を表示します。"
 // }
 
