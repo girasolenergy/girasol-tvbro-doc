@@ -2,7 +2,7 @@
 // {
 //     "name": "co.pplc.kanbanbro.plugins.jepx_fullscreen_graph",
 //     "title": "JEPX全画面グラフ",
-//     "version": "2.0.1",
+//     "version": "2.0.2",
 //     "description": "JEPXのページでグラフを全画面にし、すべての項目を表示します。"
 // }
 
@@ -71,7 +71,21 @@ if (window.location.origin + window.location.pathname == 'https://www.jepx.info/
 
       if (date != null) {
         date.setHours(0, 0, 0, 0);
-        const dateString = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, "0")}/${String(date.getDate()).padStart(2, "0")}`;
+
+        async function getDisplayDate(date) {
+          const response = await fetch("/api/spot/max_date");
+          const { max_date } = await response.json();
+          const [year, month, day] = max_date.split("-").map(Number);
+          const latestDate = new Date(year, month - 1, day);
+          if (date > latestDate) {
+            return [latestDate, true];
+          } else {
+            return [date, false];
+          }
+        }
+
+        const [displayDate, waiting] = await getDisplayDate(date);
+        const dateString = `${displayDate.getFullYear()}/${String(displayDate.getMonth() + 1).padStart(2, "0")}/${String(displayDate.getDate()).padStart(2, "0")}`;
         const input = await retry(1000, 10, () => {
           const elements = [...document.querySelectorAll(".card")]
             .filter(card => [...card.querySelectorAll(".card-header .card-title")].some(t => (t.textContent ?? "").includes("表示したい日付を選択してください")))
@@ -97,6 +111,48 @@ if (window.location.origin + window.location.pathname == 'https://www.jepx.info/
             input.dispatchEvent(new Event("change", { bubbles: true, cancelable: true }));
           }
           await delay(500);
+        }
+
+        if (waiting) {
+
+          // 右上に公開待ちのバッジを付ける
+          const indicator = document.createElement('div');
+          indicator.textContent = '公開待ち';
+          indicator.className = 'badge text-bg-warning';
+          indicator.style.position = 'fixed';
+          indicator.style.top = '1rem';
+          indicator.style.right = '1rem';
+          indicator.style.fontSize = '0.875rem';
+          indicator.style.zIndex = '100000';
+          document.body.appendChild(indicator);
+
+          // 公開を監視し、ページのリロードで表示が変わるような状態であればページをリロードする
+          // それは毎日10時から11時の間だけ、ランダムなタイミングで判定される
+          new Promise(async () => {
+            while (true) {
+
+              // 現在の日時
+              const now = new Date();
+
+              // 開始時刻は、今日の10時、ただし、現在が11時以降ならば、翌日の10時
+              const checkWindowStart = new Date(now);
+              checkWindowStart.setHours(10, 0, 0, 0);
+              if (now.getHours() >= 11) checkWindowStart.setDate(checkWindowStart.getDate() + 1);
+
+              // 開始時刻より前なら、開始まで待つ
+              // 逆に言えば、もうすでに始まっているなら待たない
+              if (now < checkWindowStart) await delay(checkWindowStart - now);
+
+              // 5分～10分待つ
+              await delay((5 + Math.random() * 5) * 60 * 1000);
+
+              // 表示中の日付より新しい日付を表示できるなら、ページをリロードする
+              const [availableDate] = await getDisplayDate(date);
+              if (availableDate > displayDate) return window.location.reload();
+
+            }
+          })
+
         }
         console.log("[jepx_fullscreen_graph] date patch: post");
       }
