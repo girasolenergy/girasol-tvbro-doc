@@ -2,11 +2,11 @@
 // {
 //     "name": "co.pplc.kanbanbro.plugins.jepx_fullscreen_graph",
 //     "title": "JEPX全画面グラフ",
-//     "version": "2.0.2",
+//     "version": "2.1.0",
 //     "description": "JEPXのページでグラフを全画面にし、すべての項目を表示します。"
 // }
 
-const enabledIds = ["shikoku", "kyushu", "tokyo", "hokuriku", "tohoku"];
+const enabledIds = ["shikoku", "kyushu", "tokyo", "hokuriku", "tohoku", "hokkaido", "kansai", "chubu", "chugoku"];
 
 if (window.location.origin + window.location.pathname == 'https://www.jepx.info/spot_free') {
   function delay(wait) {
